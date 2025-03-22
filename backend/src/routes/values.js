@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { Value } = require('../models');
+const { Value, Input } = require('../models/associations');
 
 // GET all values
 router.get('/api/values', async (req, res) => {
   try {
-    const values = await Value.findAll();
+    const values = await Value.findAll({
+      include: [{
+        model: Input,
+        attributes: ['IID', 'Name']
+      }],
+      order: [['createdAt', 'DESC']]
+    });
     res.json(values);
   } catch (error) {
     res.status(500).json({ error: error.message });

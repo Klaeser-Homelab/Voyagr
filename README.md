@@ -12,3 +12,7 @@ Logs
 - Proposals
 - Inputs
 - Outputs
+
+## Getting started
+npm run dev in /backend starts backend on 3001
+npm start in /frontend starts frontend on 3000

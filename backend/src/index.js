@@ -4,10 +4,11 @@ const cors = require('cors');
 const session = require('express-session');
 const passport = require('./config/passport');
 const sequelize = require('./config/database');
-const { Input, Value, Event } = require('./models');
+const { Input, Value, Event, Todo, associations } = require('./models');
 const inputRoutes = require('./routes/inputs');
 const valueRoutes = require('./routes/values');
 const eventRoutes = require('./routes/events');
+const todoRoutes = require('./routes/todos');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -60,26 +61,6 @@ app.get('/api/user', (req, res) => {
 });
 
 // Database routes
-app.get('/api/inputs', async (req, res) => {
-  try {
-    const inputs = await Input.findAll({
-      include: [Value]
-    });
-    res.json(inputs);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/api/values', async (req, res) => {
-  try {
-    const values = await Value.findAll();
-    res.json(values);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 app.get('/api/events', async (req, res) => {
   try {
     const events = await Event.findAll({
@@ -95,6 +76,7 @@ app.get('/api/events', async (req, res) => {
 app.use(inputRoutes);
 app.use(valueRoutes);
 app.use(eventRoutes);
+app.use(todoRoutes);
 
 // Initialize database and start server
 const startServer = async () => {

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Input = require('./Input');
 
 const Value = sequelize.define('Value', {
   VID: {
@@ -19,5 +20,7 @@ const Value = sequelize.define('Value', {
   tableName: 'values',
   timestamps: true
 });
+
+Value.hasMany(Input, { foreignKey: 'VID' });
 
 module.exports = Value; 

@@ -48,6 +48,18 @@ const InputList = ({ activeInput, onInputSelect, filterValue, onFilterChange }) 
     navigate(`/inputs/${input.IID}/events`);  // Navigate to events view
   };
 
+  const handleTodoToggle = async (todoId, completed) => {
+    try {
+      await axios.patch(`http://localhost:3001/api/todos/${todoId}`, {
+        completed
+      });
+      // Refresh the inputs list to get updated todo status
+      // You'll need to implement this refresh logic
+    } catch (error) {
+      console.error('Error toggling todo:', error);
+    }
+  };
+
   const filteredInputs = filterValue 
     ? inputs.filter(input => input.VID === filterValue.VID)
     : inputs;
@@ -118,6 +130,28 @@ const InputList = ({ activeInput, onInputSelect, filterValue, onFilterChange }) 
               <h3>{input.Name}</h3>
               <p>{input.Value?.Name || 'No value assigned'}</p>
             </div>
+
+            {/* Add Todos section */}
+            {input.Todos && input.Todos.length > 0 && (
+              <div className="todos-section">
+                <ul className="todo-list">
+                  {input.Todos.map(todo => (
+                    <li 
+                      key={todo.DOID}
+                      className={`todo-item ${todo.completed ? 'completed' : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={(e) => handleTodoToggle(todo.DOID, e.target.checked)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <span>{todo.content}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         ))}
       </div>

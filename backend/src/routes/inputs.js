@@ -1,15 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const { Input, Value, Event } = require('../models');
+const { Input, Value, Event, Todo } = require('../models');
 
 // GET all inputs
 router.get('/api/inputs', async (req, res) => {
   try {
+    console.log('DEBUGGING INPUTS ROUTE');
     const inputs = await Input.findAll({
-      include: [{
-        model: Value,
-        attributes: ['VID', 'Name', 'Color']
-      }],
+      include: [
+        {
+          model: Value,
+          attributes: ['VID', 'Name', 'Color']
+        },
+        {
+          model: Todo,
+          where: { type: 'input' },
+          required: false,  // LEFT JOIN so we get inputs even without todos
+          attributes: ['DOID', 'content', 'completed']
+        }
+      ],
       order: [['createdAt', 'DESC']]
     });
     res.json(inputs);

@@ -5,6 +5,8 @@ import InputList from './components/InputList';
 import InputEvents from './components/InputEvents';
 import Pomodoro from './components/Pomodoro';
 import ValueList from './components/ValueList';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
 import './App.css';
 
 function AppContent() {
@@ -12,6 +14,7 @@ function AppContent() {
   const [activeInput, setActiveInput] = useState(null);
   const [activeValue, setActiveValue] = useState(null);
   const [filterValue, setFilterValue] = useState(null);
+  const [values, setValues] = useState([]);
 
   // Debug activeInput changes
   useEffect(() => {
@@ -40,6 +43,16 @@ function AppContent() {
     setFilterValue(value);
   };
 
+  const fetchValues = async () => {
+    try {
+      const response = await fetch('/api/values');
+      const data = await response.json();
+      setValues(data);
+    } catch (error) {
+      console.error('Error fetching values:', error);
+    }
+  };
+
   if (loading) {
     return <div className="App">Loading...</div>;
   }
@@ -60,12 +73,13 @@ function AppContent() {
       </header>
       <main className="main-content">
         <div className="column left-column">
-          <InputList 
-            activeInput={activeInput}
-            onInputSelect={setActiveInput}
-            filterValue={filterValue}
-            onFilterChange={handleFilterChange}
-          />
+        <TodoForm 
+          values={values} 
+          onTodoAdded={() => {
+            fetchValues();
+          }} 
+        />
+          <TodoList />
         </div>
         <div className="column center-column">
           <Pomodoro 
@@ -82,6 +96,7 @@ function AppContent() {
             activeValue={activeValue}
           />
         </div>
+       
       </main>
     </div>
   );

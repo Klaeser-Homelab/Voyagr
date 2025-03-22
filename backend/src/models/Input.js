@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Value = require('./Value');
+const Todo = require('./Todo');
 
 const Input = sequelize.define('Input', {
   IID: {
@@ -25,6 +25,12 @@ const Input = sequelize.define('Input', {
   timestamps: true
 });
 
-Input.belongsTo(Value, { foreignKey: 'VID' });
+Input.hasMany(Todo, {
+  foreignKey: 'referenceId',
+  constraints: false,
+  scope: {
+    type: 'input'
+  }
+});
 
 module.exports = Input; 

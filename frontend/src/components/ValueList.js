@@ -3,30 +3,28 @@ import axios from 'axios';
 import ValueForm from './ValueForm';
 import './List.css';
 
-const ValueList = ({ onValueSelect }) => {
+function ValueList({ onValueSelect, activeValue }) {
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingValue, setEditingValue] = useState(null);
   const [showValueForm, setShowValueForm] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
+  const [editingInput, setEditingInput] = useState(null);
 
-  const fetchData = async () => {
+  const fetchValues = async () => {
     try {
-      const [inputsResponse, valuesResponse] = await Promise.all([
-        axios.get('http://localhost:3001/api/inputs', { withCredentials: true }),
-        axios.get('http://localhost:3001/api/values', { withCredentials: true })
-      ]);
-      setValues(valuesResponse.data);
+      const response = await axios.get('http://localhost:3001/api/values');
+      setValues(response.data);
       setLoading(false);
-    } catch (err) {
-      setError('Failed to fetch data');
+    } catch (error) {
+      console.error('Error fetching values:', error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchValues();
   }, []);
 
   const handleValueClick = (value) => {
@@ -44,14 +42,48 @@ const ValueList = ({ onValueSelect }) => {
   const handleValueUpdated = () => {
     setShowValueForm(false);
     setEditingValue(null);
-    fetchData();
+    // fetchData();
+  };
+
+  const handleInputEdit = async (input, newName) => {
+    try {
+      await axios.patch(`http://localhost:3001/api/inputs/${input.IID}`, {
+        Name: newName
+      });
+      fetchValues();
+      setEditingInput(null);
+    } catch (error) {
+      console.error('Error updating input:', error);
+    }
+  };
+
+  const handleInputDelete = async (input) => {
+    if (window.confirm('Are you sure you want to delete this input?')) {
+      try {
+        await axios.delete(`http://localhost:3001/api/inputs/${input.IID}`);
+        fetchValues();
+      } catch (error) {
+        console.error('Error deleting input:', error);
+      }
+    }
+  };
+
+  const handleValueChange = async (input, newVID) => {
+    try {
+      await axios.patch(`http://localhost:3001/api/inputs/${input.IID}`, {
+        VID: newVID
+      });
+      fetchValues();
+    } catch (error) {
+      console.error('Error updating input value:', error);
+    }
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="list">
+    <div className="list-container">
       <h2>Values</h2>
       <button 
         className="add-button"
@@ -70,32 +102,81 @@ const ValueList = ({ onValueSelect }) => {
         />
       )}
 
-      <div className="grid">
-        {values.map(value => (
+      {values.map(value => (
+        <div 
+          key={value.VID}
+          className={`value-card ${activeValue?.VID === value.VID ? 'active' : ''}`}
+        >
           <div 
-            key={value.VID} 
-            className={`card ${selectedValue?.VID === value.VID ? 'active' : ''}`}
+            className="value-header"
             onClick={() => handleValueClick(value)}
-            style={{ cursor: 'pointer', position: 'relative' }}
+            style={{ backgroundColor: value.Color }}
           >
-            <button 
-              className="edit-icon"
-              onClick={(e) => handleEditValue(e, value)}
-            >
-              ✎
-            </button>
-            <div 
-              className="color"
-              style={{ backgroundColor: value.Color }}
-            />
-            <div className="info">
-              <h3>{value.Name}</h3>
-            </div>
+            <h3>{value.Name}</h3>
           </div>
-        ))}
-      </div>
+          
+          {value.Inputs && value.Inputs.length > 0 && (
+            <div className="nested-inputs">
+              {value.Inputs.map(input => (
+                <div key={input.IID} className="nested-input-card">
+                  {editingInput === input.IID ? (
+                    <div className="edit-input-form">
+                      <input
+                        type="text"
+                        defaultValue={input.Name}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleInputEdit(input, e.target.value);
+                          } else if (e.key === 'Escape') {
+                            setEditingInput(null);
+                          }
+                        }}
+                        autoFocus
+                      />
+                      <select
+                        value={value.VID}
+                        onChange={(e) => handleValueChange(input, e.target.value)}
+                      >
+                        {values.map(v => (
+                          <option key={v.VID} value={v.VID}>
+                            {v.Name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <div className="input-display">
+                      <h4>{input.Name}</h4>
+                      <div className="input-actions">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingInput(input.IID);
+                          }}
+                          className="edit-button"
+                        >
+                          ✏️
+                        </button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleInputDelete(input);
+                          }}
+                          className="delete-button"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
-};
+}
 
 export default ValueList; 

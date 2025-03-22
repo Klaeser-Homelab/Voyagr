@@ -236,17 +236,233 @@
 }
 
 .delete-button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.2em;
+  padding: 4px 8px;
   opacity: 0.7;
   transition: opacity 0.2s;
+  font-size: 1.1em;
 }
 
 .delete-button:hover {
   opacity: 1;
+  color: #dc3545;
+}
+
+.todos-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.9em;
+}
+
+.todo-item.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-item input[type="checkbox"] {
+  margin: 0;
+}
+
+.value-card {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.value-header {
+  padding: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.value-header:hover {
+  opacity: 0.9;
+}
+
+.value-header h3 {
+  margin: 0;
+  color: white;
+}
+
+.nested-inputs {
+  padding: 1rem;
+  background: white;
+}
+
+.nested-input-card {
+  position: relative;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.nested-input-card:hover {
+  background-color: #f8f9fa;
+}
+
+.input-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-button,
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.edit-button:hover,
+.delete-button:hover {
+  opacity: 1;
+}
+
+.edit-input-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-input-form input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.edit-input-form select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.value-card.active {
+  box-shadow: 0 0 0 2px #007bff;
+}
+
+.todo-card {
+  background: white;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.todo-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.todo-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todo-content {
+  flex: 1;
+}
+
+.todo-content.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.todo-footer {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.todo-reference {
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.error-message {
+  color: #dc3545;
+  background-color: #f8d7da;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.edit-form {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+}
+
+.edit-form input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.save-button,
+.cancel-button,
+.edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.save-button:hover {
+  opacity: 1;
+  color: #28a745;
+}
+
+.cancel-button:hover {
+  opacity: 1;
+  color: #dc3545;
+}
+
+.edit-button:hover {
+  opacity: 1;
+  color: #007bff;
+}
+
+.todo-actions {
+  display: flex;
+  gap: 4px;
 } 

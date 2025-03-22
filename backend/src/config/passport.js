@@ -2,8 +2,8 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const User = require('../models/User'); // We'll create this later
 
-console.log('GitHub Client ID:', process.env.GITHUB_CLIENT_ID);
-console.log('GitHub Client Secret:', process.env.GITHUB_CLIENT_SECRET ? 'Present' : 'Missing');
+//console.debug('GitHub Client ID:', process.env.GITHUB_CLIENT_ID);
+//console.debug('GitHub Client Secret:', process.env.GITHUB_CLIENT_SECRET ? 'Present' : 'Missing');
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
