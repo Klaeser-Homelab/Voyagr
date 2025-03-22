@@ -1,9 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import InputList from './components/InputList';
+import InputEvents from './components/InputEvents';
+import Pomodoro from './components/Pomodoro';
+import ValueList from './components/ValueList';
 import './App.css';
 
 function AppContent() {
   const { user, loading, login, logout } = useAuth();
+  const [activeInput, setActiveInput] = useState(null);
+  const [activeValue, setActiveValue] = useState(null);
+  const [filterValue, setFilterValue] = useState(null);
+
+  // Debug activeInput changes
+  useEffect(() => {
+    console.debug('activeInput:', activeInput?.Name || 'none');
+  }, [activeInput]);
+
+  // Debug activeValue changes
+  useEffect(() => {
+    console.debug('activeValue:', activeValue?.Name || 'none');
+  }, [activeValue]);
+
+  // Update activeValue when activeInput changes
+  useEffect(() => {
+    if (activeInput) {
+      setActiveValue(activeInput.Value);
+    }
+  }, [activeInput]);
+
+  const handleValueSelect = (value) => {
+    setActiveValue(value);
+    setFilterValue(value);
+    setActiveInput(null);
+  };
+
+  const handleFilterChange = (value) => {
+    setFilterValue(value);
+  };
 
   if (loading) {
     return <div className="App">Loading...</div>;
@@ -23,15 +58,42 @@ function AppContent() {
           <button onClick={login}>Login with GitHub</button>
         )}
       </header>
+      <main className="main-content">
+        <div className="column left-column">
+          <InputList 
+            activeInput={activeInput}
+            onInputSelect={setActiveInput}
+            filterValue={filterValue}
+            onFilterChange={handleFilterChange}
+          />
+        </div>
+        <div className="column center-column">
+          <Pomodoro 
+            activeInput={activeInput} 
+            activeValue={activeValue}
+          />
+          <Routes>
+            <Route path="/inputs/:inputId/events" element={<InputEvents />} />
+          </Routes>
+        </div>
+        <div className="column right-column">
+          <ValueList 
+            onValueSelect={handleValueSelect} 
+            activeValue={activeValue}
+          />
+        </div>
+      </main>
     </div>
   );
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
 

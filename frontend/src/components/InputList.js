@@ -1,0 +1,128 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import InputForm from './InputForm';
+import './List.css';
+
+const InputList = ({ activeInput, onInputSelect, filterValue, onFilterChange }) => {
+  const [inputs, setInputs] = useState([]);
+  const [values, setValues] = useState([]); // We need values for the dropdown
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editingInput, setEditingInput] = useState(null);
+  const [showInputForm, setShowInputForm] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      const [inputsResponse, valuesResponse] = await Promise.all([
+        axios.get('http://localhost:3001/api/inputs', { withCredentials: true }),
+        axios.get('http://localhost:3001/api/values', { withCredentials: true })
+      ]);
+      setInputs(inputsResponse.data);
+      setValues(valuesResponse.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch data');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleEditInput = (input) => {
+    setEditingInput(input);
+    setShowInputForm(true);
+  };
+
+  const handleInputUpdated = () => {
+    setShowInputForm(false);
+    setEditingInput(null);
+    fetchData();
+  };
+
+  const handleCardClick = (input) => {
+    onInputSelect(input);  // Set as active input
+    navigate(`/inputs/${input.IID}/events`);  // Navigate to events view
+  };
+
+  const filteredInputs = filterValue 
+    ? inputs.filter(input => input.VID === filterValue.VID)
+    : inputs;
+
+  const clearFilter = () => {
+    onFilterChange(null);
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return (
+    <div className="list">
+      <h2>
+        Inputs
+        {filterValue && (
+          <span className="filter-tag" style={{ backgroundColor: filterValue.Color }}>
+            Filtered by: {filterValue.Name}
+            <button 
+              className="clear-filter"
+              onClick={clearFilter}
+            >
+              ×
+            </button>
+          </span>
+        )}
+      </h2>
+      <button 
+        className="add-button"
+        onClick={() => {
+          setEditingInput(null);
+          setShowInputForm(true);
+        }}
+      >
+        Add New Input
+      </button>
+
+      {showInputForm && (
+        <InputForm 
+          inputToEdit={editingInput}
+          values={values}
+          onInputUpdated={handleInputUpdated}
+        />
+      )}
+
+      <div className="grid">
+        {filteredInputs.map(input => (
+          <div 
+            key={input.IID} 
+            className={`card ${activeInput?.IID === input.IID ? 'active' : ''}`}
+            onClick={() => handleCardClick(input)}
+            style={{ cursor: 'pointer', position: 'relative' }}
+          >
+            <button 
+              className="edit-icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditInput(input);
+              }}
+            >
+              ✎
+            </button>
+            <div 
+              className="color"
+              style={{ backgroundColor: input.Value?.Color || '#ccc' }}
+            />
+            <div className="info">
+              <h3>{input.Name}</h3>
+              <p>{input.Value?.Name || 'No value assigned'}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default InputList; 
