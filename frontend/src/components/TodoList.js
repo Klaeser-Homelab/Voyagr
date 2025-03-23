@@ -10,7 +10,7 @@ function TodoList({ activeValue, isActiveEvent }) {
 
   const fetchTodos = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/todos');
+      const response = await axios.get('http://localhost:3001/api/todos?completed=false');
       console.debug('Fetched todos:', response.data);
       setTodos(response.data);
       setLoading(false);

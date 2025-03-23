@@ -23,10 +23,17 @@ router.post('/api/todos', async (req, res) => {
 
 router.get('/api/todos', async (req, res) => {
   try {
+    const { completed } = req.query;
+    console.log('Completed parameter:', completed);
+    // Build where clause based on completed parameter
+    const whereClause = {};
+    if (completed !== undefined) {
+      // Convert string 'true'/'false' to boolean
+      whereClause.completed = completed === 'true';
+    }
+
     const todos = await Todo.findAll({
-      where: {
-        completed: false  // Only get incomplete todos
-      },
+      where: whereClause,
       include: [
         {
           model: Value,
