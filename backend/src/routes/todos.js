@@ -1,22 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { Todo, Value, Input } = require('../models/associations');
+const { Todo, Value, Input, Event } = require('../models/associations');
 
 router.post('/api/todos', async (req, res) => {
   try {
     console.log('Received request body:', req.body);
-    const { description, type, referenceId } = req.body;
+    const { description, type, referenceId, EID } = req.body;
     
     const todo = await Todo.create({
       description,
       type,
       referenceId,
+      EID,
       completed: false
     });
 
     res.status(201).json(todo);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -38,6 +39,10 @@ router.get('/api/todos', async (req, res) => {
             model: Value,
             attributes: ['VID', 'Name', 'Color']
           }]
+        },
+        {
+          model: Event,
+          attributes: ['EID', 'duration', 'type', 'createdAt']
         }
       ],
       order: [['createdAt', 'DESC']]
@@ -85,6 +90,25 @@ router.delete('/api/todos/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting todo:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Toggle todo completed status
+router.patch('/api/todos/:id/toggle', async (req, res) => {
+  try {
+    const todo = await Todo.findByPk(req.params.id);
+    
+    if (!todo) {
+      return res.status(404).json({ error: 'Todo not found' });
+    }
+
+    // Toggle the completed status
+    todo.completed = !todo.completed;
+    await todo.save();
+
+    res.json(todo);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

@@ -3,7 +3,7 @@ import axios from 'axios';
 import ValueForm from './ValueForm';
 import './List.css';
 
-function ValueList({ onValueSelect, activeValue }) {
+function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,10 +27,24 @@ function ValueList({ onValueSelect, activeValue }) {
     fetchValues();
   }, []);
 
-  const handleValueClick = (value) => {
-    const newSelected = selectedValue?.VID === value.VID ? null : value;
-    setSelectedValue(newSelected);
-    onValueSelect(newSelected); // Pass null or the value to parent for filtering
+  const handleValueClick = (value, e) => {
+    e.stopPropagation();
+    console.debug('Value clicked:', value.Name);
+    if (activeValue?.VID === value.VID) {
+        onValueSelect(null);
+    } else {
+        onValueSelect(value);
+    }
+  };
+
+  const handleInputClick = (input, value, e) => {
+    e.stopPropagation();
+    console.debug('Input clicked:', input.Name, 'from value:', value.Name);
+    if (activeInput?.IID === input.IID) {
+        onInputSelect(null);
+    } else {
+        onInputSelect({ ...input, Value: value });
+    }
   };
 
   const handleEditValue = (e, value) => {
@@ -109,7 +123,7 @@ function ValueList({ onValueSelect, activeValue }) {
         >
           <div 
             className="value-header"
-            onClick={() => handleValueClick(value)}
+            onClick={(e) => handleValueClick(value, e)}
             style={{ backgroundColor: value.Color }}
           >
             <h3>{value.Name}</h3>
@@ -118,7 +132,10 @@ function ValueList({ onValueSelect, activeValue }) {
           {value.Inputs && value.Inputs.length > 0 && (
             <div className="nested-inputs">
               {value.Inputs.map(input => (
-                <div key={input.IID} className="nested-input-card">
+                <div 
+                  key={input.IID} 
+                  className={`nested-input-card ${activeInput?.IID === input.IID ? 'active' : ''}`}
+                >
                   {editingInput === input.IID ? (
                     <div className="edit-input-form">
                       <input
@@ -133,20 +150,15 @@ function ValueList({ onValueSelect, activeValue }) {
                         }}
                         autoFocus
                       />
-                      <select
-                        value={value.VID}
-                        onChange={(e) => handleValueChange(input, e.target.value)}
-                      >
-                        {values.map(v => (
-                          <option key={v.VID} value={v.VID}>
-                            {v.Name}
-                          </option>
-                        ))}
-                      </select>
                     </div>
                   ) : (
                     <div className="input-display">
-                      <h4>{input.Name}</h4>
+                      <div 
+                        className="input-name"
+                        onClick={(e) => handleInputClick(input, value, e)}
+                      >
+                        <h4>{input.Name}</h4>
+                      </div>
                       <div className="input-actions">
                         <button 
                           onClick={(e) => {

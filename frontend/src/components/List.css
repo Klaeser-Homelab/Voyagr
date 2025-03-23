@@ -307,7 +307,6 @@
 }
 
 .nested-input-card {
-  position: relative;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   border: 1px solid #eee;
@@ -315,8 +314,10 @@
   transition: all 0.2s;
 }
 
-.nested-input-card:hover {
+.nested-input-card.active {
+  border-color: #007bff;
   background-color: #f8f9fa;
+  box-shadow: 0 0 0 2px #007bff;
 }
 
 .input-display {
@@ -325,9 +326,18 @@
   align-items: center;
 }
 
+.input-name {
+  flex: 1;
+  cursor: pointer;
+}
+
+.input-name:hover {
+  opacity: 0.7;
+}
+
 .input-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .edit-button,
@@ -347,17 +357,11 @@
 
 .edit-input-form {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .edit-input-form input {
   flex: 1;
-  padding: 4px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.edit-input-form select {
   padding: 4px 8px;
   border: 1px solid #ddd;
   border-radius: 4px;

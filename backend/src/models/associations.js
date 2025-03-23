@@ -1,6 +1,7 @@
 const Value = require('./Value');
 const Input = require('./Input');
 const Todo = require('./Todo');
+const Event = require('./Event');
 
 // Set up associations
 Value.hasMany(Input, { foreignKey: 'VID' });
@@ -17,6 +18,9 @@ Todo.belongsTo(Value, {
   constraints: false,
 });
 
+Todo.belongsTo(Event, { foreignKey: 'EID' });
+Event.hasOne(Todo, { foreignKey: 'EID' });
+
 Todo.addHook('beforeFind', (options) => {
   if (options.where?.type === 'input') {
     options.include = [{ model: Input }];
@@ -28,5 +32,6 @@ Todo.addHook('beforeFind', (options) => {
 module.exports = {
   Value,
   Input,
-  Todo
+  Todo,
+  Event
 }; 

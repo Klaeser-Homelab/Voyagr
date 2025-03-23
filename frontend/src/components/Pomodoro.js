@@ -2,14 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './Pomodoro.css';
 
-const Pomodoro = ({ activeInput, activeValue }) => {
+const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent }) => {
   // Define time constants (in milliseconds)
   const workTime = 30 * 60 * 1000;  // 30 minutes
 
   const [minutes, setMinutes] = useState(30);
   const [seconds, setSeconds] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
   const [stopwatchTime, setStopwatchTime] = useState(0); // seconds elapsed
 
@@ -37,7 +36,7 @@ const Pomodoro = ({ activeInput, activeValue }) => {
   useEffect(() => {
     let interval = null;
 
-    if (isActive) {
+    if (isActiveEvent) {
       interval = setInterval(() => {
         if (mode === 'timer') {
           // Timer mode (counting down)
@@ -71,14 +70,14 @@ const Pomodoro = ({ activeInput, activeValue }) => {
     }
 
     return () => clearInterval(interval);
-  }, [isActive, minutes, seconds, isBreak, mode, activeInput, submitEvent]);
+  }, [isActiveEvent, minutes, seconds, isBreak, mode, activeInput, submitEvent]);
 
   const toggleTimer = () => {
-    setIsActive(!isActive);
+    setIsActiveEvent(!isActiveEvent);
   };
 
   const resetTimer = () => {
-    setIsActive(false);
+    setIsActiveEvent(false);
     if (mode === 'timer') {
       setIsBreak(false);
       setMinutes(30);
@@ -89,7 +88,7 @@ const Pomodoro = ({ activeInput, activeValue }) => {
   };
 
   const toggleMode = () => {
-    setIsActive(false);
+    setIsActiveEvent(false);
     setMode(mode === 'timer' ? 'stopwatch' : 'timer');
     resetTimer();
   };
@@ -145,13 +144,13 @@ const Pomodoro = ({ activeInput, activeValue }) => {
       <div className="controls">
         <button 
           onClick={toggleTimer}
-          disabled={!activeInput}
+          disabled={isActiveEvent || (!activeValue && !activeInput)}
         >
-          {isActive ? 'Pause' : 'Start'}
+          {isActiveEvent ? 'Pause' : 'Start'}
         </button>
         <button 
           onClick={resetTimer}
-          disabled={!isActive && mode === 'timer' && minutes === 30 && seconds === 0}
+          disabled={isActiveEvent && mode === 'timer' && minutes === 30 && seconds === 0}
         >
           Reset
         </button>
@@ -159,7 +158,7 @@ const Pomodoro = ({ activeInput, activeValue }) => {
           <button 
             className="submit-button"
             onClick={handleSubmit}
-            disabled={!activeInput}
+            disabled={isActiveEvent || stopwatchTime === 0}
           >
             Submit Event
           </button>
@@ -178,20 +177,20 @@ const Pomodoro = ({ activeInput, activeValue }) => {
         </>
       )}
 
-      {mode === 'timer' && activeInput && (
+      {mode === 'timer' && (activeInput || activeValue) && (
         <p className="active-input">
-          Recording time for: <strong>{activeInput.Name}</strong>
+          Recording time for: <strong>{activeInput ? activeInput.Name : activeValue.Name}</strong>
         </p>
       )}
-      {mode === 'timer' && !activeInput && (
-        <p className="warning">
-          Select an input to record time when session ends
-        </p>
+      {!activeInput && !activeValue && (
+        <div className="warning-message">
+          Please select an input or value before starting a timer
+        </div>
       )}
 
-      {!activeInput && (
+      {isActiveEvent && (
         <div className="warning-message">
-          Please select an input before starting a timer
+          Session in progress. Please complete or submit current session before starting a new one.
         </div>
       )}
     </div>

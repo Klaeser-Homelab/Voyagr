@@ -25,6 +25,14 @@ const Todo = sequelize.define('Todo', {
   completed: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  EID: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Events',
+      key: 'EID'
+    }
   }
 }, {
   tableName: 'todo'

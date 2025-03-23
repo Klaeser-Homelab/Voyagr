@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import InputList from './components/InputList';
 import InputEvents from './components/InputEvents';
 import Pomodoro from './components/Pomodoro';
+import Today from './components/Today';
 import ValueList from './components/ValueList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
@@ -13,6 +14,7 @@ function AppContent() {
   const { user, loading, login, logout } = useAuth();
   const [activeInput, setActiveInput] = useState(null);
   const [activeValue, setActiveValue] = useState(null);
+  const [isActiveEvent, setIsActiveEvent] = useState(false);
   const [filterValue, setFilterValue] = useState(null);
   const [values, setValues] = useState([]);
 
@@ -34,9 +36,18 @@ function AppContent() {
   }, [activeInput]);
 
   const handleValueSelect = (value) => {
+    console.debug('handleValueSelect:', value);
     setActiveValue(value);
     setFilterValue(value);
-    setActiveInput(null);
+    if (!value) {
+        setActiveInput(null); // Clear input selection when deselecting value
+    }
+  };
+
+  const handleInputSelect = (input) => {
+    console.debug('handleInputSelect:', input);
+    setActiveInput(input);
+    // The existing useEffect will handle updating activeValue
   };
 
   const handleFilterChange = (value) => {
@@ -79,13 +90,20 @@ function AppContent() {
             fetchValues();
           }} 
         />
-          <TodoList />
+          <TodoList 
+            activeValue={activeValue} 
+            isActiveEvent={isActiveEvent}
+            setIsActiveEvent={setIsActiveEvent}
+          />
         </div>
         <div className="column center-column">
           <Pomodoro 
             activeInput={activeInput} 
             activeValue={activeValue}
+            isActiveEvent={isActiveEvent}
+            setIsActiveEvent={setIsActiveEvent}
           />
+          <Today />
           <Routes>
             <Route path="/inputs/:inputId/events" element={<InputEvents />} />
           </Routes>
@@ -93,7 +111,9 @@ function AppContent() {
         <div className="column right-column">
           <ValueList 
             onValueSelect={handleValueSelect} 
+            onInputSelect={handleInputSelect}
             activeValue={activeValue}
+            activeInput={activeInput}
           />
         </div>
        
