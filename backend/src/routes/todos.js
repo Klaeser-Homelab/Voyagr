@@ -23,6 +23,9 @@ router.post('/api/todos', async (req, res) => {
 router.get('/api/todos', async (req, res) => {
   try {
     const todos = await Todo.findAll({
+      where: {
+        completed: false  // Only get incomplete todos
+      },
       include: [
         {
           model: Value,

@@ -38,18 +38,6 @@ function TodoList() {
     fetchTodos();
   }, []);
 
-  const handleToggleComplete = async (todo) => {
-    try {
-      await axios.patch(`http://localhost:3001/api/todos/${todo.DOID}`, {
-        completed: !todo.completed
-      });
-      fetchTodos();
-    } catch (error) {
-      console.error('Error toggling todo:', error);
-      setError('Failed to update todo');
-    }
-  };
-
   const handleEdit = (todo) => {
     setEditingTodo(todo.DOID);
     setEditDescription(todo.description);
@@ -96,11 +84,6 @@ function TodoList() {
             }}
           >
             <div className="todo-header">
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => handleToggleComplete(todo)}
-              />
               {editingTodo === todo.DOID ? (
                 <div className="edit-form">
                   <input
@@ -130,7 +113,7 @@ function TodoList() {
                 </div>
               ) : (
                 <>
-                  <span className={`todo-content ${todo.completed ? 'completed' : ''}`}>
+                  <span className={`todo-content`}>
                     {todo.description}
                   </span>
                   <div className="todo-actions">

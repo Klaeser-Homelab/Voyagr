@@ -1,5 +1,45 @@
-function Stopwatch({ activeInput }) {
-  // ... existing state ...
+import React, { useState, useRef, useEffect } from 'react';
+
+function Stopwatch({ activeValue, activeInput }) {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        setTime(prev => prev + 1000);
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isRunning]);
+
+  const handleStart = () => {
+    console.debug('Starting stopwatch');
+    setIsRunning(true);
+  };
+
+  const handleStop = () => {
+    console.debug('Stopping stopwatch');
+    setIsRunning(false);
+  };
+
+  const handleReset = () => {
+    console.debug('Resetting stopwatch');
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const formatTime = (ms) => {
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / 1000 / 60) % 60);
+    const hours = Math.floor(ms / 1000 / 60 / 60);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="timer-container">
@@ -27,11 +67,13 @@ function Stopwatch({ activeInput }) {
         </button>
         <button 
           onClick={handleReset}
-          disabled={!time}
+          disabled={isRunning || time === 0}
         >
           Reset
         </button>
       </div>
     </div>
   );
-} 
+}
+
+export default Stopwatch; 
