@@ -7,10 +7,10 @@ services:
       - "80:80"
     networks:
       - manageme-network
+    environment:
+      - REACT_APP_BACKEND_URL=${BACKEND_URL}
     depends_on:
       - backend
-    environment:
-      BACKEND_URL: ${BACKEND_URL}
   backend:
     image: manageme-backend:latest
     container_name: manageme-backend
