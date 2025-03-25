@@ -14,10 +14,8 @@ RUN npm install
 COPY frontend/ .
 # : Print the build argument
 
-ARG REACT_APP_BACKEND_URL
-
 # Set REACT_APP_BACKEND_URL as an environment variable
-ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+ENV REACT_APP_BACKEND_URL=http://10.0.0.35:3001
 
 # Debug: Print the environment variable
 RUN echo "Environment variable REACT_APP_BACKEND_URL: $REACT_APP_BACKEND_URL"
