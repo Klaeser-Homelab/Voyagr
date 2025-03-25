@@ -15,7 +15,7 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }));
 
@@ -42,13 +42,13 @@ app.get('/auth/github',
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
   }
 );
 
 app.get('/auth/logout', (req, res) => {
   req.logout(() => {
-    res.redirect('http://localhost:3000');
+    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
   });
 });
 

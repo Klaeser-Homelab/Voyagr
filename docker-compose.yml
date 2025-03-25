@@ -9,7 +9,8 @@ services:
       - manageme-network
     depends_on:
       - backend
-
+    environment:
+      BACKEND_URL: ${BACKEND_URL}
   backend:
     image: manageme-backend:latest
     container_name: manageme-backend
@@ -28,7 +29,7 @@ services:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       SESSION_SECRET: ${SESSION_SECRET}
-
+      FRONTEND_URL: ${FRONTEND_URL}
       NODE_ENV: production
     depends_on:
       postgres:

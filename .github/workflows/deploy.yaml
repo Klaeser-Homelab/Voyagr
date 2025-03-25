@@ -72,14 +72,23 @@ jobs:
             --env-file ${{ env.ENV_FILE_PATH }} \
             up -d --remove-orphans
 
-      - name: Dump env vars
-        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-backend printenv > env_dump.txt
+      - name: Dump frontend env vars
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-frontend printenv > frontend_env.txt
 
-      - name: Upload env dump
+      - name: Dump backend env vars
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-backend printenv > backend_env.txt
+
+      - name: Dump database env vars
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-db printenv > db_env.txt
+
+      - name: Upload env dumps
         uses: actions/upload-artifact@v4
         with:
           name: env-vars
-          path: env_dump.txt
+          path: |
+            frontend_env.txt
+            backend_env.txt
+            db_env.txt
 
       - name: Cleanup Docker context
         if: always()
