@@ -16,7 +16,7 @@ jobs:
       FRONTEND_IMAGE: manageme-frontend:latest
       BACKEND_IMAGE: manageme-backend:latest
       ENV_FILE_PATH: /env/.env
-      REACT_APP_BACKEND_URL: $REACT_APP_BACKEND_URL
+      REACT_APP_BACKEND_URL: http://10.0.0.35:3001
 
     steps:
       - name: Checkout code
@@ -32,6 +32,7 @@ jobs:
       - name: Build Backend image
         run: |
           docker build \
+            --build-arg REACT_APP_BACKEND_URL=${{ env.REACT_APP_BACKEND_URL }} \
             -f Dockerfile.backend \
             -t ${{ env.BACKEND_IMAGE }} \
             .
