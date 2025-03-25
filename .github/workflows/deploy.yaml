@@ -72,6 +72,15 @@ jobs:
             --env-file ${{ env.ENV_FILE_PATH }} \
             up -d --remove-orphans
 
+      - name: Dump env vars
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-backend printenv > env_dump.txt
+
+      - name: Upload env dump
+        uses: actions/upload-artifact@v4
+        with:
+          name: env-vars
+          path: env_dump.txt
+
       - name: Cleanup Docker context
         if: always()
         run: |
