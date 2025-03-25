@@ -8,14 +8,65 @@ function Today() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get current hour
+  // Calculate time percentages
+  const startHour = 8;  // 8 AM
+  const endHour = 19;   // 7 PM
+  const totalHours = endHour - startHour;
   const currentHour = new Date().getHours();
   
-  // Create array of hours from current hour down to 8am
-  const hours = Array.from(
-    { length: Math.max(0, currentHour - 7) }, 
-    (_, i) => currentHour - i
-  ).filter(hour => hour >= 8); // Only show hours from 8am onwards
+  // Calculate time segments
+  const getTimeSegments = () => {
+    const segments = [];
+    let remainingPercent = 100;
+
+    // Group completed todos by value
+    const todosByValue = completedTodos.reduce((acc, todo) => {
+      const valueId = todo.type === 'value' ? todo.Value?.VID : todo.Input?.Value?.VID;
+      const valueName = todo.type === 'value' ? todo.Value?.Name : todo.Input?.Value?.Name;
+      const valueColor = todo.type === 'value' ? todo.Value?.Color : todo.Input?.Value?.Color;
+      
+      if (!valueId) return acc;
+      
+      if (!acc[valueId]) {
+        acc[valueId] = {
+          name: valueName,
+          color: valueColor,
+          count: 0,
+          todos: []
+        };
+      }
+      
+      acc[valueId].count++;
+      acc[valueId].todos.push(todo);
+      return acc;
+    }, {});
+
+    // Calculate percentages for completed work
+    const completedHours = Math.min(currentHour - startHour, totalHours);
+    const completedPercent = (completedHours / totalHours) * 100;
+    
+    // Add segments for completed work
+    Object.values(todosByValue).forEach(value => {
+      const percent = (value.count / completedTodos.length) * completedPercent;
+      segments.push({
+        name: value.name,
+        color: value.color,
+        percent: percent.toFixed(1)
+      });
+      remainingPercent -= percent;
+    });
+
+    // Add remaining time segment if within working hours
+    if (currentHour >= startHour && currentHour < endHour) {
+      segments.push({
+        name: 'Remaining',
+        color: '#e0e0e0',
+        percent: remainingPercent.toFixed(1)
+      });
+    }
+
+    return segments;
+  };
 
   useEffect(() => {
     const fetchCompletedTodos = async () => {
@@ -50,11 +101,40 @@ function Today() {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const timeSegments = getTimeSegments();
+
   return (
     <div className="today-container">
+      <div className="time-bar">
+        {timeSegments.map((segment, index) => (
+          <div
+            key={index}
+            className="time-segment"
+            style={{
+              width: `${segment.percent}%`,
+              backgroundColor: segment.color,
+            }}
+            title={`${segment.name}: ${segment.percent}%`}
+          />
+        ))}
+      </div>
+      <div className="time-legend">
+        {timeSegments.map((segment, index) => (
+          <div key={index} className="legend-item">
+            <div 
+              className="legend-color" 
+              style={{ backgroundColor: segment.color }} 
+            />
+            <span>{segment.name}: {segment.percent}%</span>
+          </div>
+        ))}
+      </div>
       <h2>Today's Completed Tasks</h2>
       <div className="timeline">
-        {hours.map(hour => {
+        {Array.from(
+          { length: Math.max(0, currentHour - 7) }, 
+          (_, i) => currentHour - i
+        ).filter(hour => hour >= 8).map(hour => {
           const todosInHour = getTodosForHour(hour);
           return (
             <div key={hour} className="hour-slot">

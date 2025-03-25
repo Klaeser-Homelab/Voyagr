@@ -101,6 +101,21 @@ router.get('/api/inputs/:id/events', async (req, res) => {
   }
 });
 
+router.patch('/api/inputs/:id', async (req, res) => {
+  try {
+    const { Name } = req.body;
+    const input = await Input.findByPk(req.params.id);
+    if (!input) {
+      return res.status(404).json({ error: 'Input not found' });
+    }
+    await input.update({ Name });
+    res.json(input);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+  
+
 // New route to get events by VID
 router.get('/api/values/:id/events', async (req, res) => {
   try {
