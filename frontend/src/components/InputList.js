@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { api } from '../config/api';
 import InputForm from './InputForm';
 import './List.css';
 
@@ -16,8 +17,8 @@ const InputList = ({ activeInput, onInputSelect, filterValue, onFilterChange }) 
   const fetchData = async () => {
     try {
       const [inputsResponse, valuesResponse] = await Promise.all([
-        axios.get('http://localhost:3001/api/inputs', { withCredentials: true }),
-        axios.get('http://localhost:3001/api/values', { withCredentials: true })
+        axios.get(api.endpoints.inputs, { withCredentials: true }),
+        axios.get(api.endpoints.values, { withCredentials: true })
       ]);
       setInputs(inputsResponse.data);
       setValues(valuesResponse.data);
@@ -50,11 +51,11 @@ const InputList = ({ activeInput, onInputSelect, filterValue, onFilterChange }) 
 
   const handleTodoToggle = async (todoId, completed) => {
     try {
-      await axios.patch(`http://localhost:3001/api/todos/${todoId}`, {
+      await axios.patch(`${api.endpoints.todos}/${todoId}`, {
         completed
       });
       // Refresh the inputs list to get updated todo status
-      // You'll need to implement this refresh logic
+      fetchData();
     } catch (error) {
       console.error('Error toggling todo:', error);
     }

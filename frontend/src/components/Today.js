@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import './Today.css';
 
 function Today() {
@@ -19,7 +20,7 @@ function Today() {
   useEffect(() => {
     const fetchCompletedTodos = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/todos?completed=true');
+        const response = await axios.get(`${api.endpoints.todos}?completed=true`);
         setCompletedTodos(response.data);
         setLoading(false);
       } catch (error) {

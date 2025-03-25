@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 
-function TodoList({ activeValue, isActiveEvent }) {
+const TodoList = ({ type, referenceId }) => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingTodo, setEditingTodo] = useState(null);
   const [editDescription, setEditDescription] = useState('');
 
+  useEffect(() => {
+    fetchTodos();
+  }, [type, referenceId]);
+
   const fetchTodos = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/todos?completed=false');
+      const response = await axios.get(`${api.endpoints.todos}?completed=false&type=${type}&referenceId=${referenceId}`);
       console.debug('Fetched todos:', response.data);
       setTodos(response.data);
       setLoading(false);
@@ -21,12 +26,12 @@ function TodoList({ activeValue, isActiveEvent }) {
     }
   };
 
-  const handleDelete = async (todo) => {
+  const handleDelete = async (todoId) => {
     if (window.confirm('Are you sure you want to delete this todo?')) {
       try {
-        await axios.delete(`http://localhost:3001/api/todos/${todo.DOID}`);
-        console.debug('Todo deleted:', todo.DOID);
-        fetchTodos(); // Refresh the list
+        await axios.delete(`${api.endpoints.todos}/${todoId}`);
+        console.debug('Todo deleted:', todoId);
+        fetchTodos();
       } catch (error) {
         console.error('Error deleting todo:', error);
         setError('Failed to delete todo');
@@ -34,9 +39,16 @@ function TodoList({ activeValue, isActiveEvent }) {
     }
   };
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
+  const handleComplete = async (todo) => {
+    try {
+      await axios.patch(`${api.endpoints.todos}/${todo.DOID}`, {
+        completed: !todo.completed
+      });
+      fetchTodos();
+    } catch (error) {
+      console.error('Error updating todo:', error);
+    }
+  };
 
   const handleEdit = (todo) => {
     setEditingTodo(todo.DOID);
@@ -45,7 +57,7 @@ function TodoList({ activeValue, isActiveEvent }) {
 
   const handleSaveEdit = async (todo) => {
     try {
-      await axios.patch(`http://localhost:3001/api/todos/${todo.DOID}`, {
+      await axios.patch(`${api.endpoints.todos}/${todo.DOID}`, {
         description: editDescription
       });
       setEditingTodo(null);
@@ -62,13 +74,13 @@ function TodoList({ activeValue, isActiveEvent }) {
   };
 
   const handleToggle = async (todo) => {
-      try {
-        await axios.patch(`http://localhost:3001/api/todos/${todo.DOID}/toggle`);
-        fetchTodos();
-      } catch (error) {
-        console.error('Error toggling todo:', error);
-        setError('Failed to toggle todo');
-      }
+    try {
+      await axios.patch(`${api.endpoints.todos}/${todo.DOID}/toggle`);
+      fetchTodos();
+    } catch (error) {
+      console.error('Error toggling todo:', error);
+      setError('Failed to toggle todo');
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -78,15 +90,15 @@ function TodoList({ activeValue, isActiveEvent }) {
     <div className="todo-list-container">
       {todos
         .filter(todo => {
-          if (!activeValue) return true; // Show all todos if no value selected
+          if (!type) return true; // Show all todos if no value selected
           
           // Check if todo is directly linked to this value
-          if (todo.type === 'value' && todo.Value?.VID === activeValue.VID) {
+          if (todo.type === 'value' && todo.Value?.VID === referenceId) {
             return true;
           }
           
           // Check if todo is linked to an input that belongs to this value
-          if (todo.type === 'input' && todo.Input?.Value?.VID === activeValue.VID) {
+          if (todo.type === 'input' && todo.Input?.Value?.VID === referenceId) {
             return true;
           }
           
@@ -157,7 +169,7 @@ function TodoList({ activeValue, isActiveEvent }) {
                         ✏️
                       </button>
                       <button 
-                        onClick={() => handleDelete(todo)}
+                        onClick={() => handleDelete(todo.DOID)}
                         className="delete-button"
                         title="Delete todo"
                       >

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import './List.css';
 
 const EventList = ({ events, inputName, onEventAdded }) => {
@@ -7,7 +8,7 @@ const EventList = ({ events, inputName, onEventAdded }) => {
 
   const handleAddEvent = async () => {
     try {
-      await axios.post(`http://localhost:3001/api/events`, {
+      await axios.post(api.endpoints.events, {
         IID: selectedInput.IID,
         timestamp: new Date()
       }, {

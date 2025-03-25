@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import ValueForm from './ValueForm';
 import './List.css';
 
@@ -15,7 +16,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
 
   const fetchValues = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/values');
+      const response = await axios.get(api.endpoints.values);
       setValues(response.data);
       setLoading(false);
     } catch (error) {
@@ -57,12 +58,12 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const handleValueUpdated = () => {
     setShowValueForm(false);
     setEditingValue(null);
-    // fetchData();
+    fetchValues();
   };
 
   const handleInputEdit = async (input, newName) => {
     try {
-      await axios.patch(`http://localhost:3001/api/inputs/${input.IID}`, {
+      await axios.patch(`${api.endpoints.inputs}/${input.IID}`, {
         Name: newName
       });
       fetchValues();
@@ -75,7 +76,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const handleInputDelete = async (input) => {
     if (window.confirm('Are you sure you want to delete this input?')) {
       try {
-        await axios.delete(`http://localhost:3001/api/inputs/${input.IID}`);
+        await axios.delete(`${api.endpoints.inputs}/${input.IID}`);
         fetchValues();
       } catch (error) {
         console.error('Error deleting input:', error);
@@ -85,7 +86,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
 
   const handleValueChange = async (input, newVID) => {
     try {
-      await axios.patch(`http://localhost:3001/api/inputs/${input.IID}`, {
+      await axios.patch(`${api.endpoints.inputs}/${input.IID}`, {
         VID: newVID
       });
       fetchValues();

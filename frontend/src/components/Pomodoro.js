@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import './Pomodoro.css';
 
 const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent }) => {
@@ -21,7 +22,7 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
 
     try {
       console.debug('Passing activeValue check, making API call...');
-      await axios.post('http://localhost:3001/api/events', {
+      await axios.post(api.endpoints.events, {
         VID: activeValue.VID,
         IID: activeInput?.IID,
         duration: workTime / 1000,

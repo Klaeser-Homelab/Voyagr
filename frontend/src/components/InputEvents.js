@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { api } from '../config/api';
 import './List.css';
 
 const InputEvents = () => {
@@ -11,7 +12,7 @@ const InputEvents = () => {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/inputs/${inputId}/events`);
+      const response = await axios.get(`${api.endpoints.inputs}/${inputId}/events`);
       setEvents(response.data);
       setLoading(false);
     } catch (err) {
@@ -35,7 +36,7 @@ const InputEvents = () => {
 
   const handleAddEvent = async () => {
     try {
-      await axios.post(`http://localhost:3001/api/events`, {
+      await axios.post(api.endpoints.events, {
         IID: inputId,
         timestamp: new Date()
       }, {
@@ -50,7 +51,7 @@ const InputEvents = () => {
 
   const deleteEvent = async (eventId) => {
     try {
-      await axios.delete(`http://localhost:3001/api/events/${eventId}`);
+      await axios.delete(`${api.endpoints.events}/${eventId}`);
       // Refresh the events list after deletion
       fetchEvents();
     } catch (error) {

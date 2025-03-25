@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import './ValueForm.css';
 
 const ValueForm = ({ valueToEdit, onValueUpdated }) => {
@@ -24,7 +25,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
     try {
       if (valueToEdit) {
         // Update existing value
-        await axios.put(`http://localhost:3001/api/values/${valueToEdit.VID}`, {
+        await axios.put(`${api.endpoints.values}/${valueToEdit.VID}`, {
           Name: formData.name,
           Color: formData.color
         }, {
@@ -33,7 +34,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
         setMessage('Value updated successfully!');
       } else {
         // Create new value
-        await axios.post('http://localhost:3001/api/values', {
+        await axios.post(api.endpoints.values, {
           Name: formData.name,
           Color: formData.color
         }, {

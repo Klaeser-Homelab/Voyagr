@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 import './ValueForm.css'; // We can reuse the form styles
 
 const InputForm = ({ inputToEdit, values, onInputUpdated }) => {
@@ -24,7 +25,7 @@ const InputForm = ({ inputToEdit, values, onInputUpdated }) => {
     try {
       if (inputToEdit) {
         // Update existing input
-        await axios.put(`http://localhost:3001/api/inputs/${inputToEdit.IID}`, {
+        await axios.put(`${api.endpoints.inputs}/${inputToEdit.IID}`, {
           Name: formData.name,
           VID: formData.vid
         }, {
@@ -33,7 +34,7 @@ const InputForm = ({ inputToEdit, values, onInputUpdated }) => {
         setMessage('Input updated successfully!');
       } else {
         // Create new input
-        await axios.post('http://localhost:3001/api/inputs', {
+        await axios.post(api.endpoints.inputs, {
           Name: formData.name,
           VID: formData.vid
         }, {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 
 function TodoForm({ onTodoAdded, activeValue, activeInput }) {
   const [description, setDescription] = useState('');
@@ -17,7 +18,7 @@ function TodoForm({ onTodoAdded, activeValue, activeInput }) {
     }
 
     try {
-      await axios.post('http://localhost:3001/api/todos', {
+      await axios.post(api.endpoints.todos, {
         description,
         type,
         referenceId
