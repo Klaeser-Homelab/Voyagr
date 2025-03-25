@@ -96,7 +96,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
           </div>
         </div>
 
-        <button type="submit">
+        <button className="value-submit-button" type="submit">
           {valueToEdit ? 'Update Value' : 'Create Value'}
         </button>
       </form>

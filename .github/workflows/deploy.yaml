@@ -1,0 +1,80 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Deploy to LXC
+    runs-on: self-hosted
+    
+    env:
+      DOCKER_HOST: tcp://10.0.0.35:2375
+      DOCKER_CONTEXT_NAME: manageme-ctx
+      DOCKER_COMPOSE_FILE: docker-compose.yml
+      FRONTEND_IMAGE: manageme-frontend:latest
+      BACKEND_IMAGE: manageme-backend:latest
+      ENV_FILE_PATH: /env/.env
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Frontend image
+        run: |
+          docker build \
+            -f Dockerfile.frontend \
+            -t ${{ env.FRONTEND_IMAGE }} \
+            .
+
+      - name: Build Backend image
+        run: |
+          docker build \
+            -f Dockerfile.backend \
+            -t ${{ env.BACKEND_IMAGE }} \
+            .
+
+      - name: Set up Docker context
+        run: |
+          docker context \
+            create ${{ env.DOCKER_CONTEXT_NAME }} \
+            --docker host=${{ env.DOCKER_HOST }}
+
+      - name: Save and load images to remote Docker
+        run: |
+          # Save images
+          docker save ${{ env.FRONTEND_IMAGE }} > frontend.tar
+          docker save ${{ env.BACKEND_IMAGE }} > backend.tar
+          
+          # Load images on remote host
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} load < frontend.tar
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} load < backend.tar
+          
+          # Cleanup
+          rm frontend.tar backend.tar
+
+      - name: Create volume if not exists
+        run: |
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} volume create manageme-db-data || true
+
+      - name: Deploy with Docker Compose
+        run: |
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} compose --file ${{ env.DOCKER_COMPOSE_FILE }} \
+            --env-file ${{ env.ENV_FILE_PATH }} \
+            stop frontend backend || true
+          
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} compose --file ${{ env.DOCKER_COMPOSE_FILE }} \
+            --env-file ${{ env.ENV_FILE_PATH }} \
+            rm -f frontend backend || true
+          
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} compose --file ${{ env.DOCKER_COMPOSE_FILE }} \
+            --env-file ${{ env.ENV_FILE_PATH }} \
+            up -d --remove-orphans
+
+      - name: Cleanup Docker context
+        if: always()
+        run: |
+          docker context rm ${{ env.DOCKER_CONTEXT_NAME }} --force
+
+

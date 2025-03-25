@@ -75,7 +75,7 @@ function TodoList({ activeValue, isActiveEvent }) {
   if (error) return <div className="error-message">{error}</div>;
 
   return (
-    <div className="list-container">
+    <div className="todo-list-container">
       {todos
         .filter(todo => {
           if (!activeValue) return true; // Show all todos if no value selected

@@ -71,50 +71,43 @@ function AppContent() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Welcome to ManageMe</h1>
-        {user ? (
-          <div>
-            <p>Logged in as {user.displayName}</p>
-            <img src={user.avatar} alt="Profile" style={{ width: 50, height: 50, borderRadius: '50%' }} />
-            <button onClick={logout} style={{ marginTop: 20 }}>Logout</button>
-          </div>
-        ) : (
-          <button onClick={login}>Login with GitHub</button>
-        )}
+        <h1>ManageMe</h1>
+        
       </header>
+      <ValueList 
+            onValueSelect={handleValueSelect} 
+            onInputSelect={handleInputSelect}
+            activeValue={activeValue}
+            activeInput={activeInput}
+          />
+      
       <main className="main-content">
+        
         <div className="column left-column">
+        <Pomodoro 
+            activeInput={activeInput} 
+            activeValue={activeValue}
+            isActiveEvent={isActiveEvent}
+            setIsActiveEvent={setIsActiveEvent}
+          />
+          {(activeValue || activeInput) && (
         <TodoForm 
           values={values} 
           onTodoAdded={() => {
             fetchValues();
-          }} 
-        />
+          }}
+          activeValue={activeValue}
+          activeInput={activeInput}
+          />
+          )}
           <TodoList 
             activeValue={activeValue} 
             isActiveEvent={isActiveEvent}
             setIsActiveEvent={setIsActiveEvent}
           />
         </div>
-        <div className="column center-column">
-          <Pomodoro 
-            activeInput={activeInput} 
-            activeValue={activeValue}
-            isActiveEvent={isActiveEvent}
-            setIsActiveEvent={setIsActiveEvent}
-          />
-          <Today />
-          <Routes>
-            <Route path="/inputs/:inputId/events" element={<InputEvents />} />
-          </Routes>
-        </div>
         <div className="column right-column">
-          <ValueList 
-            onValueSelect={handleValueSelect} 
-            onInputSelect={handleInputSelect}
-            activeValue={activeValue}
-            activeInput={activeInput}
-          />
+          <Today />
         </div>
        
       </main>

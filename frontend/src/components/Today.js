@@ -7,8 +7,14 @@ function Today() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Create array of hours from 8am to 10pm
-  const hours = Array.from({ length: 15 }, (_, i) => i + 8);
+  // Get current hour
+  const currentHour = new Date().getHours();
+  
+  // Create array of hours from current hour down to 8am
+  const hours = Array.from(
+    { length: Math.max(0, currentHour - 7) }, 
+    (_, i) => currentHour - i
+  ).filter(hour => hour >= 8); // Only show hours from 8am onwards
 
   useEffect(() => {
     const fetchCompletedTodos = async () => {

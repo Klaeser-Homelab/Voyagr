@@ -11,6 +11,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const [showValueForm, setShowValueForm] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
   const [editingInput, setEditingInput] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const fetchValues = async () => {
     try {
@@ -97,17 +98,24 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="list-container">
-      <h2>Values</h2>
-      <button 
-        className="add-button"
-        onClick={() => {
+    <>
+    <div className="header-container">
+    <h2>Values</h2>
+    <button 
+      className={`create-button ${isEditMode ? 'active' : ''}`}
+      onClick={() => {
+        setIsEditMode(!isEditMode);
+        if (!isEditMode) {
           setEditingValue(null);
-          setShowValueForm(true);
-        }}
-      >
-        Add New Value
-      </button>
+          setShowValueForm(false);
+        }
+      }}
+      title={isEditMode ? "Exit Edit Mode" : "Enter Edit Mode"}
+    >
+      ✏️
+    </button>
+    </div>
+    <div className={`list-container ${isEditMode ? 'edit-mode' : ''}`}>
 
       {showValueForm && (
         <ValueForm 
@@ -159,26 +167,28 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
                       >
                         <h4>{input.Name}</h4>
                       </div>
-                      <div className="input-actions">
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingInput(input.IID);
-                          }}
-                          className="edit-button"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleInputDelete(input);
-                          }}
-                          className="delete-button"
-                        >
-                          🗑️
-                        </button>
-                      </div>
+                      {isEditMode && (
+                        <div className="input-actions">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingInput(input.IID);
+                            }}
+                            className="edit-button"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleInputDelete(input);
+                            }}
+                            className="delete-button"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -188,6 +198,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
         </div>
       ))}
     </div>
+    </>
   );
 }
 

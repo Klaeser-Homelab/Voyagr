@@ -114,8 +114,18 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
     resetTimer();
   };
 
+  // Get the color to use for the border
+  const borderColor = activeInput?.Value?.Color || activeValue?.Color || '#ddd';
+
   return (
-    <div className="pomodoro">
+    <div 
+      className="pomodoro"
+      style={{
+        borderLeft: `4px solid ${borderColor}`,
+        paddingLeft: '1rem',
+        borderRadius: '4px'
+      }}
+    >
       <div className="mode-switch">
         <button 
           className={`mode-button ${mode === 'timer' ? 'active' : ''}`}
@@ -176,21 +186,9 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
           </p>
         </>
       )}
-
-      {mode === 'timer' && (activeInput || activeValue) && (
-        <p className="active-input">
-          Recording time for: <strong>{activeInput ? activeInput.Name : activeValue.Name}</strong>
-        </p>
-      )}
       {!activeInput && !activeValue && (
         <div className="warning-message">
           Please select an input or value before starting a timer
-        </div>
-      )}
-
-      {isActiveEvent && (
-        <div className="warning-message">
-          Session in progress. Please complete or submit current session before starting a new one.
         </div>
       )}
     </div>
