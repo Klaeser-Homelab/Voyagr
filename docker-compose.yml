@@ -18,8 +18,6 @@ services:
       - "3001:3001"
     networks:
       - manageme-network
-    env_file:
-      - /env/.env
     environment:
       # Sequelize environment variables
       DB_HOST: postgres
