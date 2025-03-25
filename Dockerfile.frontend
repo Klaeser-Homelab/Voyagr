@@ -16,8 +16,17 @@ COPY frontend/ .
 # Set REACT_APP_BACKEND_URL as a build argument
 ARG REACT_APP_BACKEND_URL
 
+# Debug: Print the build argument
+RUN echo "Build argument REACT_APP_BACKEND_URL: $REACT_APP_BACKEND_URL"
+
 # Set REACT_APP_BACKEND_URL as an environment variable
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+
+# Debug: Print the environment variable
+RUN echo "Environment variable REACT_APP_BACKEND_URL: $REACT_APP_BACKEND_URL"
+
+# Debug: Print all environment variables
+RUN echo "All environment variables:" && env
 
 # Build the app
 RUN npm run build

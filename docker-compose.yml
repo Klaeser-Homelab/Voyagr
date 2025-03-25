@@ -7,13 +7,6 @@ services:
       - "80:80"
     networks:
       - manageme-network
-    environment:
-      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-      args:
-        - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
     depends_on:
       - backend
   backend:
