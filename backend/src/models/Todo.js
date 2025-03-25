@@ -30,7 +30,7 @@ const Todo = sequelize.define('Todo', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Events',
+      model: 'events',
       key: 'EID'
     }
   }
