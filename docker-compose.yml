@@ -8,7 +8,7 @@ services:
     networks:
       - manageme-network
     environment:
-      - REACT_APP_BACKEND_URL=${BACKEND_URL}
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
     depends_on:
       - backend
   backend:
