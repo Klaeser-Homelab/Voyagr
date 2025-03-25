@@ -1,10 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { api } from '../config/api';
 
 const AuthContext = createContext(null);
-const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001';
 
 export const AuthProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,27 +15,49 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/user', {
+      const response = await axios.get(`${api.endpoints.auth}/user`, {
         withCredentials: true
       });
       setUser(response.data);
+      setIsAuthenticated(true);
     } catch (error) {
+      console.error('Auth check failed:', error);
       setUser(null);
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const login = () => {
-    window.location.href = backendUrl + '/auth/github';
+  const login = async () => {
+    try {
+      window.location.href = `${api.endpoints.auth}/github`;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
   };
 
-  const logout = () => {
-    window.location.href = backendUrl + '/auth/logout';
+  const logout = async () => {
+    try {
+      await axios.get(`${api.endpoints.auth}/logout`, {
+        withCredentials: true
+      });
+      setUser(null);
+      setIsAuthenticated(false);
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+      throw error;
+    }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
