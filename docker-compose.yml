@@ -1,26 +1,70 @@
 services:
+  frontend:
+    image: manageme-frontend:latest
+    container_name: manageme-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - manageme-network
+    depends_on:
+      - backend
+
+  backend:
+    image: manageme-backend:latest
+    container_name: manageme-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    networks:
+      - manageme-network
+    environment:
+      # Sequelize environment variables
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:16
     container_name: manageme-db
     environment:
-      POSTGRES_DB: manageme
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - manageme-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: manageme-pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
+    networks:
+      - manageme-network
     depends_on:
       - postgres
 
 volumes:
-  postgres_data: 
+  postgres_data:
+
+networks:
+  manageme-network:
+    external: true
