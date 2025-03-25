@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 
-const TodoList = ({ type, referenceId }) => {
+const TodoList = ({ type, referenceId, activeValue, activeInput }) => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -90,16 +90,23 @@ const TodoList = ({ type, referenceId }) => {
     <div className="todo-list-container">
       {todos
         .filter(todo => {
-          if (!type) return true; // Show all todos if no value selected
+          if (!activeValue && !activeInput) return true; // Show all todos if nothing selected
           
-          // Check if todo is directly linked to this value
-          if (todo.type === 'value' && todo.Value?.VID === referenceId) {
-            return true;
+          if (activeInput) {
+            // Show todos for the active input
+            return todo.type === 'input' && todo.Input?.IID === activeInput.IID;
           }
           
-          // Check if todo is linked to an input that belongs to this value
-          if (todo.type === 'input' && todo.Input?.Value?.VID === referenceId) {
-            return true;
+          if (activeValue) {
+            // Show todos for the active value AND its inputs
+            if (todo.type === 'value' && todo.Value?.VID === activeValue.VID) {
+              return true;
+            }
+            
+            // Include todos from inputs that belong to this value
+            if (todo.type === 'input' && todo.Input?.Value?.VID === activeValue.VID) {
+              return true;
+            }
           }
           
           return false;

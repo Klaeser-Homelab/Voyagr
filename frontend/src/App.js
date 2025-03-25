@@ -101,9 +101,8 @@ function AppContent() {
           />
           )}
           <TodoList 
-            activeValue={activeValue} 
-            isActiveEvent={isActiveEvent}
-            setIsActiveEvent={setIsActiveEvent}
+            activeValue={activeValue}
+            activeInput={activeInput}
           />
         </div>
         <div className="column right-column">

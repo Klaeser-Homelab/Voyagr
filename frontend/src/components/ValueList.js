@@ -9,8 +9,6 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingValue, setEditingValue] = useState(null);
-  const [showValueForm, setShowValueForm] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(null);
   const [editingInput, setEditingInput] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -49,14 +47,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
     }
   };
 
-  const handleEditValue = (e, value) => {
-    e.stopPropagation(); // Prevent card click when clicking edit
-    setEditingValue(value);
-    setShowValueForm(true);
-  };
-
   const handleValueUpdated = () => {
-    setShowValueForm(false);
     setEditingValue(null);
     fetchValues();
   };
@@ -84,17 +75,6 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
     }
   };
 
-  const handleValueChange = async (input, newVID) => {
-    try {
-      await axios.patch(`${api.endpoints.inputs}/${input.IID}`, {
-        VID: newVID
-      });
-      fetchValues();
-    } catch (error) {
-      console.error('Error updating input value:', error);
-    }
-  };
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -108,7 +88,6 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
         setIsEditMode(!isEditMode);
         if (!isEditMode) {
           setEditingValue(null);
-          setShowValueForm(false);
         }
       }}
       title={isEditMode ? "Exit Edit Mode" : "Enter Edit Mode"}
@@ -118,7 +97,7 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
     </div>
     <div className={`list-container ${isEditMode ? 'edit-mode' : ''}`}>
 
-      {showValueForm && (
+      {isEditMode && (
         <ValueForm 
           valueToEdit={editingValue}
           onValueUpdated={handleValueUpdated}
