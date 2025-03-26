@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
+import { Link } from 'react-router-dom';
 import './Today.css';
 
 function Today() {
@@ -71,7 +72,7 @@ function Today() {
   useEffect(() => {
     const fetchCompletedTodos = async () => {
       try {
-        const response = await axios.get(`${api.endpoints.todos}?completed=true`);
+        const response = await axios.get(`${api.endpoints.todos}/completed/today`);
         setCompletedTodos(response.data);
         setLoading(false);
       } catch (error) {
@@ -129,6 +130,9 @@ function Today() {
           </div>
         ))}
       </div>
+      <Link to="/history" className="text-gray-600 hover:text-gray-900">
+                    History
+                  </Link>
       <h2>Today's Completed Tasks</h2>
       <div className="timeline">
         {Array.from(

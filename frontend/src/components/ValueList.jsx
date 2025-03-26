@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import ValueForm from './ValueForm';
-import './List.css';
+import ValueCard from './ValueCard';
 
 function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
   const [values, setValues] = useState([]);
@@ -75,110 +75,63 @@ function ValueList({ onValueSelect, onInputSelect, activeValue, activeInput }) {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className="flex items-center justify-center h-32">Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
-    <>
-    <div className="header-container">
-    <h2>Values</h2>
-    <button 
-      className={`create-button ${isEditMode ? 'active' : ''}`}
-      onClick={() => {
-        setIsEditMode(!isEditMode);
-        if (!isEditMode) {
-          setEditingValue(null);
-        }
-      }}
-      title={isEditMode ? "Exit Edit Mode" : "Enter Edit Mode"}
-    >
-      ✏️
-    </button>
-    </div>
-    <div className={`list-container ${isEditMode ? 'edit-mode' : ''}`}>
-
-      {isEditMode && (
-        <ValueForm 
-          valueToEdit={editingValue}
-          onValueUpdated={handleValueUpdated}
-        />
-      )}
-
-      {values.map(value => (
-        <div 
-          key={value.VID}
-          className={`value-card ${activeValue?.VID === value.VID ? 'active' : ''}`}
+    <div className="p-4">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Values</h2>
+        <button 
+          className={`p-2 rounded-full transition-colors duration-200 ${
+            isEditMode 
+              ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => {
+            setIsEditMode(!isEditMode);
+            if (!isEditMode) {
+              setEditingValue(null);
+            }
+          }}
+          title={isEditMode ? "Exit Edit Mode" : "Enter Edit Mode"}
         >
-          <div 
-            className="value-header"
-            onClick={(e) => handleValueClick(value, e)}
-            style={{ backgroundColor: value.Color }}
-          >
-            <h3>{value.Name}</h3>
+          ✏️
+        </button>
+      </div>
+
+      <div className="relative">
+        <div className="overflow-x-auto pb-4">
+          <div className="flex flex-row space-x-4 min-w-max">
+            {isEditMode && (
+              <div className="w-80 shrink-0">
+                <ValueForm 
+                  valueToEdit={editingValue}
+                  onValueUpdated={handleValueUpdated}
+                />
+              </div>
+            )}
+
+            {values.map(value => (
+              <div key={value.VID} className="w-80 shrink-0">
+                <ValueCard
+                  value={value}
+                  activeValue={activeValue}
+                  activeInput={activeInput}
+                  isEditMode={isEditMode}
+                  editingInput={editingInput}
+                  setEditingInput={setEditingInput}
+                  onValueClick={handleValueClick}
+                  onInputClick={handleInputClick}
+                  onInputEdit={handleInputEdit}
+                  onInputDelete={handleInputDelete}
+                />
+              </div>
+            ))}
           </div>
-          
-          {value.Inputs && value.Inputs.length > 0 && (
-            <div className="nested-inputs">
-              {value.Inputs.map(input => (
-                <div 
-                  key={input.IID} 
-                  className={`nested-input-card ${activeInput?.IID === input.IID ? 'active' : ''}`}
-                >
-                  {editingInput === input.IID ? (
-                    <div className="edit-input-form">
-                      <input
-                        type="text"
-                        defaultValue={input.Name}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            handleInputEdit(input, e.target.value);
-                          } else if (e.key === 'Escape') {
-                            setEditingInput(null);
-                          }
-                        }}
-                        autoFocus
-                      />
-                    </div>
-                  ) : (
-                    <div className="input-display">
-                      <div 
-                        className="input-name"
-                        onClick={(e) => handleInputClick(input, value, e)}
-                      >
-                        <h4>{input.Name}</h4>
-                      </div>
-                      {isEditMode && (
-                        <div className="input-actions">
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingInput(input.IID);
-                            }}
-                            className="edit-button"
-                          >
-                            ✏️
-                          </button>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleInputDelete(input);
-                            }}
-                            className="delete-button"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
-      ))}
+      </div>
     </div>
-    </>
   );
 }
 

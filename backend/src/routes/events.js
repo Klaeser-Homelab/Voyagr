@@ -1,6 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { Event } = require('../models');
+const { Event, Input } = require('../models');
+
+// Database routes
+router.get('/api/events', async (req, res) => {
+  try {
+    const events = await Event.findAll({
+      include: [Input]
+    });
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // POST new event
 router.post('/api/events', async (req, res) => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 
-const TodoList = ({ type, referenceId, activeValue, activeInput }) => {
+const TodoList = ({ activeValue, activeInput }) => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,11 +11,19 @@ const TodoList = ({ type, referenceId, activeValue, activeInput }) => {
 
   useEffect(() => {
     fetchTodos();
-  }, [type, referenceId]);
+  }, [activeInput, activeValue]);
 
   const fetchTodos = async () => {
+    let response;
     try {
-      const response = await axios.get(`${api.endpoints.todos}?completed=false&type=${type}&referenceId=${referenceId}`);
+     if (activeInput) {
+        response = await axios.get(`${api.endpoints.todos}/incomplete/input/${activeInput.IID}`);
+      } else if (activeValue) {
+        response = await axios.get(`${api.endpoints.todos}/incomplete/value/${activeValue.VID}`);
+      }
+      else {
+        response = await axios.get(`${api.endpoints.todos}/incomplete`);
+      }
       console.debug('Fetched todos:', response.data);
       setTodos(response.data);
       setLoading(false);
@@ -88,30 +96,7 @@ const TodoList = ({ type, referenceId, activeValue, activeInput }) => {
 
   return (
     <div className="todo-list-container">
-      {todos
-        .filter(todo => {
-          if (!activeValue && !activeInput) return true; // Show all todos if nothing selected
-          
-          if (activeInput) {
-            // Show todos for the active input
-            return todo.type === 'input' && todo.Input?.IID === activeInput.IID;
-          }
-          
-          if (activeValue) {
-            // Show todos for the active value AND its inputs
-            if (todo.type === 'value' && todo.Value?.VID === activeValue.VID) {
-              return true;
-            }
-            
-            // Include todos from inputs that belong to this value
-            if (todo.type === 'input' && todo.Input?.Value?.VID === activeValue.VID) {
-              return true;
-            }
-          }
-          
-          return false;
-        })
-        .map(todo => {
+      {todos.map(todo => {
           const valueColor = todo.type === 'value' 
             ? todo.Value?.Color 
             : todo.Input?.Value?.Color;

@@ -52,23 +52,28 @@ app.get('/auth/logout', (req, res) => {
   });
 });
 
+app.get('/auth/user', (req, res) => {
+  if (req.user) {
+    res.json({
+      id: req.user.id,
+      username: req.user.username,
+      displayName: req.user.displayName,
+      avatar: req.user.avatar,
+      isAuthenticated: true
+    });
+  } else {
+    res.status(401).json({ 
+      message: 'Not authenticated',
+      isAuthenticated: false
+    });
+  }
+});
+
 app.get('/api/user', (req, res) => {
   if (req.user) {
     res.json(req.user);
   } else {
     res.status(401).json({ message: 'Not authenticated' });
-  }
-});
-
-// Database routes
-app.get('/api/events', async (req, res) => {
-  try {
-    const events = await Event.findAll({
-      include: [Input]
-    });
-    res.json(events);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 });
 

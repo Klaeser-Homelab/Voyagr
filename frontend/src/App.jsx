@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import InputList from './components/InputList';
 import InputEvents from './components/InputEvents';
@@ -8,6 +8,8 @@ import Today from './components/Today';
 import ValueList from './components/ValueList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
+import History from './components/History';
+import Header from './components/Header';
 import './App.css';
 
 function AppContent() {
@@ -70,35 +72,30 @@ function AppContent() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>ManageMe</h1>
-        
-      </header>
       <ValueList 
-            onValueSelect={handleValueSelect} 
-            onInputSelect={handleInputSelect}
-            activeValue={activeValue}
-            activeInput={activeInput}
-          />
+        onValueSelect={handleValueSelect} 
+        onInputSelect={handleInputSelect}
+        activeValue={activeValue}
+        activeInput={activeInput}
+      />
       
       <main className="main-content">
-        
         <div className="column left-column">
-        <Pomodoro 
+          <Pomodoro 
             activeInput={activeInput} 
             activeValue={activeValue}
             isActiveEvent={isActiveEvent}
             setIsActiveEvent={setIsActiveEvent}
           />
           {(activeValue || activeInput) && (
-        <TodoForm 
-          values={values} 
-          onTodoAdded={() => {
-            fetchValues();
-          }}
-          activeValue={activeValue}
-          activeInput={activeInput}
-          />
+            <TodoForm 
+              values={values} 
+              onTodoAdded={() => {
+                fetchValues();
+              }}
+              activeValue={activeValue}
+              activeInput={activeInput}
+            />
           )}
           <TodoList 
             activeValue={activeValue}
@@ -108,7 +105,6 @@ function AppContent() {
         <div className="column right-column">
           <Today />
         </div>
-       
       </main>
     </div>
   );
@@ -117,8 +113,12 @@ function AppContent() {
 function App() {
   return (
     <Router>
+      <Header />
       <AuthProvider>
-        <AppContent />
+        <Routes>
+          <Route path="/" element={<AppContent />} />
+          <Route path="/history" element={<History />} />
+        </Routes>
       </AuthProvider>
     </Router>
   );

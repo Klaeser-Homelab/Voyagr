@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { Todo, Value, Input, Event } = require('../models/associations');
+const { Todo, Value, Input } = require('../models/associations');
+const { Op } = require('sequelize');
 
 router.post('/api/todos', async (req, res) => {
   try {
@@ -21,19 +22,33 @@ router.post('/api/todos', async (req, res) => {
   }
 });
 
-router.get('/api/todos', async (req, res) => {
-  try {
-    const { completed } = req.query;
-    console.log('Completed parameter:', completed);
-    // Build where clause based on completed parameter
-    const whereClause = {};
-    if (completed !== undefined) {
-      // Convert string 'true'/'false' to boolean
-      whereClause.completed = completed === 'true';
-    }
 
+router.get('/api/todos/completed', async (req, res) => {
+  try {
     const todos = await Todo.findAll({
-      where: whereClause,
+      where: { completed: true }
+    });
+    res.json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/todos/completed/today', async (req, res) => {
+  try {
+    const todos = await Todo.findAll({
+      where: { completed: true, createdAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) } }
+    });
+    res.json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/todos/incomplete', async (req, res) => {
+  try {
+    const todos = await Todo.findAll({
+      where: { completed: false },
       include: [
         {
           model: Value,
@@ -46,19 +61,59 @@ router.get('/api/todos', async (req, res) => {
             model: Value,
             attributes: ['VID', 'Name', 'Color']
           }]
-        },
-        {
-          model: Event,
-          attributes: ['EID', 'duration', 'type', 'createdAt']
         }
-      ],
-      order: [['createdAt', 'DESC']]
+      ]
     });
     res.json(todos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+router.get('/api/todos/incomplete/input/:IID', async (req, res) => {
+  try {
+    // Validate that IID is provided and is a number
+    const IID = parseInt(req.params.IID);
+    if (isNaN(IID)) {
+      return res.status(400).json({ error: 'Must provide a number for IID' });
+    }
+
+    const todos = await Todo.findAll({
+      where: { 
+        completed: false,
+        type: 'input',
+        referenceId: IID
+      }
+    });
+    res.json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.get('/api/todos/incomplete/value/:VID', async (req, res) => {
+  try {
+    console.log('Getting value todos');
+    const VID = parseInt(req.params.VID);
+    if (isNaN(VID)) {
+      return res.status(400).json({ error: 'Must provide a number for VID' });
+    }
+    const todos = await Todo.findAll({
+      where: { 
+        completed: false,
+        referenceId: VID,
+        type: 'value'
+      }
+    });
+    res.json(todos);
+  } catch (error) {
+    console.error('Error getting value todos:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 router.patch('/api/todos/:id', async (req, res) => {
   try {

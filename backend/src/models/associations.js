@@ -23,7 +23,13 @@ Event.hasOne(Todo, { foreignKey: 'EID' });
 
 Todo.addHook('beforeFind', (options) => {
   if (options.where?.type === 'input') {
-    options.include = [{ model: Input }];
+    options.include = [{
+      model: Input,
+      include: [{
+        model: Value,
+        attributes: ['VID', 'Name', 'Color']
+      }]
+    }];
   } else if (options.where?.type === 'value') {
     options.include = [{ model: Value }];
   }
