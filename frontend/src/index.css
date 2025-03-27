@@ -1,7 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@plugin "daisyui";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, retro;
+}
 
 body {
   margin: 0;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { TimerProvider } from './context/TimerContext';
+import { SelectionProvider, useSelection } from './context/SelectionContext';
 import InputList from './components/InputList';
 import InputEvents from './components/InputEvents';
 import Pomodoro from './components/Pomodoro';
@@ -12,51 +14,13 @@ import HistoryPage from './pages/HistoryPage';
 import ValuesPage from './pages/ValuesPage';
 import EventQueue from './components/EventQueue';
 import Header from './components/Header';
+
 import './App.css';
 
 function AppContent() {
   const { user, loading, login, logout } = useAuth();
-  const [activeInput, setActiveInput] = useState(null);
-  const [activeValue, setActiveValue] = useState(null);
-  const [isActiveEvent, setIsActiveEvent] = useState(false);
-  const [filterValue, setFilterValue] = useState(null);
   const [values, setValues] = useState([]);
-
-  // Debug activeInput changes
-  useEffect(() => {
-    console.debug('activeInput:', activeInput?.Name || 'none');
-  }, [activeInput]);
-
-  // Debug activeValue changes
-  useEffect(() => {
-    console.debug('activeValue:', activeValue?.Name || 'none');
-  }, [activeValue]);
-
-  // Update activeValue when activeInput changes
-  useEffect(() => {
-    if (activeInput) {
-      setActiveValue(activeInput.Value);
-    }
-  }, [activeInput]);
-
-  const handleValueSelect = (value) => {
-    console.debug('handleValueSelect:', value);
-    setActiveValue(value);
-    setFilterValue(value);
-    if (!value) {
-        setActiveInput(null); // Clear input selection when deselecting value
-    }
-  };
-
-  const handleInputSelect = (input) => {
-    console.debug('handleInputSelect:', input);
-    setActiveInput(input);
-    // The existing useEffect will handle updating activeValue
-  };
-
-  const handleFilterChange = (value) => {
-    setFilterValue(value);
-  };
+  const { activeInput, activeValue, handleValueSelect, handleInputSelect } = useSelection();
 
   const fetchValues = async () => {
     try {
@@ -81,22 +45,12 @@ function AppContent() {
       <div className="drawer lg:drawer-open">
         <input id="main-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col">
-          <ValueList 
-            onValueSelect={handleValueSelect} 
-            onInputSelect={handleInputSelect}
-            activeValue={activeValue}
-            activeInput={activeInput}
-          />
+          <ValueList />
           
           <main className="flex-1 p-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-4">
-                <Pomodoro 
-                  activeInput={activeInput} 
-                  activeValue={activeValue}
-                  isActiveEvent={isActiveEvent}
-                  setIsActiveEvent={setIsActiveEvent}
-                />
+                <Pomodoro />
                 <EventQueue />
                 {(activeValue || activeInput) && (
                   <TodoForm 
@@ -127,13 +81,17 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <Header />
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<AppContent />} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/values" element={<ValuesPage />} />
-        </Routes>
+        <TimerProvider>
+          <SelectionProvider>
+            <Header />
+            <Routes>
+              <Route path="/" element={<AppContent />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/values" element={<ValuesPage />} />
+            </Routes>
+          </SelectionProvider>
+        </TimerProvider>
       </AuthProvider>
     </Router>
   );

@@ -1,17 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
+import { useTimer } from '../context/TimerContext';
+import { useSelection } from '../context/SelectionContext';
 import './Pomodoro.css';
 
-const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent }) => {
-  // Define time constants (in milliseconds)
-  const workTime = 30 * 60 * 1000;  // 30 minutes
-
-  const [minutes, setMinutes] = useState(30);
-  const [seconds, setSeconds] = useState(0);
-  const [isBreak, setIsBreak] = useState(false);
-  const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
-  const [stopwatchTime, setStopwatchTime] = useState(0); // seconds elapsed
+const Pomodoro = () => {
+  const { activeInput, activeValue } = useSelection();
+  const {
+    isActiveEvent,
+    startTimer,
+    stopTimer,
+    resetTimer,
+    mode,
+    toggleMode,
+    minutes,
+    seconds,
+    isBreak,
+    stopwatchTime,
+    adjustTime,
+    setMinutes,
+    setSeconds,
+    setIsBreak,
+    setStopwatchTime
+  } = useTimer();
 
   const submitEvent = useCallback(async () => {
     console.debug('submitEvent called, checking activeValue:', activeValue);
@@ -25,14 +37,14 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
       await axios.post(api.endpoints.events, {
         VID: activeValue.VID,
         IID: activeInput?.IID,
-        duration: workTime / 1000,
+        duration: 30 * 60, // 30 minutes in seconds
         type: 'session'
       });
       console.debug('API call successful');
     } catch (error) {
       console.error('Error submitting event:', error);
     }
-  }, [activeValue, activeInput, workTime]);
+  }, [activeValue, activeInput]);
 
   useEffect(() => {
     let interval = null;
@@ -71,44 +83,7 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
     }
 
     return () => clearInterval(interval);
-  }, [isActiveEvent, minutes, seconds, isBreak, mode, activeInput, submitEvent]);
-
-  const toggleTimer = () => {
-    setIsActiveEvent(!isActiveEvent);
-    console.log("Timer toggled");
-  };
-
-  const resetTimer = () => {
-    setIsActiveEvent(false);
-    if (mode === 'timer') {
-      setIsBreak(false);
-      setMinutes(30);
-      setSeconds(0);
-    } else {
-      setStopwatchTime(0);
-    }
-  };
-
-  const toggleMode = () => {
-    setIsActiveEvent(false);
-    setMode(mode === 'timer' ? 'stopwatch' : 'timer');
-    resetTimer();
-  };
-
-  const formatTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours > 0 ? `${String(hours).padStart(2, '0')}:` : ''}${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  };
-
-  const adjustTime = (minutesToAdd) => {
-    const newMinutes = minutes + minutesToAdd;
-    if (newMinutes >= 0) {  // Prevent negative time
-      setMinutes(newMinutes);
-      setSeconds(0);  // Reset seconds when adjusting time
-    }
-  };
+  }, [isActiveEvent, minutes, seconds, isBreak, mode, submitEvent]);
 
   const handleSubmit = async () => {
     await submitEvent();
@@ -117,6 +92,24 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
 
   // Get the color to use for the border
   const borderColor = activeInput?.Value?.Color || activeValue?.Color || '#ddd';
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const getTitle = () => {
+    if (!activeInput && !activeValue) return 'Select a Value or Input';
+    if (isBreak) return 'Break Time';
+    return activeInput ? activeInput.Name : activeValue.Name;
+  };
+
+  const getSubtitle = () => {
+    if (!activeInput && !activeValue) return 'Choose what to focus on';
+    if (isBreak) return 'Take a short break';
+    return activeInput ? activeInput.Value.Name : '';
+  };
 
   return (
     <div 
@@ -144,7 +137,7 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
         </div>
 
         <h2 className="card-title text-2xl font-bold mb-4">
-          {mode === 'timer' ? (isBreak ? 'Break Time!' : 'Session') : 'Stopwatch'}
+          {getTitle()}
         </h2>
         
         <div className="text-4xl font-mono mb-6">
@@ -158,7 +151,7 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
         <div className="flex gap-2 mb-4">
           <button 
             className="btn btn-primary"
-            onClick={toggleTimer}
+            onClick={isActiveEvent ? stopTimer : startTimer}
             disabled={(!activeValue && !activeInput)}
           >
             {isActiveEvent ? 'Pause' : 'Start'}
