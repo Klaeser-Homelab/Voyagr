@@ -8,7 +8,9 @@ import Today from './components/Today';
 import ValueList from './components/ValueList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import History from './components/History';
+import HistoryPage from './pages/HistoryPage';
+import ValuesPage from './pages/ValuesPage';
+import EventQueue from './components/EventQueue';
 import Header from './components/Header';
 import './App.css';
 
@@ -67,45 +69,57 @@ function AppContent() {
   };
 
   if (loading) {
-    return <div className="App">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-base-200 flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (
-    <div className="App">
-      <ValueList 
-        onValueSelect={handleValueSelect} 
-        onInputSelect={handleInputSelect}
-        activeValue={activeValue}
-        activeInput={activeInput}
-      />
-      
-      <main className="main-content">
-        <div className="column left-column">
-          <Pomodoro 
-            activeInput={activeInput} 
-            activeValue={activeValue}
-            isActiveEvent={isActiveEvent}
-            setIsActiveEvent={setIsActiveEvent}
-          />
-          {(activeValue || activeInput) && (
-            <TodoForm 
-              values={values} 
-              onTodoAdded={() => {
-                fetchValues();
-              }}
-              activeValue={activeValue}
-              activeInput={activeInput}
-            />
-          )}
-          <TodoList 
+    <div className="min-h-screen bg-base-200">
+      <div className="drawer lg:drawer-open">
+        <input id="main-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col">
+          <ValueList 
+            onValueSelect={handleValueSelect} 
+            onInputSelect={handleInputSelect}
             activeValue={activeValue}
             activeInput={activeInput}
           />
+          
+          <main className="flex-1 p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <Pomodoro 
+                  activeInput={activeInput} 
+                  activeValue={activeValue}
+                  isActiveEvent={isActiveEvent}
+                  setIsActiveEvent={setIsActiveEvent}
+                />
+                <EventQueue />
+                {(activeValue || activeInput) && (
+                  <TodoForm 
+                    values={values} 
+                    onTodoAdded={() => {
+                      fetchValues();
+                    }}
+                    activeValue={activeValue}
+                    activeInput={activeInput}
+                  />
+                )}
+                <TodoList 
+                  activeValue={activeValue}
+                  activeInput={activeInput}
+                />
+              </div>
+              <div>
+                <Today />
+              </div>
+            </div>
+          </main>
         </div>
-        <div className="column right-column">
-          <Today />
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
@@ -117,7 +131,8 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<AppContent />} />
-          <Route path="/history" element={<History />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/values" element={<ValuesPage />} />
         </Routes>
       </AuthProvider>
     </Router>

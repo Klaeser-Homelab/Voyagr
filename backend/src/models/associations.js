@@ -21,18 +21,26 @@ Todo.belongsTo(Value, {
 Todo.belongsTo(Event, { foreignKey: 'EID' });
 Event.hasOne(Todo, { foreignKey: 'EID' });
 
+//Event Associations
+Event.belongsTo(Value, { foreignKey: 'VID' });
+Event.belongsTo(Input, { foreignKey: 'IID' });
+
 Todo.addHook('beforeFind', (options) => {
-  if (options.where?.type === 'input') {
-    options.include = [{
+  // Always include both possibilities, let Sequelize handle the association based on type
+  options.include = [
+    {
+      model: Value,
+      attributes: ['VID', 'Name', 'Color']
+    },
+    {
       model: Input,
+      attributes: ['IID', 'Name'],
       include: [{
         model: Value,
         attributes: ['VID', 'Name', 'Color']
       }]
-    }];
-  } else if (options.where?.type === 'value') {
-    options.include = [{ model: Value }];
-  }
+    }
+  ];
 });
 
 module.exports = {

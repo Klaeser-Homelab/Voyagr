@@ -37,7 +37,7 @@ router.get('/api/todos/completed', async (req, res) => {
 router.get('/api/todos/completed/today', async (req, res) => {
   try {
     const todos = await Todo.findAll({
-      where: { completed: true, createdAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) } }
+      where: { completed: true, updatedAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) } }
     });
     res.json(todos);
   } catch (error) {

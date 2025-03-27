@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { Event, Input } = require('../models');
+const { Event, Input, Value } = require('../models');
+const { Op } = require('sequelize');
+const Sequelize = require('sequelize');
 
 // Database routes
 router.get('/api/events', async (req, res) => {
@@ -10,6 +12,41 @@ router.get('/api/events', async (req, res) => {
     });
     res.json(events);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/events/today', async (req, res) => {
+  try {
+    const events = await Event.findAll({
+      attributes: [
+        'EID',
+        'duration',
+        'createdAt',
+        'IID',
+        [Sequelize.col('Value.Color'), 'color'],
+        [Sequelize.col('Value.Name'), 'valueName'],
+        [Sequelize.col('Input.Name'), 'inputName']
+      ],
+      include: [
+        {
+          model: Value,
+          attributes: []
+        },
+        {
+          model: Input,
+          attributes: []
+        }
+      ],
+      where: {
+        updatedAt: {
+          [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
+        }
+      }
+    });
+    res.json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error);
     res.status(500).json({ error: error.message });
   }
 });

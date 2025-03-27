@@ -1,4 +1,5 @@
 import React from 'react';
+import InputCard from './InputCard';
 
 function ValueCard({ 
   value, 
@@ -28,62 +29,17 @@ function ValueCard({
       {value.Inputs && value.Inputs.length > 0 && (
         <div className="p-2 space-y-2">
           {value.Inputs.map(input => (
-            <div 
-              key={input.IID} 
-              className={`rounded-md transition-all duration-200
-                ${activeInput?.IID === input.IID ? 'bg-gray-100' : 'bg-gray-50'}`}
-            >
-              {editingInput === input.IID ? (
-                <div className="p-2">
-                  <input
-                    type="text"
-                    defaultValue={input.Name}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        onInputEdit(input, e.target.value);
-                      } else if (e.key === 'Escape') {
-                        setEditingInput(null);
-                      }
-                    }}
-                    autoFocus
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center justify-between p-2 group">
-                  <div 
-                    className="flex-grow cursor-pointer"
-                    onClick={(e) => onInputClick(input, value, e)}
-                  >
-                    <h4 className="text-gray-700">{input.Name}</h4>
-                  </div>
-                  {isEditMode && (
-                    <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingInput(input.IID);
-                        }}
-                        className="p-1 rounded hover:bg-gray-200 transition-colors duration-200"
-                        title="Edit input"
-                      >
-                        ✏️
-                      </button>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onInputDelete(input);
-                        }}
-                        className="p-1 rounded hover:bg-gray-200 transition-colors duration-200 text-red-500"
-                        title="Delete input"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            <InputCard
+              key={input.IID}
+              input={{ ...input, color: value.Color }}
+              isEditMode={isEditMode}
+              editingInput={editingInput}
+              setEditingInput={setEditingInput}
+              onInputClick={(input) => onInputClick(input, value)}
+              onInputEdit={onInputEdit}
+              onInputDelete={onInputDelete}
+              activeInput={activeInput}
+            />
           ))}
         </div>
       )}

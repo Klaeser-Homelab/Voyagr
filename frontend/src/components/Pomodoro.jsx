@@ -75,6 +75,7 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
 
   const toggleTimer = () => {
     setIsActiveEvent(!isActiveEvent);
+    console.log("Timer toggled");
   };
 
   const resetTimer = () => {
@@ -110,7 +111,6 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
   };
 
   const handleSubmit = async () => {
-    console.debug('handleSubmit called, activeValue:', activeValue);
     await submitEvent();
     resetTimer();
   };
@@ -120,78 +120,97 @@ const Pomodoro = ({ activeInput, activeValue, isActiveEvent, setIsActiveEvent })
 
   return (
     <div 
-      className="pomodoro"
+      className="card bg-base-100 shadow-xl"
       style={{
         borderLeft: `4px solid ${borderColor}`,
         paddingLeft: '1rem',
         borderRadius: '4px'
       }}
     >
-      <div className="mode-switch">
-        <button 
-          className={`mode-button ${mode === 'timer' ? 'active' : ''}`}
-          onClick={() => mode !== 'timer' && toggleMode()}
-        >
-          Timer
-        </button>
-        <button 
-          className={`mode-button ${mode === 'stopwatch' ? 'active' : ''}`}
-          onClick={() => mode !== 'stopwatch' && toggleMode()}
-        >
-          Stopwatch
-        </button>
-      </div>
-
-      <h2>{mode === 'timer' ? (isBreak ? 'Break Time!' : 'Session') : 'Stopwatch'}</h2>
-      
-      <div className="timer">
-        {mode === 'timer' ? (
-          `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-        ) : (
-          formatTime(stopwatchTime)
-        )}
-      </div>
-
-      <div className="controls">
-        <button 
-          onClick={toggleTimer}
-          disabled={isActiveEvent || (!activeValue && !activeInput)}
-        >
-          {isActiveEvent ? 'Pause' : 'Start'}
-        </button>
-        <button 
-          onClick={resetTimer}
-          disabled={isActiveEvent && mode === 'timer' && minutes === 30 && seconds === 0}
-        >
-          Reset
-        </button>
-        {mode === 'stopwatch' && (
+      <div className="card-body">
+        <div className="join mb-4">
           <button 
-            className="submit-button"
-            onClick={handleSubmit}
-            disabled={isActiveEvent || stopwatchTime === 0}
+            className={`join-item btn ${mode === 'timer' ? 'btn-active' : ''}`}
+            onClick={() => mode !== 'timer' && toggleMode()}
           >
-            Submit Event
+            Timer
           </button>
+          <button 
+            className={`join-item btn btn-success ${mode === 'stopwatch' ? 'btn-active' : ''}`}
+            onClick={() => mode !== 'stopwatch' && toggleMode()}
+          >
+            Stopwatch
+          </button>
+        </div>
+
+        <h2 className="card-title text-2xl font-bold mb-4">
+          {mode === 'timer' ? (isBreak ? 'Break Time!' : 'Session') : 'Stopwatch'}
+        </h2>
+        
+        <div className="text-4xl font-mono mb-6">
+          {mode === 'timer' ? (
+            `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+          ) : (
+            formatTime(stopwatchTime)
+          )}
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          <button 
+            className="btn btn-primary"
+            onClick={toggleTimer}
+            disabled={(!activeValue && !activeInput)}
+          >
+            {isActiveEvent ? 'Pause' : 'Start'}
+          </button>
+          <button 
+            className="btn btn-ghost"
+            onClick={resetTimer}
+            disabled={isActiveEvent && mode === 'timer' && minutes === 30 && seconds === 0}
+          >
+            Reset
+          </button>
+          {mode === 'stopwatch' && (
+            <button 
+              className="btn btn-success"
+              onClick={handleSubmit}
+              disabled={isActiveEvent || stopwatchTime === 0}
+            >
+              Submit Event
+            </button>
+          )}
+        </div>
+
+        {mode === 'timer' && (
+          <>
+            <div className="flex gap-2 mb-4">
+              <button 
+                className="btn btn-sm btn-ghost"
+                onClick={() => adjustTime(-5)}
+              >
+                -5 min
+              </button>
+              <button 
+                className="btn btn-sm btn-ghost"
+                onClick={() => adjustTime(5)}
+              >
+                +5 min
+              </button>
+            </div>
+            <p className="text-center text-lg">
+              {isBreak ? 'Take a break!' : 'Stay focused!'}
+            </p>
+          </>
+        )}
+        {!activeInput && !activeValue && (
+          <div className="alert alert-warning mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Please select an input or value before starting a timer</span>
+          </div>
         )}
       </div>
-
-      {mode === 'timer' && (
-        <>
-          <div className="adjust-controls">
-            <button onClick={() => adjustTime(-5)}>-5 min</button>
-            <button onClick={() => adjustTime(5)}>+5 min</button>
-          </div>
-          <p className="status">
-            {isBreak ? 'Take a break!' : 'Stay focused!'}
-          </p>
-        </>
-      )}
-      {!activeInput && !activeValue && (
-        <div className="warning-message">
-          Please select an input or value before starting a timer
-        </div>
-      )}
     </div>
   );
 };

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import { Link } from 'react-router-dom';
+import ToDoBar from './ToDoBar';
 import './Today.css';
-
+import EventBar from './EventBar';
 function Today() {
   const [completedTodos, setCompletedTodos] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,74 +18,27 @@ function Today() {
   const totalHours = endHour - startHour;
   const currentHour = new Date().getHours();
   
-  // Calculate time segments
-  const getTimeSegments = () => {
-    const segments = [];
-    let remainingPercent = 100;
-
-    // Group completed todos by value
-    const todosByValue = completedTodos.reduce((acc, todo) => {
-      const valueId = todo.type === 'value' ? todo.Value?.VID : todo.Input?.Value?.VID;
-      const valueName = todo.type === 'value' ? todo.Value?.Name : todo.Input?.Value?.Name;
-      const valueColor = todo.type === 'value' ? todo.Value?.Color : todo.Input?.Value?.Color;
-      
-      if (!valueId) return acc;
-      
-      if (!acc[valueId]) {
-        acc[valueId] = {
-          name: valueName,
-          color: valueColor,
-          count: 0,
-          todos: []
-        };
-      }
-      
-      acc[valueId].count++;
-      acc[valueId].todos.push(todo);
-      return acc;
-    }, {});
-
-    // Calculate percentages for completed work
-    const completedHours = Math.min(currentHour - startHour, totalHours);
-    const completedPercent = (completedHours / totalHours) * 100;
-    
-    // Add segments for completed work
-    Object.values(todosByValue).forEach(value => {
-      const percent = (value.count / completedTodos.length) * completedPercent;
-      segments.push({
-        name: value.name,
-        color: value.color,
-        percent: percent.toFixed(1)
-      });
-      remainingPercent -= percent;
-    });
-
-    // Add remaining time segment if within working hours
-    if (currentHour >= startHour && currentHour < endHour) {
-      segments.push({
-        name: 'Remaining',
-        color: '#e0e0e0',
-        percent: remainingPercent.toFixed(1)
-      });
-    }
-
-    return segments;
-  };
-
   useEffect(() => {
-    const fetchCompletedTodos = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${api.endpoints.todos}/completed/today`);
-        setCompletedTodos(response.data);
+        // Fetch both todos and events in parallel
+        const [todosResponse, eventsResponse] = await Promise.all([
+          axios.get(`${api.endpoints.todos}/completed/today`),
+          axios.get(`${api.endpoints.events}/today`)
+        ]);
+        
+        setCompletedTodos(todosResponse.data);
+        setCompletedEvents(eventsResponse.data);
+        setEvents(eventsResponse.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching completed todos:', error);
-        setError('Failed to fetch completed todos');
+        console.error('Error fetching data:', error);
+        setError('Failed to fetch data');
         setLoading(false);
       }
     };
 
-    fetchCompletedTodos();
+    fetchData();
   }, []);
 
   const formatHour = (hour) => {
@@ -91,70 +47,71 @@ function Today() {
     return `${hour} AM`;
   };
 
-  // Get todos for a specific hour
-  const getTodosForHour = (hour) => {
-    return completedTodos.filter(todo => {
+  const formatDuration = (seconds) => {
+    const minutes = Math.round(seconds / 60);
+    return `${minutes} min`;
+  };
+
+  // Get items for a specific hour (combining todos and events)
+  const getItemsForHour = (hour) => {
+    const todosInHour = completedTodos.filter(todo => {
       const completedTime = new Date(todo.updatedAt);
       return completedTime.getHours() === hour;
     });
+
+    const eventsInHour = events.filter(event => {
+      const eventTime = new Date(event.createdAt);
+      return eventTime.getHours() === hour;
+    });
+
+    // Combine and sort by timestamp in ascending order (oldest first)
+    return [...todosInHour, ...eventsInHour];
   };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const timeSegments = getTimeSegments();
-
   return (
     <div className="today-container">
-      <div className="time-bar">
-        {timeSegments.map((segment, index) => (
-          <div
-            key={index}
-            className="time-segment"
-            style={{
-              width: `${segment.percent}%`,
-              backgroundColor: segment.color,
-            }}
-            title={`${segment.name}: ${segment.percent}%`}
-          />
-        ))}
-      </div>
-      <div className="time-legend">
-        {timeSegments.map((segment, index) => (
-          <div key={index} className="legend-item">
-            <div 
-              className="legend-color" 
-              style={{ backgroundColor: segment.color }} 
-            />
-            <span>{segment.name}: {segment.percent}%</span>
-          </div>
-        ))}
-      </div>
+      <EventBar completedEvents={completedEvents} />
+      <ToDoBar completedTodos={completedTodos} events={events} />
       <Link to="/history" className="text-gray-600 hover:text-gray-900">
-                    History
-                  </Link>
-      <h2>Today's Completed Tasks</h2>
+        History
+      </Link>
+      <h2>Today's Activity</h2>
       <div className="timeline">
         {Array.from(
           { length: Math.max(0, currentHour - 7) }, 
           (_, i) => currentHour - i
         ).filter(hour => hour >= 8).map(hour => {
-          const todosInHour = getTodosForHour(hour);
+          const itemsInHour = getItemsForHour(hour);
           return (
             <div key={hour} className="hour-slot">
               <div className="time-label">{formatHour(hour)}</div>
-              <div className="todos-for-hour">
-                {todosInHour.map(todo => (
+              <div className="items-for-hour">
+                {itemsInHour.reverse().map(item => (
                   <div 
-                    key={todo.DOID} 
-                    className="completed-todo"
+                    key={item.DOID || item.EID} 
+                    className="completed-item"
                     style={{ 
-                      borderLeft: `4px solid ${todo.type === 'value' ? todo.Value?.Color : todo.Input?.Value?.Color || '#ddd'}`
+                      borderLeft: `4px solid ${
+                        item.DOID  // if it's a todo
+                          ? (item.type === 'value' ? item.Value?.Color : item.Input?.Value?.Color)
+                          : (item.color || '#ddd')  // if it's an event
+                      }`
                     }}
                   >
-                    <span className="todo-description">{todo.description}</span>
-                    <span className="todo-reference">
-                      {todo.type === 'value' ? todo.Value?.Name : todo.Input?.Name}
+                    <span className="item-description">
+                      {item.DOID 
+                        ? item.description 
+                        : `Event (${Math.round(item.duration / 60)} min)`
+                      }
+                    </span>
+                    <span className="item-reference">
+                      {item.DOID
+                        ? (item.type === 'value' ? item.Value?.Name : item.Input?.Name)
+                        : (item.inputName || item.valueName)
+                      }
                     </span>
                   </div>
                 ))}

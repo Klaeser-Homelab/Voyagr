@@ -106,7 +106,7 @@ const TodoList = ({ activeValue, activeInput }) => {
               key={todo.DOID} 
               className="todo-card"
               style={{ 
-                borderLeft: `4px solid ${valueColor || '#ddd'}`,
+                borderLeft: `16px solid ${valueColor || '#ddd'}`,
                 borderRadius: '4px',
                 borderTop: `1px solid #eee`,
                 borderRight: `1px solid #eee`,
