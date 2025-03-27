@@ -46,11 +46,9 @@ function AppContent() {
         <input id="main-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col">
           <ValueList />
-          
           <main className="flex-1 p-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-4">
-                <Pomodoro />
                 <EventQueue />
                 {(activeValue || activeInput) && (
                   <TodoForm 

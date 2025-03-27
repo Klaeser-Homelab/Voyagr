@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const TimerContext = createContext();
 
@@ -42,6 +42,51 @@ export const TimerProvider = ({ children }) => {
       setSeconds(0);
     }
   };
+
+  useEffect(() => {
+    let interval = null;
+
+    if (isBreak || isActiveEvent) {
+      interval = setInterval(() => {
+        if (isBreak) {
+          if (seconds === 0) {
+            if (minutes === 0) {
+              setIsBreak(false);
+              setMinutes(30);
+              setSeconds(0);
+              stopTimer();
+            } else {
+              setMinutes(minutes - 1);
+              setSeconds(59);
+            }
+          } else {
+            setSeconds(seconds - 1);
+          }
+        } else if (mode === 'timer') {
+          if (seconds === 0) {
+            if (minutes === 0) {
+              if (isBreak) {
+                setMinutes(30);
+                setIsBreak(false);
+              } else {
+                setMinutes(5);
+                setIsBreak(true);
+              }
+            } else {
+              setMinutes(minutes - 1);
+              setSeconds(59);
+            }
+          } else {
+            setSeconds(seconds - 1);
+          }
+        } else {
+          setStopwatchTime(prev => prev + 1);
+        }
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [isBreak, isActiveEvent, minutes, seconds, mode]);
 
   return (
     <TimerContext.Provider value={{
