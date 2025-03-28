@@ -24,7 +24,7 @@ const TodoList = ({ activeValue, activeInput }) => {
       else {
         response = await axios.get(`${api.endpoints.todos}/incomplete`);
       }
-      console.debug('Fetched todos:', response.data);
+      console.log('List todos:', response.data);
       setTodos(response.data);
       setLoading(false);
     } catch (error) {

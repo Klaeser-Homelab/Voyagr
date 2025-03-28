@@ -1,8 +1,15 @@
+import { PlayIcon } from "@heroicons/react/24/outline";
+import { useTimer } from "../context/TimerContext";
+import { useSelection } from "../context/SelectionContext";
+
 const InputCard = ({ 
   input, 
   onInputClick,
-  activeInput,
 }) => {
+  const { startTimer } = useTimer();
+  const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
+
+
   const getScheduleText = () => {
     if (!input.startTime || !input.endTime || !input.daysOfWeek) return null;
     
@@ -10,6 +17,13 @@ const InputCard = ({
     const scheduledDays = input.daysOfWeek.map(day => days[day]).join(', ');
     return `${input.startTime.slice(0, 5)} - ${input.endTime.slice(0, 5)} on ${scheduledDays}`;
   };
+
+  const handlePlay = (e) => {
+    e.stopPropagation();
+    onInputClick(input, e);
+    handleInputSelect(input);
+    startTimer();
+  }
 
   return (
     <div 
@@ -26,6 +40,7 @@ const InputCard = ({
               style={{ backgroundColor: input.color }}
             />
             <h4 className="text-gray-700">{input.Name}</h4>
+            <PlayIcon className="size-6 text-black" onClick={handlePlay} />
           </div>
           
           {/* Schedule information */}

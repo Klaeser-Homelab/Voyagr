@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { api } from '../config/api';
 import InputCard from './InputCard';
 import { useTimer } from '../context/TimerContext';
 import { useSelection } from '../context/SelectionContext';
 import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/outline';
+import ToDo from './ToDo';
+import ToDoForm from './TodoForm';
 
-function ActiveValueCard({ value }) {
+function ActiveValueCard({ value, addToQueue }) {
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
+
   const { 
     startTimer, 
     stopTimer, 
@@ -17,6 +27,23 @@ function ActiveValueCard({ value }) {
     toggleMode
   } = useTimer();
   const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const response = await axios.get(`${api.endpoints.todos}/incomplete/value/${value.VID}`);
+        setTodos(response.data);
+        setLoading(false);
+        console.log('Value todos:', response.data);
+      } catch (error) {
+        console.error('Error fetching todos:', error);
+        setError('Failed to load todos');
+        setLoading(false);
+      }
+    };
+
+    fetchTodos();
+  }, [value.VID]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -98,18 +125,14 @@ function ActiveValueCard({ value }) {
       
       {value.Inputs && value.Inputs.length > 0 && (
         <div className="p-2 space-y-2">
-          {value.Inputs.map(input => (
-            <InputCard
-              key={input.IID}
-              input={{ ...input, color: value.Color }}
-              onInputClick={(input) => handleInputSelect(input)}
-              activeInput={activeInput}
-            />
+          {todos.map(todo => (
+            <ToDo key={todo.DOID} todo={todo} addToQueue={addToQueue} />
           ))}
+          <ToDoForm activeValue={value}  />
         </div>
       )}
     </div>
   );
 }
 
-export default ActiveValueCard; 
+export default ActiveValueCard;

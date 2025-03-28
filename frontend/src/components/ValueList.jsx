@@ -16,6 +16,22 @@ function ValueList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [todoQueue, setTodoQueue] = useState([]); // Queue for unsaved todos
+  
+  const addToQueue = (updatedTodo) => {
+      setTodoQueue((prevQueue) => {
+        const index = prevQueue.findIndex((todo) => todo.DOID === updatedTodo.DOID);
+        if (index !== -1) {
+          // Replace the existing todo in the queue
+          const newQueue = [...prevQueue];
+          newQueue[index] = updatedTodo;
+          return newQueue;
+        }
+        // Add new todo to the queue
+        return [...prevQueue, updatedTodo];
+      });
+    };
+
   const submitSession = async () => {
     if (!activeValue) {
       console.warn('No value selected, cannot submit session');
@@ -36,6 +52,13 @@ function ValueList() {
       setMinutes(5); // Set break time
     } catch (error) {
       console.error('Error submitting session:', error);
+    }
+    try {
+      await axios.post(`${api.endpoints.todos}/batchprocess`, todoQueue);
+      console.log('Todos submitted:', todoQueue);
+      setTodoQueue([]); // Clear the queue after submission
+    } catch (error) {
+      console.error('Error submitting todos:', error);
     }
   };
 
@@ -108,8 +131,8 @@ function ValueList() {
 
         <div className="flex flex-wrap gap-4">
           {values.map(value => (
-            <div key={value.VID} className="w-80">
-              <ValueCard value={value} />
+            <div key={value.VID} className="flex-1 basis-[40vw]">
+              <ValueCard value={value} addToQueue={addToQueue} />
             </div>
           ))}
         </div>

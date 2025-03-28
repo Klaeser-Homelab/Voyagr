@@ -33,7 +33,6 @@ function ValueCard({ value }) {
               key={input.IID}
               input={{ ...input, color: value.Color }}
               onInputClick={(input) => handleInputSelect(input)}
-              activeInput={activeInput}
             />
           ))}
         </div>

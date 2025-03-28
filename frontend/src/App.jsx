@@ -49,21 +49,6 @@ function AppContent() {
           <main className="flex-1 p-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="space-y-4">
-                <EventQueue />
-                {(activeValue || activeInput) && (
-                  <TodoForm 
-                    values={values} 
-                    onTodoAdded={() => {
-                      fetchValues();
-                    }}
-                    activeValue={activeValue}
-                    activeInput={activeInput}
-                  />
-                )}
-                <TodoList 
-                  activeValue={activeValue}
-                  activeInput={activeInput}
-                />
               </div>
               <div>
                 <Today />

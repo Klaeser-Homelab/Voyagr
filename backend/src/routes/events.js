@@ -54,6 +54,7 @@ router.get('/api/events/today', async (req, res) => {
 // POST new event
 router.post('/api/events', async (req, res) => {
   try {
+  
     const { VID, IID, duration, type } = req.body;
     
     // VID is required
