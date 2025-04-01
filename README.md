@@ -21,7 +21,7 @@ The Postgres database used for development runs in a Docker instance within Dock
 `docker compose -f docker-compose.dev.yml up -d` will run the docker-compose.dev.yml that includes the build information for the Docker instance. Once the database is built, login to PgAdmin and change the password from the default.
 
 ### Backend
-`npm run dev` in /backend starts backend on 3001. The backend will error if you have not built the Database. The backend uses a Node.js web framework called Express. Sequalize is used as a Node.js Object-Relational Manager to interact with the database with types.
+`npm run dev` in /backend starts backend on 3001. The backend will error if you have not built the Database or it is not currently running in Docker Desktop. The backend uses a Node.js web framework called Express. Sequalize is used as a Node.js Object-Relational Manager to interact with the database with types.
 
 ### Deployment
 Journeyman is deployed to self-hosted docker containers running on Proxmox. The deployment is configured using GitHub Actions configured in `.github/workflows/deploy.yaml`.  Dockerfiles that build the layers of the containers and a docker-compose file that configures the services run in the container.
