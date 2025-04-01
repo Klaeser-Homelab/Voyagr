@@ -3,7 +3,7 @@ import axios from 'axios';
 import { api } from '../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-function TodoForm({ onTodoAdded, activeValue, activeInput }) {
+function TodoForm({ activeValue, activeInput, onTodoAdded }) {
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {
@@ -19,7 +19,7 @@ function TodoForm({ onTodoAdded, activeValue, activeInput }) {
     }
 
     try {
-      await axios.post(api.endpoints.todos, {
+      const response = await axios.post(api.endpoints.todos, {
         description,
         type,
         referenceId
@@ -27,7 +27,10 @@ function TodoForm({ onTodoAdded, activeValue, activeInput }) {
       
       setDescription('');
       
-      if (onTodoAdded) onTodoAdded();
+      // Add the new todo to local state using the response data
+      if (onTodoAdded) {
+        onTodoAdded(response.data);
+      }
     } catch (error) {
       console.error('Error creating todo:', error);
     }
@@ -39,21 +42,27 @@ function TodoForm({ onTodoAdded, activeValue, activeInput }) {
   return (
     <div className="form-control">
       <div className="flex items-center gap-2 w-full">
-      <button 
-      onClick={handleSubmit} 
-      className="btn btn-square btn-primary">
-        <PlusIcon className="h-6 w-6" />
-      </button>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter todo description"
-              className="input input-bordered flex-1 bg-gray-100"
-              required
-            />
-          </div>
-        </div>
+        <button 
+          onClick={handleSubmit} 
+          className="btn btn-square btn-primary"
+        >
+          <PlusIcon className="h-6 w-6" />
+        </button>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSubmit(e);
+            }
+          }}
+          placeholder="Enter todo description"
+          className="input input-bordered flex-1 bg-gray-100"
+          required
+        />
+      </div>
+    </div>
   );
 }
 

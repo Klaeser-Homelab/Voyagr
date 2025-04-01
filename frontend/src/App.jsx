@@ -11,11 +11,11 @@ import ValueList from './components/ValueList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import HistoryPage from './pages/HistoryPage';
-import ValuesPage from './pages/ValuesPage';
-import EventQueue from './components/EventQueue';
+import ProfilePage from './pages/ProfilePage';
+import JourneyPage from './pages/JourneyPage';
 import Header from './components/Header';
-
-import './App.css';
+import AvatarPage from './pages/AvatarPage';
+import { TodayProvider } from './context/TodayContext';
 
 function AppContent() {
   const { user, loading, login, logout } = useAuth();
@@ -46,15 +46,10 @@ function AppContent() {
         <input id="main-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col">
           <ValueList />
-          <main className="flex-1 p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div className="space-y-4">
-              </div>
-              <div>
-                <Today />
-              </div>
-            </div>
-          </main>
+          <div className="flex-1 p-4 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+            <Today />
+          </div>
         </div>
       </div>
     </div>
@@ -67,12 +62,15 @@ function App() {
       <AuthProvider>
         <TimerProvider>
           <SelectionProvider>
-            <Header />
-            <Routes>
-              <Route path="/" element={<AppContent />} />
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/values" element={<ValuesPage />} />
-            </Routes>
+            <TodayProvider>
+              <Header />
+              <Routes>
+                <Route path="/" element={<AppContent />} />
+                <Route path="/history" element={<HistoryPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/journey" element={<JourneyPage />} />
+              </Routes>
+            </TodayProvider>
           </SelectionProvider>
         </TimerProvider>
       </AuthProvider>

@@ -34,10 +34,10 @@ router.get('/api/todos/completed', async (req, res) => {
   }
 });
 
-router.get('/api/todos/completed/today', async (req, res) => {
+router.get('/api/todos/completed/today/noevent', async (req, res) => {
   try {
     const todos = await Todo.findAll({
-      where: { completed: true, updatedAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) } }
+      where: { completed: true, updatedAt: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) }, EID: null }
     });
     res.json(todos);
   } catch (error) {
@@ -113,7 +113,30 @@ router.get('/api/todos/incomplete/value/:VID', async (req, res) => {
   }
 });
 
+router.post('/api/todos/batchprocess', async (req, res) => {
+  try {
+    const todos = req.body;
+    console.log('Processing batch of todos:', todos); 
 
+    // Update the todos to be completed and set their EID
+    await Promise.all(todos.map(todo => 
+      Todo.update(
+        { 
+          completed: true,
+          EID: todo.EID 
+        }, 
+        { 
+          where: { DOID: todo.DOID } 
+        }
+      )
+    ));
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error processing batch of todos:', error); 
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.patch('/api/todos/:id', async (req, res) => {
   try {
@@ -141,6 +164,7 @@ router.patch('/api/todos/:id', async (req, res) => {
 
 router.delete('/api/todos/:id', async (req, res) => {
   try {
+    console.log('Deleting todo:', req.params.id);
     const result = await Todo.destroy({
       where: { DOID: req.params.id }
     });

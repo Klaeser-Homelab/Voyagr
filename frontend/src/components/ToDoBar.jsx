@@ -50,12 +50,12 @@ const ToDoBar = ({ completedTodos = [] }) => {
 
   return (
     <>
-    <h3>Todos</h3>
-      <div className="time-bar">
+      <h3>Todos</h3>
+      <div className="w-full h-6 flex rounded-xl overflow-hidden shadow-md mb-4">
         {timeSegments.map((segment, index) => (
           <div
             key={index}
-            className="time-segment"
+            className="h-full transition-all duration-300 hover:opacity-90"
             style={{
               width: `${segment.percent}%`,
               backgroundColor: segment.color,
@@ -64,11 +64,11 @@ const ToDoBar = ({ completedTodos = [] }) => {
           />
         ))}
       </div>
-      <div className="time-legend">
+      <div className="flex flex-wrap gap-4 mb-8">
         {timeSegments.map((segment, index) => (
-          <div key={index} className="legend-item">
+          <div key={index} className="flex items-center gap-2 text-sm">
             <div 
-              className="legend-color" 
+              className="w-3 h-3 rounded-sm" 
               style={{ backgroundColor: segment.color }} 
             />
             <span>{segment.name}: {segment.percent}%</span>

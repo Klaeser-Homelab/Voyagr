@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
 import { Link } from 'react-router-dom';
 import ToDoBar from './ToDoBar';
-import './Today.css';
 import EventBar from './EventBar';
+import { useToday } from '../context/TodayContext';
+
 function Today() {
-  const [completedTodos, setCompletedTodos] = useState([]);
-  const [completedEvents, setCompletedEvents] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { events, completedTodos, loading, error, fetchAll } = useToday();
 
   // Calculate time percentages
   const startHour = 8;  // 8 AM
@@ -19,27 +14,8 @@ function Today() {
   const currentHour = new Date().getHours();
   
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch both todos and events in parallel
-        const [todosResponse, eventsResponse] = await Promise.all([
-          axios.get(`${api.endpoints.todos}/completed/today`),
-          axios.get(`${api.endpoints.events}/today`)
-        ]);
-        
-        setCompletedTodos(todosResponse.data);
-        setCompletedEvents(eventsResponse.data);
-        setEvents(eventsResponse.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+    fetchAll();
+  }, [fetchAll]);
 
   const formatHour = (hour) => {
     if (hour === 12) return '12 PM';
@@ -68,31 +44,33 @@ function Today() {
     return [...todosInHour, ...eventsInHour];
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className="flex justify-center items-center h-32">Loading...</div>;
+  if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   return (
-    <div className="today-container">
-      <EventBar completedEvents={completedEvents} />
+    <div className="bg-base-100 shadow-lg p-4 w-full">
+      <EventBar completedEvents={events} />
       <ToDoBar completedTodos={completedTodos} events={events} />
-      <Link to="/history" className="text-gray-600 hover:text-gray-900">
+      <Link to="/history" className="link link-hover text-base-content/70">
         History
       </Link>
-      <h2>Today's Activity</h2>
-      <div className="timeline">
+      <h2 className="text-2xl font-bold mb-4">Today's Activity</h2>
+      <div className="flex flex-col gap-4">
         {Array.from(
           { length: Math.max(0, currentHour - 7) }, 
           (_, i) => currentHour - i
         ).filter(hour => hour >= 8).map(hour => {
           const itemsInHour = getItemsForHour(hour);
           return (
-            <div key={hour} className="hour-slot">
-              <div className="time-label">{formatHour(hour)}</div>
-              <div className="items-for-hour">
+            <div key={hour} className="flex gap-4 py-2 border-b border-base-200">
+              <div className="w-20 font-medium text-base-content/70">
+                {formatHour(hour)}
+              </div>
+              <div className="flex-1 flex flex-col gap-2">
                 {itemsInHour.reverse().map(item => (
                   <div 
                     key={item.DOID || item.EID} 
-                    className="completed-item"
+                    className="card bg-base-200 p-2 flex justify-between items-center"
                     style={{ 
                       borderLeft: `4px solid ${
                         item.DOID  // if it's a todo
@@ -101,13 +79,13 @@ function Today() {
                       }`
                     }}
                   >
-                    <span className="item-description">
+                    <span className="font-medium">
                       {item.DOID 
                         ? item.description 
                         : `Event (${Math.round(item.duration / 60)} min)`
                       }
                     </span>
-                    <span className="item-reference">
+                    <span className="text-sm text-base-content/70">
                       {item.DOID
                         ? (item.type === 'value' ? item.Value?.Name : item.Input?.Name)
                         : (item.inputName || item.valueName)

@@ -4,7 +4,7 @@ import { api } from '../config/api';
 import ValueForm from '../components/ValueForm';
 import EditValueCard from '../components/EditValueCard';
 
-const ValuesPage = () => {
+const ProfilePage = () => {
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,28 +61,28 @@ const ValuesPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600">Loading values...</div>
+      <div className="flex items-center justify-center min-h-screen bg-base-100 dark:bg-base-900">
+        <div className="text-xl text-base-content dark:text-base-200">Loading values...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-red-600">{error}</div>
+      <div className="flex items-center justify-center min-h-screen bg-base-100 dark:bg-base-900">
+        <div className="text-xl text-error">{error}</div>
       </div>
     );
   }
 
   return (
-    <main className="main-content">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Values</h1>
+<>
+<div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-base-content dark:text-base-200">Values</h1>
       </div>
 
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-base-200 dark:bg-base-800 rounded-lg shadow p-6">
           <ValueForm onValueUpdated={fetchValues} />
         </div>
 
@@ -98,8 +98,8 @@ const ValuesPage = () => {
           ))}
         </div>
       </div>
-    </main>
+    </>
   );
 };
 
-export default ValuesPage; 
+export default ProfilePage; 

@@ -8,12 +8,10 @@ import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/ou
 import ToDo from './ToDo';
 import ToDoForm from './TodoForm';
 
-function ActiveValueCard({ value, addToQueue }) {
+function ActiveValueCard({ value, onTodosUpdate }) {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-
 
   const { 
     startTimer, 
@@ -28,20 +26,23 @@ function ActiveValueCard({ value, addToQueue }) {
   } = useTimer();
   const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
 
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const response = await axios.get(`${api.endpoints.todos}/incomplete/value/${value.VID}`);
-        setTodos(response.data);
-        setLoading(false);
-        console.log('Value todos:', response.data);
-      } catch (error) {
-        console.error('Error fetching todos:', error);
-        setError('Failed to load todos');
-        setLoading(false);
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get(`${api.endpoints.todos}/incomplete/value/${value.VID}`);
+      setTodos(response.data);
+      setLoading(false);
+      console.log('Value todos:', response.data);
+      if (onTodosUpdate) {
+        onTodosUpdate(response.data);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+      setError('Failed to load todos');
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTodos();
   }, [value.VID]);
 
@@ -49,6 +50,38 @@ function ActiveValueCard({ value, addToQueue }) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const updateTodoState = (todoId, completed) => {
+    setTodos(currentTodos => {
+      const newTodos = currentTodos.map(todo => 
+        todo.DOID === todoId ? { ...todo, completed } : todo
+      );
+      if (onTodosUpdate) {
+        onTodosUpdate(newTodos);
+      }
+      return newTodos;
+    });
+  };
+
+  const deleteTodo = (todoId) => {
+    setTodos(currentTodos => {
+      const newTodos = currentTodos.filter(todo => todo.DOID !== todoId);
+      if (onTodosUpdate) {
+        onTodosUpdate(newTodos);
+      }
+      return newTodos;
+    });
+  };
+
+  const addTodo = (newTodo) => {
+    setTodos(currentTodos => {
+      const newTodos = [...currentTodos, newTodo];
+      if (onTodosUpdate) {
+        onTodosUpdate(newTodos);
+      }
+      return newTodos;
+    });
   };
 
   return (
@@ -126,9 +159,17 @@ function ActiveValueCard({ value, addToQueue }) {
       {value.Inputs && value.Inputs.length > 0 && (
         <div className="p-2 space-y-2">
           {todos.map(todo => (
-            <ToDo key={todo.DOID} todo={todo} addToQueue={addToQueue} />
+            <ToDo 
+              key={todo.DOID} 
+              todo={todo} 
+              onToggle={updateTodoState}
+              onDelete={deleteTodo}
+            />
           ))}
-          <ToDoForm activeValue={value}  />
+          <ToDoForm 
+            activeValue={value} 
+            onTodoAdded={addTodo}
+          />
         </div>
       )}
     </div>
