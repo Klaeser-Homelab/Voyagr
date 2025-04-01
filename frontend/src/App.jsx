@@ -16,6 +16,7 @@ import JourneyPage from './pages/JourneyPage';
 import Header from './components/Header';
 import AvatarPage from './pages/AvatarPage';
 import { TodayProvider } from './context/TodayContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 function AppContent() {
   const { user, loading, login, logout } = useAuth();
@@ -58,23 +59,25 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <TimerProvider>
-          <SelectionProvider>
-            <TodayProvider>
-              <Header />
-              <Routes>
-                <Route path="/" element={<AppContent />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/journey" element={<JourneyPage />} />
-              </Routes>
-            </TodayProvider>
-          </SelectionProvider>
-        </TimerProvider>
-      </AuthProvider>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <TimerProvider>
+            <SelectionProvider>
+              <TodayProvider>
+                <Header />
+                <Routes>
+                  <Route path="/" element={<AppContent />} />
+                  <Route path="/history" element={<HistoryPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/journey" element={<JourneyPage />} />
+                </Routes>
+              </TodayProvider>
+            </SelectionProvider>
+          </TimerProvider>
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

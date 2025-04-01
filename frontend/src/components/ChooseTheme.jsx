@@ -1,58 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const ChooseTheme = () => {
-    const [theme, setTheme] = useState('retro')
+  const { theme, themeData, handleThemeChange } = useTheme();
 
-    useEffect(() => {
-      document.querySelector('html').setAttribute('data-theme', theme);
-    }, [theme])
-  
-    const handleThemeChange = (newTheme) => {
-      setTheme(newTheme);
-    };
+  const handleMouseEnter = (themeValue) => {
+    document.querySelector('html').setAttribute('data-theme', themeValue);
+  };
+
+  const handleMouseLeave = () => {
+    document.querySelector('html').setAttribute('data-theme', theme);
+  };
   
   return (
-            <div className="collapse collapse-arrow">
-              <input type="checkbox" />
-              <div className="collapse-title font-medium">Choose Theme</div>
-              <div className="collapse-content">
-                <fieldset className="fieldset flex flex-col gap-2">
-                  <label className="flex gap-2 cursor-pointer items-center">
-                    <input
-                      type="radio"
-                      name="theme-radios"
-                      value="light"
-                      className="radio radio-sm"
-                      checked={theme === 'light'}
-                      onChange={() => handleThemeChange('light')}
-                    />
-                    Light
-                  </label>
-                  <label className="flex gap-2 cursor-pointer items-center">
-                    <input
-                      type="radio"
-                      name="theme-radios"
-                      value="dark"
-                      className="radio radio-sm"
-                      checked={theme === 'dark'}
-                      onChange={() => handleThemeChange('dark')}
-                    />
-                    Dark
-                  </label>
-                  <label className="flex gap-2 cursor-pointer items-center">
-                    <input
-                      type="radio"
-                      name="theme-radios"
-                      value="retro"
-                      className="radio radio-sm"
-                      checked={theme === 'retro'}
-                      onChange={() => handleThemeChange('retro')}
-                    />
-                    Retro
-                  </label>   
-                </fieldset>
+    <div className="p-4">
+      <h3 className="font-medium mb-4">Choose your Journey Theme</h3>
+      <div className="flex flex-wrap gap-4">
+        {Object.entries(themeData).map(([value, data]) => (
+          <div 
+            key={value}
+            className={`card bg-base-100 shadow-sm cursor-pointer hover:shadow-md transition-shadow flex-1 basis-[40vw] ${
+              theme === value ? 'ring-2 ring-primary' : ''
+            }`}
+            onClick={() => handleThemeChange(value)}
+            onMouseEnter={() => handleMouseEnter(value)}
+            onMouseLeave={handleMouseLeave}
+          >
+            <figure>
+              <img
+                src={data.image}
+                alt={data.name}
+                className="w-full h-48 object-cover"
+              />
+            </figure>
+            <div className="card-body p-4">
+              <h2 className="card-title text-lg">{data.name}</h2>
+              <p className="text-sm">{data.description}</p>
+              <div className="card-actions justify-end">
+                {theme === value ? (
+                  <span className="btn btn-neutral">Current</span>
+                ) : (
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => handleThemeChange(value)}
+                  >
+                    Apply
+                  </button>
+                )}
               </div>
             </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
