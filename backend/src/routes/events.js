@@ -1,14 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const { Value, Input, Event, Todo } = require('../models/associations');
+const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize');
 
-// Database routes
+// GET all events for the current user
 router.get('/api/events', async (req, res) => {
   try {
     const events = await Event.findAll({
-      include: [Input]
+      include: [
+        {
+          model: Item,
+          where: { user_id: req.user.id },
+          required: true
+        },
+        {
+          model: Habit,
+          attributes: ['item_id', 'description']
+        },
+        {
+          model: Value,
+          attributes: ['item_id', 'description', 'color']
+        }
+      ],
+      order: [['created_at', 'DESC']]
     });
     res.json(events);
   } catch (error) {
@@ -16,38 +31,44 @@ router.get('/api/events', async (req, res) => {
   }
 });
 
+// GET today's events for the current user
 router.get('/api/events/today', async (req, res) => {
   try {
     const events = await Event.findAll({
       attributes: [
-        'EID',
+        'item_id',
         'duration',
-        'createdAt',
-        'IID',
-        [Sequelize.col('Value.Color'), 'color'],
-        [Sequelize.col('Value.Name'), 'valueName'],
-        [Sequelize.col('Input.Name'), 'inputName']
+        'created_at',
+        'parent_id',
+        [Sequelize.col('Value.color'), 'color'],
+        [Sequelize.col('Value.description'), 'valueDescription'],
+        [Sequelize.col('Habit.description'), 'habitDescription']
       ],
       include: [
+        {
+          model: Item,
+          where: { user_id: req.user.id },
+          required: true
+        },
         {
           model: Value,
           attributes: []
         },
         {
-          model: Input,
+          model: Habit,
           attributes: []
         },
         {
           model: Todo,
-          attributes: ['DOID', 'description', 'completed', 'updatedAt'],
+          attributes: ['item_id', 'content', 'completed', 'updated_at'],
           where: {
             completed: true
           },
-          required: false // This makes it a LEFT JOIN so we get events even if they don't have todos
+          required: false
         }
       ],
       where: {
-        updatedAt: {
+        updated_at: {
           [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
         }
       }
@@ -62,37 +83,76 @@ router.get('/api/events/today', async (req, res) => {
 // POST new event
 router.post('/api/events', async (req, res) => {
   try {
-  
-    const { VID, IID, duration, type } = req.body;
+    // First create the base item
+    const item = await Item.create({
+      user_id: req.user.id,
+      type: 'event'
+    });
+
+    const { parent_id, duration, type } = req.body;
     
-    // VID is required
-    if (!VID) {
-      return res.status(400).json({ error: 'VID is required' });
+    // parent_id (Value ID) is required
+    if (!parent_id) {
+      return res.status(400).json({ error: 'parent_id is required' });
     }
 
     const event = await Event.create({
-      VID,
-      IID,  // Optional now
+      item_id: item.id,
+      parent_id,
       duration,
       type: type || 'session'
     });
 
-    res.status(201).json(event);
+    // Return the event with its item data
+    const fullEvent = await Event.findByPk(event.item_id, {
+      include: [
+        {
+          model: Item,
+          attributes: ['created_at']
+        },
+        {
+          model: Value,
+          attributes: ['description', 'color']
+        },
+        {
+          model: Habit,
+          attributes: ['description']
+        }
+      ]
+    });
+
+    res.status(201).json(fullEvent);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+// DELETE event
 router.delete('/api/events/:id', async (req, res) => {
   try {
-    const result = await Event.destroy({
-      where: { EID: req.params.id }
+    const event = await Event.findOne({
+      where: { item_id: req.params.id },
+      include: [{
+        model: Item,
+        where: { user_id: req.user.id },
+        required: true
+      }]
     });
-    if (result) {
-      res.status(204).send();
-    } else {
-      res.status(404).json({ error: 'Event not found' });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
     }
+
+    // Find the associated item
+    const item = await Item.findByPk(event.item_id);
+    
+    // Delete both the event and its item
+    await event.destroy();
+    if (item) {
+      await item.destroy();
+    }
+
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

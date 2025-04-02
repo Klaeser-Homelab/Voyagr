@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useSelection } from '../context/SelectionContext';
 import { useTimer } from '../context/TimerContext';
 import { useToday } from '../context/TodayContext';
-import ActiveInputCard from './ActiveInputCard';
+import ActiveCard from './ActiveCard';
 
 function ValueList() {
   const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
@@ -116,7 +116,7 @@ function ValueList() {
     );
   }
 
-  if (!activeValue) {
+  if (!activeValue && !activeInput) {
     return (
       <div className="p-4">
         <div className="flex items-center justify-between mb-6">
@@ -141,7 +141,7 @@ function ValueList() {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-6">
-        <h2>Active Value</h2>
+      <h2 className="text-2xl font-bold mb-4">Current Activity</h2>
         <div className="flex items-center gap-4">
 <button 
   onClick={handleAbandonSession}
@@ -158,17 +158,17 @@ function ValueList() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4">
-        <ActiveValueCard 
-          value={activeValue} 
-          onTodosUpdate={setCurrentTodos}
-        />
-      </div>
+      {activeValue && (
+        <div className="min-w-[30vw] flex-1 basis-[40vw]">
+          <ActiveCard 
+            item={activeValue} 
+          />
+        </div>
+      )}
       {activeInput && (
         <div className="min-w-[30vw] flex-1 basis-[40vw]">
-          <ActiveInputCard 
-            input={activeInput} 
-            onClose={() => setActiveInput(null)}
+          <ActiveCard 
+            item={activeInput} 
           />
         </div>
       )}

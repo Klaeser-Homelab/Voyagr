@@ -5,8 +5,7 @@ import { api } from '../config/api';
 const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   const [formData, setFormData] = useState({
     Name: '',
-    Description: '',
-    Color: '#4A90E2'
+    color: '#4A90E2'
   });
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -15,8 +14,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
     if (valueToEdit) {
       setFormData({
         Name: valueToEdit.Name,
-        Description: valueToEdit.Description,
-        Color: valueToEdit.Color
+        color: valueToEdit.color
       });
     }
   }, [valueToEdit]);
@@ -27,9 +25,8 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
       if (valueToEdit) {
         // Update existing value
         await axios.put(`${api.endpoints.values}/${valueToEdit.VID}`, {
-          Name: formData.Name,
-          Description: formData.Description,
-          Color: formData.Color
+          description: formData.Name,
+          color: formData.color
         }, {
           withCredentials: true
         });
@@ -37,9 +34,8 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
       } else {
         // Create new value
         await axios.post(api.endpoints.values, {
-          Name: formData.Name,
-          Description: formData.Description,
-          Color: formData.Color
+          description: formData.Name,
+          color: formData.color
         }, {
           withCredentials: true
         });
@@ -48,8 +44,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
       
       setFormData({
         Name: '',
-        Description: '',
-        Color: '#4A90E2'
+        color: '#4A90E2'
       }); // Reset form
       setError(null);
       if (onValueUpdated) onValueUpdated();
@@ -89,34 +84,20 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Description</span>
-            </label>
-            <textarea
-              name="Description"
-              value={formData.Description}
-              onChange={handleChange}
-              className="textarea textarea-bordered h-24"
-              placeholder="Enter value description"
-              required
-            />
-          </div>
-
-          <div className="form-control">
-            <label className="label">
               <span className="label-text">Color</span>
             </label>
             <div className="flex gap-4 items-center">
               <input
                 type="color"
-                name="Color"
-                value={formData.Color}
+                name="color"
+                value={formData.color}
                 onChange={handleChange}
                 className="w-12 h-12 rounded cursor-pointer"
               />
               <input
                 type="text"
-                name="Color"
-                value={formData.Color}
+                name="color"
+                value={formData.color}
                 onChange={handleChange}
                 className="input input-bordered flex-1"
                 pattern="^#[0-9A-Fa-f]{6}$"
@@ -130,8 +111,8 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
               type="submit" 
               className="btn btn-primary"
               style={{ 
-                backgroundColor: formData.Color,
-                borderColor: formData.Color 
+                backgroundColor: formData.color,
+                borderColor: formData.color 
               }}
             >
               {valueToEdit ? 'Update Value' : 'Create Value'}

@@ -2,10 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
-const passport = require('./config/passport');
+const { authMiddleware, handleAuth0User, authRoutes } = require('./middleware/auth');
 const sequelize = require('./config/database');
-const { Input, Value, Event, Todo, associations } = require('./models');
-const inputRoutes = require('./routes/inputs');
+const habitRoutes = require('./routes/habits');
 const valueRoutes = require('./routes/values');
 const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
@@ -20,65 +19,28 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Session middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax'
   }
 }));
-app.use(passport.initialize());
-app.use(passport.session());
 
-// Auth routes
-app.get('/auth/github',
-  passport.authenticate('github', { scope: ['user:email'] })
-);
+// Auth0 middleware
+app.use(authMiddleware);
+app.use(handleAuth0User);
 
-app.get('/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
-  }
-);
-
-app.get('/auth/logout', (req, res) => {
-  req.logout(() => {
-    res.redirect(process.env.FRONTEND_URL || 'http://localhost:3000');
-  });
-});
-
-app.get('/auth/user', (req, res) => {
-  if (req.user) {
-    res.json({
-      id: req.user.id,
-      username: req.user.username,
-      displayName: req.user.displayName,
-      avatar: req.user.avatar,
-      isAuthenticated: true
-    });
-  } else {
-    res.status(401).json({ 
-      message: 'Not authenticated',
-      isAuthenticated: false
-    });
-  }
-});
-
-app.get('/api/user', (req, res) => {
-  if (req.user) {
-    res.json(req.user);
-  } else {
-    res.status(401).json({ message: 'Not authenticated' });
-  }
-});
+// Auth routes (including test route)
+app.use('/auth', authRoutes);
 
 // Use the routes
-app.use(inputRoutes);
+app.use(habitRoutes);
 app.use(valueRoutes);
 app.use(eventRoutes);
 app.use(todoRoutes);
@@ -90,7 +52,7 @@ const startServer = async () => {
     console.log('Database connection established successfully.');
     
     // Sync database (creates tables if they don't exist)
-    await sequelize.sync();
+    await sequelize.sync({ force: true });
     console.log('Database synchronized.');
 
     app.listen(port, () => {

@@ -1,41 +1,38 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Item = require('./Item');
+const Event = require('./Event');
 
 const Todo = sequelize.define('Todo', {
-  DOID: {
+  item_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
-  },
-  type: {
-    type: DataTypes.STRING(10),
-    allowNull: false,
-    validate: {
-      isIn: [['input', 'value']]
+    references: {
+      model: Item,
+      key: 'id'
     }
-  },
-  referenceId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false
-  },    
+    allowNull: true
+  },
+  parent_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Event,
+      key: 'item_id'
+    }
+  },
   completed: {
     type: DataTypes.BOOLEAN,
+    allowNull: false,
     defaultValue: false
-  },
-  EID: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    references: {
-      model: 'events',
-      key: 'EID'
-    }
   }
 }, {
-  tableName: 'todo'
+  tableName: 'todos',
+  timestamps: true,
+  underscored: true
 });
 
 module.exports = Todo; 

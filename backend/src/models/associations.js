@@ -1,54 +1,63 @@
+// Import model factories
+const Item = require('./Item');
 const Value = require('./Value');
-const Input = require('./Input');
-const Todo = require('./Todo');
+const Habit = require('./Habit');
 const Event = require('./Event');
+const Todo = require('./Todo');
 
-// Set up associations
-Value.hasMany(Input, { foreignKey: 'VID' });
+// Value associations
+Value.belongsTo(Item, { foreignKey: 'item_id' });
+Value.hasMany(Habit, { foreignKey: 'parent_id' });
+Value.hasMany(Event, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'value'
+  }
+});
 
-// Input associations
-Input.belongsTo(Value, { foreignKey: 'VID' });
-Input.hasMany(Event, { foreignKey: 'IID' });
+// Habit associations
+Habit.belongsTo(Item, { foreignKey: 'item_id' });
+Habit.belongsTo(Value, { foreignKey: 'parent_id' });
+Habit.hasMany(Event, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'habit'
+  }
+});
+
+// Event associations
+Event.belongsTo(Item, { foreignKey: 'item_id' });
+Item.hasOne(Event, { foreignKey: 'item_id' });
+Event.belongsTo(Habit, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'habit'
+  }
+});
+Event.belongsTo(Value, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'value'
+  }
+});
+Event.hasMany(Todo, { foreignKey: 'parent_id' });
 
 // Todo associations
-Todo.belongsTo(Input, {
-  foreignKey: 'referenceId',
-  constraints: false,
-});
+Todo.belongsTo(Item, { foreignKey: 'item_id' });
+Todo.belongsTo(Event, { foreignKey: 'parent_id' });
 
-Todo.belongsTo(Value, {
-  foreignKey: 'referenceId',
-  constraints: false,
-});
+// Item associations
+Item.hasOne(Value, { foreignKey: 'item_id' });
 
-Todo.belongsTo(Event, { foreignKey: 'EID' });
-
-//Event Associations
-Event.belongsTo(Value, { foreignKey: 'VID' });
-Event.belongsTo(Input, { foreignKey: 'IID' });
-Event.hasMany(Todo, { foreignKey: 'EID' });
-
-Todo.addHook('beforeFind', (options) => {
-  // Always include both possibilities, let Sequelize handle the association based on type
-  options.include = [
-    {
-      model: Value,
-      attributes: ['VID', 'Name', 'Color']
-    },
-    {
-      model: Input,
-      attributes: ['IID', 'Name'],
-      include: [{
-        model: Value,
-        attributes: ['VID', 'Name', 'Color']
-      }]
-    }
-  ];
-});
-
+// Export models
 module.exports = {
-  Event,
+  Item,
   Value,
-  Input,
+  Habit,
+  Event,
   Todo
-}; 
+};

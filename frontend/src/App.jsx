@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { Auth0Provider } from '@auth0/auth0-react';
+
 import { TimerProvider } from './context/TimerContext';
 import { SelectionProvider, useSelection } from './context/SelectionContext';
 import Today from './components/Today';
@@ -11,9 +12,9 @@ import JourneyPage from './pages/JourneyPage';
 import Header from './components/Header';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
-
+import Login from './pages/Login';
+import Callback from './components/Callback';
 function AppContent() {
-  const { user, loading, login, logout } = useAuth();
   const [values, setValues] = useState([]);
   const { activeInput, activeValue, handleValueSelect, handleInputSelect } = useSelection();
 
@@ -26,14 +27,6 @@ function AppContent() {
       console.error('Error fetching values:', error);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-base-200 flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -53,15 +46,23 @@ function AppContent() {
 
 function App() {
   return (
+    <Auth0Provider
+    domain="dev-m0q23jbgtbwidn00.us.auth0.com"
+    clientId="jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn"
+    authorizationParams={{
+      redirect_uri: "http://localhost:3000/auth/auth0/callback"
+    }}
+  >
     <ThemeProvider>
       <Router>
-        <AuthProvider>
           <TimerProvider>
             <SelectionProvider>
               <TodayProvider>
                 <Header />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/auth/auth0/callback" element={<Callback />} />
                   <Route path="/history" element={<HistoryPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/journey" element={<JourneyPage />} />
@@ -69,9 +70,9 @@ function App() {
               </TodayProvider>
             </SelectionProvider>
           </TimerProvider>
-        </AuthProvider>
       </Router>
     </ThemeProvider>
+    </Auth0Provider>
   );
 }
 

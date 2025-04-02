@@ -1,26 +1,29 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Input = require('./Input');
+const Item = require('./Item');
+
 
 const Value = sequelize.define('Value', {
-  VID: {
+  item_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    references: {
+      model: Item,
+      key: 'id'
+    }
   },
-  Name: {
-    type: DataTypes.STRING,
-    allowNull: false
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
-  Color: {
+  color: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   }
 }, {
   tableName: 'values',
-  timestamps: true
+  timestamps: true,
+  underscored: true
 });
-
-Value.hasMany(Input, { foreignKey: 'VID' });
 
 module.exports = Value; 

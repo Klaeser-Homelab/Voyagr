@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
-import InputCard from './InputCard';
 import { useTimer } from '../context/TimerContext';
 import { useSelection } from '../context/SelectionContext';
 import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/outline';
 import Todo from './Todo';
 import TodoForm from './TodoForm';
 
-function ActiveValueCard({ value, onTodosUpdate }) {
+function ActiveCard({ item, onTodosUpdate }) {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,12 +25,20 @@ function ActiveValueCard({ value, onTodosUpdate }) {
   } = useTimer();
   const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
 
+  const isValue = 'VID' in item;
+  const color = item.color;
+  const name = isValue ? item.Name : item.Name;
+  const description = isValue ? item.Description : item.Description;
+
   const fetchTodos = async () => {
     try {
-      const response = await axios.get(`${api.endpoints.todos}/incomplete/value/${value.VID}`);
+      const endpoint = isValue 
+        ? `${api.endpoints.todos}/incomplete/value/${item.VID}`
+        : `${api.endpoints.todos}/incomplete/input/${item.IID}`;
+      
+      const response = await axios.get(endpoint);
       setTodos(response.data);
       setLoading(false);
-      console.log('Value todos:', response.data);
       if (onTodosUpdate) {
         onTodosUpdate(response.data);
       }
@@ -44,7 +51,7 @@ function ActiveValueCard({ value, onTodosUpdate }) {
 
   useEffect(() => {
     fetchTodos();
-  }, [value.VID]);
+  }, [isValue ? item.VID : item.IID]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -90,11 +97,11 @@ function ActiveValueCard({ value, onTodosUpdate }) {
     >
       <div 
         className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"    
-        style={{ backgroundColor: value.Color }}
+        style={{ backgroundColor: color }}
       >
-        <h3 className="text-lg font-semibold text-white">{value.Name}</h3>
+        <h3 className="text-lg font-semibold text-white">{name}</h3>
         <div className="flex items-center gap-4">
-        {mode === 'timer' && (
+          {mode === 'timer' && (
             <div className="flex items-center gap-2">
               <button 
                 className="btn btn-sm btn-ghost text-white hover:bg-white/20"
@@ -156,24 +163,22 @@ function ActiveValueCard({ value, onTodosUpdate }) {
         </div>
       </div>
       
-      {value.Inputs && value.Inputs.length > 0 && (
-        <div className="p-2 space-y-2">
-          {todos.map(todo => (
-            <Todo 
-              key={todo.DOID} 
-              todo={todo} 
-              onToggle={updateTodoState}
-              onDelete={deleteTodo}
-            />
-          ))}
-          <TodoForm 
-            activeValue={value} 
-            onTodoAdded={addTodo}
+      <div className="p-2 space-y-2">
+        {todos.map(todo => (
+          <Todo 
+            key={todo.DOID} 
+            todo={todo} 
+            onToggle={updateTodoState}
+            onDelete={deleteTodo}
           />
-        </div>
-      )}
+        ))}
+        <TodoForm 
+          item={item}
+          onTodoAdded={addTodo}
+        />
+      </div>
     </div>
   );
 }
 
-export default ActiveValueCard;
+export default ActiveCard; 

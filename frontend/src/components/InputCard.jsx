@@ -2,13 +2,9 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 import { useTimer } from "../context/TimerContext";
 import { useSelection } from "../context/SelectionContext";
 
-const InputCard = ({ 
-  input, 
-  onInputClick,
-}) => {
+const InputCard = ({ input}) => {
   const { startTimer } = useTimer();
-  const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
-
+  const { activeInput, handleInputSelect } = useSelection();
 
   const getScheduleText = () => {
     if (!input.startTime || !input.endTime || !input.daysOfWeek) return null;
@@ -18,9 +14,8 @@ const InputCard = ({
     return `${input.startTime.slice(0, 5)} - ${input.endTime.slice(0, 5)} on ${scheduledDays}`;
   };
 
-  const handlePlay = (e) => {
+  const handleInputClick = (e) => {
     e.stopPropagation();
-    onInputClick(input, e);
     handleInputSelect(input);
     startTimer();
   }
@@ -30,17 +25,18 @@ const InputCard = ({
       key={input.IID} 
       className={`rounded-md transition-all duration-200 cursor-pointer
         ${activeInput?.IID === input.IID ? 'bg-base-100' : 'bg-base-100'}`}
-      onClick={(e) => onInputClick(input, e)}
     >
       <div className="flex items-center justify-between p-2">
         <div className="flex-grow">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between space-x-2">
+            <>
             <div 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: input.color }}
             />
             <h4 className="text-gray-700">{input.Name}</h4>
-            <PlayIcon className="size-6 text-black" onClick={handlePlay} />
+            </>
+            <PlayIcon className="size-6 text-black" onClick={handleInputClick} />
           </div>
           
           {/* Schedule information */}

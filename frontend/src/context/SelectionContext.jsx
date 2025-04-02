@@ -17,13 +17,6 @@ export const SelectionProvider = ({ children }) => {
     console.debug('activeValue:', activeValue?.Name || 'none');
   }, [activeValue]);
 
-  // Update activeValue when activeInput changes
-  useEffect(() => {
-    if (activeInput) {
-      setActiveValue(activeInput.Value);
-    }
-  }, [activeInput]);
-
   const handleValueSelect = (value) => {
     console.debug('handleValueSelect:', value);
     setActiveValue(value);
@@ -36,7 +29,6 @@ export const SelectionProvider = ({ children }) => {
   const handleInputSelect = (input) => {
     console.debug('handleInputSelect:', input);
     setActiveInput(input);
-    // The existing useEffect will handle updating activeValue
   };
 
   const handleFilterChange = (value) => {

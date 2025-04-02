@@ -39,7 +39,7 @@ const ProfilePage = () => {
 
   const handleInputEdit = async (input, newName) => {
     try {
-      await axios.patch(`${api.endpoints.inputs}/${input.IID}`, {
+      await axios.patch(`${api.endpoints.habits}/${input.IID}`, {
         Name: newName
       });
       fetchValues();
@@ -51,7 +51,7 @@ const ProfilePage = () => {
   const handleInputDelete = async (input) => {
     if (window.confirm('Are you sure you want to delete this input?')) {
       try {
-        await axios.delete(`${api.endpoints.inputs}/${input.IID}`);
+        await axios.delete(`${api.endpoints.habits}/${input.IID}`);
         fetchValues();
       } catch (error) {
         console.error('Error deleting input:', error);

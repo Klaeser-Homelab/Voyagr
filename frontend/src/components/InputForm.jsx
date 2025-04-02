@@ -57,13 +57,13 @@ const InputForm = ({ inputToEdit, values, onInputUpdated }) => {
 
       if (inputToEdit) {
         // Update existing input
-        await axios.put(`${api.endpoints.inputs}/${inputToEdit.IID}`, submitData, {
+        await axios.put(`${api.endpoints.habits}/${inputToEdit.IID}`, submitData, {
           withCredentials: true
         });
         setMessage('Input updated successfully!');
       } else {
         // Create new input
-        await axios.post(api.endpoints.inputs, submitData, {
+        await axios.post(api.endpoints.habits, submitData, {
           withCredentials: true
         });
         setMessage('Input created successfully!');

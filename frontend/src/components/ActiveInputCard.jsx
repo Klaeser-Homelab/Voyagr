@@ -1,5 +1,5 @@
 import React from 'react';
-import Todo from './ToDo';
+import Todo from './Todo';
 import TodoForm from './TodoForm';
 
 const ActiveInputCard = ({ input, onClose }) => {

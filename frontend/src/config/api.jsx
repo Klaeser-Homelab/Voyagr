@@ -4,7 +4,7 @@ export const api = {
   baseUrl: API_BASE_URL,
   endpoints: {
     todos: `${API_BASE_URL}/api/todos`,
-    inputs: `${API_BASE_URL}/api/inputs`,
+    habits: `${API_BASE_URL}/api/habits`,
     values: `${API_BASE_URL}/api/values`,
     events: `${API_BASE_URL}/api/events`,
     auth: `${API_BASE_URL}/auth`

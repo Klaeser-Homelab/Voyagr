@@ -6,7 +6,7 @@ import { useSelection } from '../context/SelectionContext';
 
 function ValueCard({ value }) {
   const { startTimer } = useTimer();
-  const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
+  const { activeValue, handleValueSelect } = useSelection();
 
   const handleValueClick = (e) => {
     handleValueSelect(value);
@@ -20,7 +20,7 @@ function ValueCard({ value }) {
     >
       <div 
         className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"    
-        style={{ backgroundColor: value.Color }}
+        style={{ backgroundColor: value.color }}
       >
         <h3 className="text-lg font-semibold text-white">{value.Name}</h3>
         <PlayIcon className="size-6 text-white" onClick={handleValueClick} />
@@ -31,8 +31,7 @@ function ValueCard({ value }) {
           {value.Inputs.map(input => (
             <InputCard
               key={input.IID}
-              input={{ ...input, color: value.Color }}
-              onInputClick={(input) => handleInputSelect(input)}
+              input={{ ...input, color: value.color }}
             />
           ))}
         </div>

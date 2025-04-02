@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { Value, Input } = require('../models/associations');
+const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 
 // GET all values
 router.get('/api/values', async (req, res) => {
   try {
     const values = await Value.findAll({
       include: [{
-        model: Input,
-        attributes: ['IID', 'Name']
+        model: Habit,
+        attributes: ['item_id', 'description']
       }],
-      order: [['createdAt', 'DESC']]
+      order: [['created_at', 'DESC']]
     });
     res.json(values);
   } catch (error) {
@@ -21,12 +21,29 @@ router.get('/api/values', async (req, res) => {
 // POST new value
 router.post('/api/values', async (req, res) => {
   try {
-    const { Name, Color } = req.body;
-    const value = await Value.create({
-      Name,
-      Color
+    // First create the base item
+    const item = await Item.create({
+      user_id: req.user.id, // Assuming you have user authentication
+      type: 'value'
     });
-    res.status(201).json(value);
+
+    // Then create the value
+    const { description, color } = req.body;
+    const value = await Value.create({
+      item_id: item.id,
+      description,
+      color
+    });
+
+    // Return the value with its item data
+    const fullValue = await Value.findByPk(value.item_id, {
+      include: [{
+        model: Item,
+        attributes: ['created_at']
+      }]
+    });
+
+    res.status(201).json(fullValue);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -35,13 +52,48 @@ router.post('/api/values', async (req, res) => {
 // PUT update value
 router.put('/api/values/:id', async (req, res) => {
   try {
-    const { Name, Color } = req.body;
+    const { description, color } = req.body;
     const value = await Value.findByPk(req.params.id);
+    
     if (!value) {
       return res.status(404).json({ error: 'Value not found' });
     }
-    await value.update({ Name, Color });
-    res.json(value);
+
+    await value.update({ description, color });
+    
+    // Return the updated value with its item data
+    const fullValue = await Value.findByPk(value.item_id, {
+      include: [{
+        model: Item,
+        attributes: ['created_at']
+      }]
+    });
+
+    res.json(fullValue);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// DELETE value
+router.delete('/api/values/:id', async (req, res) => {
+  try {
+    const value = await Value.findByPk(req.params.id);
+    
+    if (!value) {
+      return res.status(404).json({ error: 'Value not found' });
+    }
+
+    // Find the associated item
+    const item = await Item.findByPk(value.item_id);
+    
+    // Delete both the value and its item
+    await value.destroy();
+    if (item) {
+      await item.destroy();
+    }
+
+    res.status(204).send();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

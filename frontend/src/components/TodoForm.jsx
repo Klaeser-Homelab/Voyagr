@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
-
-function TodoForm({ activeValue, activeInput, onTodoAdded }) {
+import { useSelection } from '../context/SelectionContext';
+function TodoForm({ item, onTodoAdded }) {
+  const { activeValue, activeInput } = useSelection();
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {
@@ -37,7 +38,7 @@ function TodoForm({ activeValue, activeInput, onTodoAdded }) {
   };
 
   // Get the color to use for the border
-  const borderColor = activeInput?.Value?.Color || activeValue?.Color || '#ddd';
+  const borderColor = item.color || '#ddd';
 
   return (
     <div className="form-control">
