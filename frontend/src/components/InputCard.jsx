@@ -29,7 +29,7 @@ const InputCard = ({
     <div 
       key={input.IID} 
       className={`rounded-md transition-all duration-200 cursor-pointer
-        ${activeInput?.IID === input.IID ? 'bg-gray-100' : 'bg-gray-50'}`}
+        ${activeInput?.IID === input.IID ? 'bg-base-100' : 'bg-base-100'}`}
       onClick={(e) => onInputClick(input, e)}
     >
       <div className="flex items-center justify-between p-2">

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Input, Value, Event, Todo } = require('../models');
+const { Input, Value, Event, Todo } = require('../models/associations');
 
 // GET all inputs
 router.get('/api/inputs', async (req, res) => {

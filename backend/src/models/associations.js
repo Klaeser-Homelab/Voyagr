@@ -5,7 +5,10 @@ const Event = require('./Event');
 
 // Set up associations
 Value.hasMany(Input, { foreignKey: 'VID' });
+
+// Input associations
 Input.belongsTo(Value, { foreignKey: 'VID' });
+Input.hasMany(Event, { foreignKey: 'IID' });
 
 // Todo associations
 Todo.belongsTo(Input, {
@@ -19,11 +22,11 @@ Todo.belongsTo(Value, {
 });
 
 Todo.belongsTo(Event, { foreignKey: 'EID' });
-Event.hasOne(Todo, { foreignKey: 'EID' });
 
 //Event Associations
 Event.belongsTo(Value, { foreignKey: 'VID' });
 Event.belongsTo(Input, { foreignKey: 'IID' });
+Event.hasMany(Todo, { foreignKey: 'EID' });
 
 Todo.addHook('beforeFind', (options) => {
   // Always include both possibilities, let Sequelize handle the association based on type
@@ -44,8 +47,8 @@ Todo.addHook('beforeFind', (options) => {
 });
 
 module.exports = {
+  Event,
   Value,
   Input,
-  Todo,
-  Event
+  Todo
 }; 

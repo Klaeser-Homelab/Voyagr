@@ -15,7 +15,7 @@ function ValueCard({ value }) {
 
   return (
     <div 
-      className={`bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg
+      className={`bg-base-100 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg
         ${activeValue?.VID === value.VID ? 'ring-2 ring-blue-500' : ''}`}
     >
       <div 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Event, Input, Value } = require('../models');
+const { Value, Input, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize');
 
@@ -36,6 +36,14 @@ router.get('/api/events/today', async (req, res) => {
         {
           model: Input,
           attributes: []
+        },
+        {
+          model: Todo,
+          attributes: ['DOID', 'description', 'completed', 'updatedAt'],
+          where: {
+            completed: true
+          },
+          required: false // This makes it a LEFT JOIN so we get events even if they don't have todos
         }
       ],
       where: {

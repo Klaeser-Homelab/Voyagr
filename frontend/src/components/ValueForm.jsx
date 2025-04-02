@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
-import './ValueForm.css';
 
 const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    color: '#000000'
+    Name: '',
+    Description: '',
+    Color: '#4A90E2'
   });
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -14,8 +14,9 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   useEffect(() => {
     if (valueToEdit) {
       setFormData({
-        name: valueToEdit.Name,
-        color: valueToEdit.Color
+        Name: valueToEdit.Name,
+        Description: valueToEdit.Description,
+        Color: valueToEdit.Color
       });
     }
   }, [valueToEdit]);
@@ -26,8 +27,9 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
       if (valueToEdit) {
         // Update existing value
         await axios.put(`${api.endpoints.values}/${valueToEdit.VID}`, {
-          Name: formData.name,
-          Color: formData.color
+          Name: formData.Name,
+          Description: formData.Description,
+          Color: formData.Color
         }, {
           withCredentials: true
         });
@@ -35,15 +37,20 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
       } else {
         // Create new value
         await axios.post(api.endpoints.values, {
-          Name: formData.name,
-          Color: formData.color
+          Name: formData.Name,
+          Description: formData.Description,
+          Color: formData.Color
         }, {
           withCredentials: true
         });
         setMessage('Value created successfully!');
       }
       
-      setFormData({ name: '', color: '#000000' }); // Reset form
+      setFormData({
+        Name: '',
+        Description: '',
+        Color: '#4A90E2'
+      }); // Reset form
       setError(null);
       if (onValueUpdated) onValueUpdated();
     } catch (err) {
@@ -53,57 +60,88 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
-    <div className="value-form">
-      <h2>{valueToEdit ? 'Edit Value' : 'Create New Value'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Value Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            placeholder="Enter value name"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="color">Color:</label>
-          <div className="color-input-container">
-            <input
-              type="color"
-              id="color"
-              name="color"
-              value={formData.color}
-              onChange={handleChange}
-            />
+    <div className="card bg-base-100 shadow-lg">
+      <div className="card-body">
+        <h2 className="card-title">{valueToEdit ? 'Edit Value' : 'Create New Value'}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Name</span>
+            </label>
             <input
               type="text"
-              value={formData.color}
+              name="Name"
+              value={formData.Name}
               onChange={handleChange}
-              name="color"
-              placeholder="#000000"
-              pattern="^#[0-9A-Fa-f]{6}$"
+              className="input input-bordered w-full"
+              placeholder="Enter value name"
+              required
             />
           </div>
-        </div>
 
-        <button className="value-submit-button" type="submit">
-          {valueToEdit ? 'Update Value' : 'Create Value'}
-        </button>
-      </form>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Description</span>
+            </label>
+            <textarea
+              name="Description"
+              value={formData.Description}
+              onChange={handleChange}
+              className="textarea textarea-bordered h-24"
+              placeholder="Enter value description"
+              required
+            />
+          </div>
 
-      {message && <div className="success-message">{message}</div>}
-      {error && <div className="error-message">{error}</div>}
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Color</span>
+            </label>
+            <div className="flex gap-4 items-center">
+              <input
+                type="color"
+                name="Color"
+                value={formData.Color}
+                onChange={handleChange}
+                className="w-12 h-12 rounded cursor-pointer"
+              />
+              <input
+                type="text"
+                name="Color"
+                value={formData.Color}
+                onChange={handleChange}
+                className="input input-bordered flex-1"
+                pattern="^#[0-9A-Fa-f]{6}$"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="card-actions justify-end">
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              style={{ 
+                backgroundColor: formData.Color,
+                borderColor: formData.Color 
+              }}
+            >
+              {valueToEdit ? 'Update Value' : 'Create Value'}
+            </button>
+          </div>
+        </form>
+
+        {message && <div className="success-message">{message}</div>}
+        {error && <div className="error-message">{error}</div>}
+      </div>
     </div>
   );
 };

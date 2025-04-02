@@ -6,7 +6,6 @@ const TodayContext = createContext(null);
 
 export const TodayProvider = ({ children }) => {
   const [events, setEvents] = useState([]);
-  const [completedTodos, setCompletedTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,44 +23,11 @@ export const TodayProvider = ({ children }) => {
     }
   }, []);
 
-  const fetchCompletedTodos = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${api.endpoints.todos}/completed/today/noevent`);
-      setCompletedTodos(response.data);
-      setError(null);
-    } catch (error) {
-      console.error('Error fetching completed todos:', error);
-      setError('Failed to load completed todos');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const fetchAll = useCallback(async () => {
-    try {
-      setLoading(true);
-      await Promise.all([
-        fetchEvents(),
-        fetchCompletedTodos()
-      ]);
-      setError(null);
-    } catch (error) {
-      console.error('Error fetching today data:', error);
-      setError('Failed to load today data');
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchEvents, fetchCompletedTodos]);
-
   const value = {
     events,
-    completedTodos,
     loading,
     error,
-    fetchEvents,
-    fetchCompletedTodos,
-    fetchAll
+    fetchEvents
   };
 
   return (

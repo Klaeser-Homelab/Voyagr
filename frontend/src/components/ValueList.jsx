@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { useSelection } from '../context/SelectionContext';
 import { useTimer } from '../context/TimerContext';
 import { useToday } from '../context/TodayContext';
+import ActiveInputCard from './ActiveInputCard';
 
 function ValueList() {
   const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
@@ -82,6 +83,11 @@ function ValueList() {
     fetchValues();
   }, []);
 
+  const handleInputClick = (input) => {
+    setActiveInput(input);
+    setActiveValue(null); // Close active value card when showing input card
+  };
+
   if (loading) {
     return <div className="text-gray-600">Loading values...</div>;
   }
@@ -114,7 +120,7 @@ function ValueList() {
     return (
       <div className="p-4">
         <div className="flex items-center justify-between mb-6">
-          <h2>Reed</h2>
+        <h2 className="text-2xl font-bold mb-4">Start an Activity</h2>
           <div className="flex items-center gap-4">
         
         </div>
@@ -158,6 +164,14 @@ function ValueList() {
           onTodosUpdate={setCurrentTodos}
         />
       </div>
+      {activeInput && (
+        <div className="min-w-[30vw] flex-1 basis-[40vw]">
+          <ActiveInputCard 
+            input={activeInput} 
+            onClose={() => setActiveInput(null)}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -6,15 +6,15 @@ import boat from '../assets/boat.png';
 import mountain from '../assets/mountain.png';
 
 const themeData = {
+  retro: {
+    name: 'Wild West on the Oregon Trail',
+    image: wagon,
+    description: 'The default theme, journey across the wild west',
+  },
   dark: {
     name: 'Space',
     image: space,
     description: 'Embark on an interstellar journey through the cosmos',
-  },
-  retro: {
-    name: 'Wild West on the Oregon Trail',
-    image: wagon,
-    description: 'Journey back to the frontier days of adventure',
   },
   cyberpunk: {
     name: 'Cyberpunk',

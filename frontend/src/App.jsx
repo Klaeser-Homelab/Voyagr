@@ -3,18 +3,12 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { TimerProvider } from './context/TimerContext';
 import { SelectionProvider, useSelection } from './context/SelectionContext';
-import InputList from './components/InputList';
-import InputEvents from './components/InputEvents';
-import Pomodoro from './components/Pomodoro';
 import Today from './components/Today';
 import ValueList from './components/ValueList';
-import TodoForm from './components/TodoForm';
-import TodoList from './components/TodoList';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import JourneyPage from './pages/JourneyPage';
 import Header from './components/Header';
-import AvatarPage from './pages/AvatarPage';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 

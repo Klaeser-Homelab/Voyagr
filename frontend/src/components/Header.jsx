@@ -39,7 +39,7 @@ const Header = () => {
             </li>
             <li>
               <Link to="/journey">
-                Current Journey
+                Change Journey
               </Link>
             </li>
             <li>
