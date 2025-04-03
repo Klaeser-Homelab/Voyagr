@@ -11,7 +11,7 @@ Why build Journey?
 - Fulfilling Lives: How should we spend our lives? And if we can answer that, how can we stay attentive to living according to that answer? These are difficult questions that most of us struggle with. Answering the first is equivalent in my mind to discovering your values and the opportunities that exist in your life to excercise those values. Journey cannot answer these questions for you but it can provide a framework for reflecting on them and putting them into action. I find such a tool personally compelling and that's enough for me to build it. If someone else finds it useful, even better. [SensorTower](https://app.sensortower.com/overview/1528595748?country=US) estimates Finch has 700K monthly downloads and $2 million in monthly revenue. Perhaps there are people out there who would use Journey.
 
 ## Using Journey
-Two issues must be completed before others can use Journey. 
+Right now I use Journey on my network at home. Two issues must be completed before others can use Journey. 
 - [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) - right now Journey is written for a single user, me. The backend must be modified to use userids to segment data.
 - [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29) - server:port where I host Journey must be opened up to the wider internet
 
