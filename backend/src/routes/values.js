@@ -4,6 +4,11 @@ const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 
 // GET all values
 router.get('/api/values', async (req, res) => {
+  console.log("Values route");
+  if (req.oidc.isAuthenticated()) {
+    const userId = req.oidc.user.sub;  // Auth0 user ID
+    console.log("Values has userId:", userId);
+  }
   try {
     const values = await Value.findAll({
       include: [{

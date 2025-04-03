@@ -8,6 +8,7 @@ const habitRoutes = require('./routes/habits');
 const valueRoutes = require('./routes/values');
 const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
+const userRoutes = require('./routes/users');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -44,7 +45,7 @@ app.use(habitRoutes);
 app.use(valueRoutes);
 app.use(eventRoutes);
 app.use(todoRoutes);
-
+app.use(userRoutes);
 // Initialize database and start server
 const startServer = async () => {
   try {

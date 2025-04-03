@@ -69,7 +69,9 @@ function ValueList() {
 
   const fetchValues = async () => {
     try {
-      const response = await axios.get(api.endpoints.values);
+      const response = await axios.get(api.endpoints.values, {
+        withCredentials: true
+      });
       setValues(response.data);
       setLoading(false);
     } catch (error) {

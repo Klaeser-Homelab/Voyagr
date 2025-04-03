@@ -17,7 +17,9 @@ const authMiddleware = auth(config);
 
 // Middleware to handle user creation/update
 const handleAuth0User = async (req, res, next) => {
+  console.log("handleAuth0User middleware");
   if (req.oidc.isAuthenticated()) {
+    console.log("User is authenticated");
     try {
       const auth0User = req.oidc.user;
       
