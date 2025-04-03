@@ -10,7 +10,12 @@ Why build Journey?
 - Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Journey I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project, I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
 - Fulfilling Lives: How should we spend our lives? And if we can answer that, how can we stay attentive to living according to that answer? These are difficult questions that most of us struggle with. Answering the first is equivalent in my mind to discovering your values and the opportunities that exist in your life to excercise those values. Journey cannot answer these questions for you but it can provide a framework for reflecting on them and putting them into action. I find such a tool personally compelling and that's enough for me to build it. If someone else finds it useful, even better. [SensorTower](https://app.sensortower.com/overview/1528595748?country=US) estimates Finch has 700K monthly downloads and $2 million in monthly revenue. Perhaps there are people out there who would use Journey.
 
-## Getting started making contributions
+## Using Journey
+Two issues must be completed before others can use Journey. 
+- [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) right now journey is written for a single user, me. The backend must be modified to use userids to segment data.
+- [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29)
+
+## Getting started
 
 ### Frontend
 `npm run dev`  in /frontend starts frontend on 3000. The frontend uses Vite as its development server, React Router for routing, Tailwind for CSS utility classes, and DaisyUI for prebuilt CSS components. Nginx is deployed as a webserver to serve the static files built by Vite's production build process.
