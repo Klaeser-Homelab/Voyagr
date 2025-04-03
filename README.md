@@ -12,8 +12,8 @@ Why build Journey?
 
 ## Using Journey
 Two issues must be completed before others can use Journey. 
-- [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) right now journey is written for a single user, me. The backend must be modified to use userids to segment data.
-- [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29)
+- [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) - right now Journey is written for a single user, me. The backend must be modified to use userids to segment data.
+- [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29) - server:port where I host Journey must be opened up to the wider internet
 
 ## Getting started
 
