@@ -1,4 +1,6 @@
 # Journey
+![Screenshot 2025-04-04 at 3 47 22 PM](https://github.com/user-attachments/assets/04cfd4cf-3605-44d5-a1a1-51ce868b74e6)
+
 
 Discover and live your values. 
 
@@ -17,9 +19,13 @@ Journey is a self-definition and self-management app. Self-definition means that
 - [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide"
 
 ## Using Journey
-Right now I use Journey on my network at home. Two issues must be completed before others can use Journey. 
-- [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) - right now Journey is written for a single user, me. The backend must be modified to use userids to segment data.
-- [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29) - server:port where I host Journey must be opened up to the wider internet
+Right now I use Journey on my network at home. ~Two~ One issue~s~ must be completed before others can use Journey. 
+- [x] [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27)
+- [ ] [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29) - server:port where I host Journey must be opened up to the wider internet
+
+Here's what you'll see when you get in
+
+![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
 
 ## Product
 
