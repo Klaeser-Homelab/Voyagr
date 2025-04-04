@@ -24,7 +24,7 @@ Right now I use Journey on my network at home. Two issues must be completed befo
 
 ### What's in a name?
 I'm not set on the name Journey, here's my thinking on names so far:
-- Journey - where will your journey take you? - Uses metaphor of an adventure to help you work through your goals over time.
+- Journey - where will your journey take you? - Uses metaphor of an adventure to help you work through your goals over time. This metaphor can be leaned into with various levels of gusto. Check out, a lots of gusto version: Navbar > Profile Dropwdown > Choose your journey.
 - Valme/Valyou - value your time - live your values - more explicit than Journey metaphor.
 
 ### Mission - Why build Journey?
