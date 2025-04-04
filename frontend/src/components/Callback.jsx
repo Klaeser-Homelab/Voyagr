@@ -6,8 +6,12 @@ import axios from 'axios';
 import { api } from '../config/api';
 
 function Callback() {
-  const { isAuthenticated, user, isLoading: auth0Loading } = useAuth0();
-  const navigate = useNavigate();
+  const { 
+    isAuthenticated, 
+    user, 
+    isLoading: auth0Loading, 
+    getAccessTokenSilently  // Use this instead of getTokenSilently
+  } = useAuth0();  const navigate = useNavigate();
   const [status, setStatus] = useState('Authenticating...');
 
   useEffect(() => {
@@ -15,11 +19,16 @@ function Callback() {
       if (!isAuthenticated || !user) return;
 
       try {
+
+        const token = await getAccessTokenSilently();
+        console.log(token);
+
         setStatus('Creating user account...');
         // Create/update user in your backend
         await axios.post(`${api.endpoints.users}/auth0`, user, {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           withCredentials: true
         });

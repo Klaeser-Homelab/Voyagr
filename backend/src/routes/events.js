@@ -8,6 +8,9 @@ const Sequelize = require('sequelize');
 // GET all events for the current user
 router.get('/api/events', requireAuth, async (req, res) => {
   try {
+    if (parseInt(req.params.id) !== req.session.user.id) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
     const events = await Event.findAll({
       include: [
         {
