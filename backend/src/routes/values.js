@@ -1,14 +1,11 @@
 const express = require('express');
+const requireAuth = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 
 // GET all values
-router.get('/api/values', async (req, res) => {
+router.get('/api/values', requireAuth, async (req, res) => {
   console.log("Values route");
-  if (req.oidc.isAuthenticated()) {
-    const userId = req.oidc.user.sub;  // Auth0 user ID
-    console.log("Values has userId:", userId);
-  }
   try {
     const values = await Value.findAll({
       include: [{
@@ -24,7 +21,7 @@ router.get('/api/values', async (req, res) => {
 });
 
 // POST new value
-router.post('/api/values', async (req, res) => {
+router.post('/api/values', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
@@ -55,7 +52,7 @@ router.post('/api/values', async (req, res) => {
 });
 
 // PUT update value
-router.put('/api/values/:id', async (req, res) => {
+router.put('/api/values/:id', requireAuth, async (req, res) => {
   try {
     const { description, color } = req.body;
     const value = await Value.findByPk(req.params.id);
@@ -81,7 +78,7 @@ router.put('/api/values/:id', async (req, res) => {
 });
 
 // DELETE value
-router.delete('/api/values/:id', async (req, res) => {
+router.delete('/api/values/:id', requireAuth, async (req, res) => {
   try {
     const value = await Value.findByPk(req.params.id);
     

@@ -50,7 +50,7 @@ function App() {
     domain="dev-m0q23jbgtbwidn00.us.auth0.com"
     clientId="jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn"
     authorizationParams={{
-      redirect_uri: "http://localhost:3000/auth/auth0/callback"
+      redirect_uri: "http://localhost:3000/auth/callback"
     }}
   >
     <ThemeProvider>
@@ -62,7 +62,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<AppContent />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/auth/auth0/callback" element={<Callback />} />
+                  <Route path="/auth/callback" element={<Callback />} />
                   <Route path="/history" element={<HistoryPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route path="/journey" element={<JourneyPage />} />

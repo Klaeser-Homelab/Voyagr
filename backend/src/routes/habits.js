@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const requireAuth = require('../middleware/auth'); // Import the middleware
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 
 // GET all habits for the current user
-router.get('/api/habits', async (req, res) => {
+router.get('/api/habits', requireAuth, async (req, res) => {
   try {
     const habits = await Habit.findAll({
       include: [
@@ -32,7 +33,7 @@ router.get('/api/habits', async (req, res) => {
 });
 
 // POST new habit
-router.post('/api/habits', async (req, res) => {
+router.post('/api/habits', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
@@ -63,7 +64,7 @@ router.post('/api/habits', async (req, res) => {
 });
 
 // GET single habit by ID (with user verification)
-router.get('/api/habits/:id', async (req, res) => {
+router.get('/api/habits/:id', requireAuth, async (req, res) => {
   try {
     const habit = await Habit.findOne({
       where: { item_id: req.params.id },
@@ -90,7 +91,7 @@ router.get('/api/habits/:id', async (req, res) => {
 });
 
 // UPDATE habit
-router.put('/api/habits/:id', async (req, res) => {
+router.put('/api/habits/:id', requireAuth, async (req, res) => {
   try {
     const { description, parent_id } = req.body;
     const habit = await Habit.findByPk(req.params.id);
@@ -116,7 +117,7 @@ router.put('/api/habits/:id', async (req, res) => {
 });
 
 // DELETE habit
-router.delete('/api/habits/:id', async (req, res) => {
+router.delete('/api/habits/:id', requireAuth, async (req, res) => {
   try {
     const habit = await Habit.findByPk(req.params.id);
     
@@ -140,7 +141,7 @@ router.delete('/api/habits/:id', async (req, res) => {
 });
 
 // GET events for a single habit (with user verification)
-router.get('/api/habits/:id/events', async (req, res) => {
+router.get('/api/habits/:id/events', requireAuth, async (req, res) => {
   try {
     const events = await Event.findAll({
       include: [{

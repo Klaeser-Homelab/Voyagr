@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const requireAuth = require('../middleware/auth'); // Import the middleware
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 
 // POST new todo
-router.post('/api/todos', async (req, res) => {
+router.post('/api/todos', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
@@ -47,7 +48,7 @@ router.post('/api/todos', async (req, res) => {
 });
 
 // GET completed todos for the current user
-router.get('/api/todos/completed', async (req, res) => {
+router.get('/api/todos/completed', requireAuth, async (req, res) => {
   try {
     const todos = await Todo.findAll({
       include: [{
@@ -64,7 +65,7 @@ router.get('/api/todos/completed', async (req, res) => {
 });
 
 // GET completed todos for today without events for the current user
-router.get('/api/todos/completed/today/noevent', async (req, res) => {
+router.get('/api/todos/completed/today/noevent', requireAuth, async (req, res) => {
   try {
     const todos = await Todo.findAll({
       include: [{
@@ -85,7 +86,7 @@ router.get('/api/todos/completed/today/noevent', async (req, res) => {
 });
 
 // GET incomplete todos for the current user
-router.get('/api/todos/incomplete', async (req, res) => {
+router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
   try {
     const todos = await Todo.findAll({
       include: [
@@ -116,7 +117,7 @@ router.get('/api/todos/incomplete', async (req, res) => {
 });
 
 // GET incomplete todos for a specific habit for the current user
-router.get('/api/todos/incomplete/habit/:id', async (req, res) => {
+router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
   try {
     const habitId = parseInt(req.params.id);
     if (isNaN(habitId)) {
@@ -142,7 +143,7 @@ router.get('/api/todos/incomplete/habit/:id', async (req, res) => {
 });
 
 // GET incomplete todos for a specific value for the current user
-router.get('/api/todos/incomplete/value/:id', async (req, res) => {
+router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => {
   try {
     const valueId = parseInt(req.params.id);
     if (isNaN(valueId)) {
@@ -168,7 +169,7 @@ router.get('/api/todos/incomplete/value/:id', async (req, res) => {
 });
 
 // UPDATE todo completion status
-router.patch('/api/todos/:id', async (req, res) => {
+router.patch('/api/todos/:id', requireAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
       where: { item_id: req.params.id },
@@ -193,7 +194,7 @@ router.patch('/api/todos/:id', async (req, res) => {
 });
 
 // DELETE todo
-router.delete('/api/todos/:id', async (req, res) => {
+router.delete('/api/todos/:id', requireAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
       where: { item_id: req.params.id },

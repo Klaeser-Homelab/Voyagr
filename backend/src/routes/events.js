@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const requireAuth = require('../middleware/auth'); // Import the middleware
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize');
 
 // GET all events for the current user
-router.get('/api/events', async (req, res) => {
+router.get('/api/events', requireAuth, async (req, res) => {
   try {
     const events = await Event.findAll({
       include: [
@@ -32,7 +33,7 @@ router.get('/api/events', async (req, res) => {
 });
 
 // GET today's events for the current user
-router.get('/api/events/today', async (req, res) => {
+router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
     const events = await Event.findAll({
       attributes: [
@@ -81,7 +82,7 @@ router.get('/api/events/today', async (req, res) => {
 });
 
 // POST new event
-router.post('/api/events', async (req, res) => {
+router.post('/api/events', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
@@ -128,7 +129,7 @@ router.post('/api/events', async (req, res) => {
 });
 
 // DELETE event
-router.delete('/api/events/:id', async (req, res) => {
+router.delete('/api/events/:id', requireAuth, async (req, res) => {
   try {
     const event = await Event.findOne({
       where: { item_id: req.params.id },

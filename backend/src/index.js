@@ -2,13 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
-const { authMiddleware, handleAuth0User, authRoutes } = require('./middleware/auth');
+//const { authMiddleware, handleAuth0User, authRoutes } = require('./middleware/auth');
 const sequelize = require('./config/database');
 const habitRoutes = require('./routes/habits');
 const valueRoutes = require('./routes/values');
 const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
+const router = express.Router();
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -33,12 +34,8 @@ app.use(session({
   }
 }));
 
-// Auth0 middleware
-app.use(authMiddleware);
-app.use(handleAuth0User);
-
 // Auth routes (including test route)
-app.use('/auth', authRoutes);
+//app.use(authRoutes);
 
 // Use the routes
 app.use(habitRoutes);
