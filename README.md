@@ -14,6 +14,7 @@ Journey is a self-definition and self-management app. Self-definition means that
 - [ ] Discover and share values and habits
 - [ ] Initiate habits and session from places smart home buttons
 - [ ] Journey API allows habit tracking to be recorded from self-management apps
+- [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide"
 
 ## Using Journey
 Right now I use Journey on my network at home. Two issues must be completed before others can use Journey. 
