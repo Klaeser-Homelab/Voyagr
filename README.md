@@ -26,6 +26,7 @@ Right now I use Journey on my network at home. Two issues must be completed befo
 I'm not set on the name Journey, here's my thinking on names so far:
 - Journey - where will your journey take you? - Uses metaphor of an adventure to help you work through your goals over time. This metaphor can be leaned into with various levels of gusto. Check out, a lots of gusto version: Navbar > Profile Dropwdown > Choose your journey.
 - Valme/Valyou - value your time - live your values - more explicit than Journey metaphor.
+- whoami - [24601?](https://www.youtube.com/watch?v=VyOVA_W4og4) - bonus: people might mistake me for someone who knows a lot about programming.
 
 ### Mission - Why build Journey?
 - Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Journey I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project (you know who you are), I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
