@@ -1,6 +1,6 @@
 # Journey
 
-Journey helps you discover and live your values. 
+Discover and live your values. 
 
 ### Where does Journey fit?
 Journey is a self-definition and self-management app. Self-definition means that Journey helps you define who you are and how you want to live. It does this by creating a process for value selection and a community for sharing values. Self-definition alone is a powerful concept and I considered limiting Journey's scope to just that. However, there is so much to be gained by going one step further and applying a vision of self-defintion to a process of self-management that I think this extra step is a must. Great self-management apps exist ( [Session](https://www.stayinsession.com/) ), so do habit forming apps ( [Finch](https://finchcare.com/) ) but I think they miss out on this powerful combination of self-definition and self-management.
