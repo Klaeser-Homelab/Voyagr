@@ -1,21 +1,40 @@
 # Journey
 
-Journey is a habit forming self-management system that helps you manage your time by the minute and across a lifetime. Journey helps you identify values and habits you'd like to live by, focus your time using the pomodoro method, and visualize your progress. 
+Journey helps you discover and live your values. 
 
-## Why use Journey?
-Other self-management apps exist, why should you use Journey? If you are looking for a pomodoro app that strongly integrates with your desktop environment to block or trigger actions and is hands off about your goals and whether you achieve them then try [Session](https://www.stayinsession.com/). Journey on the other hand is deeply concerned with helping you achieve your goals through reminders, chiding, and habit tracking. If on the other hand you are only looking for a habit former and do not want to track your time or care for comprehensive habit tracking then try [Finch](https://finchcare.com/). Finch is only available as a phone app but is built around inclusivity and accessibility. Suceeding at a habit is a powerful way to start and end your day but checking your phone often derails these same habits. The long term vision for Journey is to extend the system beyond screens using simple and cheap devices with buttons and displays. 
+### Where does Journey fit?
+Journey is a self-definition and self-management app. Self-definition means that Journey helps you define who you are and how you want to live. It does this by creating a process for value selection and a community for sharing values. Self-definition alone is a powerful concept and I considered limiting Journey's scope to just that. However, there is so much to be gained by going one step further and applying a vision of self-defintion to a process of self-management that I think this extra step is a must. Great self-management apps exist ( [Session](https://www.stayinsession.com/) ), so do habit forming apps ( [Finch](https://finchcare.com/) ) but I think they miss out on this powerful combination of self-definition and self-management.
 
-## Mission
-Why build Journey?
-- Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Journey I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project, I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
-- Fulfilling Lives: How should we spend our lives? And if we can answer that, how can we stay attentive to living according to that answer? These are difficult questions that most of us struggle with. Answering the first is equivalent in my mind to discovering your values and the opportunities that exist in your life to excercise those values. Journey cannot answer these questions for you but it can provide a framework for reflecting on them and putting them into action. I find such a tool personally compelling and that's enough for me to build it. If someone else finds it useful, even better. [SensorTower](https://app.sensortower.com/overview/1528595748?country=US) estimates Finch has 700K monthly downloads and $2 million in monthly revenue. Perhaps there are people out there who would use Journey.
+## What features exist and are enivsioned?
+- [x] Create and record values  
+- [x] Manage your time using a pomodoro timer, stopwatch, and tasks  
+- [ ] Visualize your progress using a habit tracker  
+- [ ] Gamify progress so it feels good to value your time  
+- [ ] Share your journey with different levels of a support network  
+- [ ] Discover and share values and habits
+- [ ] Initiate habits and session from places smart home buttons
+- [ ] Journey API allows habit tracking to be recorded from self-management apps
 
 ## Using Journey
 Right now I use Journey on my network at home. Two issues must be completed before others can use Journey. 
 - [Create Login](https://github.com/Klaeser-Homelab/Journey/issues/27) - right now Journey is written for a single user, me. The backend must be modified to use userids to segment data.
 - [Configure external access](https://github.com/Klaeser-Homelab/Journey/issues/29) - server:port where I host Journey must be opened up to the wider internet
 
-## Getting started
+## Product
+
+### What's in a name?
+I'm not set on the name Journey, here's my thinking on names so far:
+- Journey - where will your journey take you? - Uses metaphor of an adventure to help you work through your goals over time.
+- Valme/Valyou - value your time - live your values - more explicit than Journey metaphor.
+
+### Mission - Why build Journey?
+- Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Journey I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project (you know who you are), I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
+- Fulfilling Lives: Most of us struggle at some point in our lives with the question of how we should spend our time? There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is finding and keeping your attention on what matters. If Journey could help me on that journey that would be very personally compelling and that's enough for me to build it. If someone else finds it useful, even better.
+
+### How many people want this kind of thing?
+- [SensorTower](https://app.sensortower.com/overview/1528595748?country=US) estimates Finch has 700K monthly downloads and $2 million in monthly revenue. Perhaps there are people out there who would use Journey. I'm not sure.
+
+## Building Journey
 
 ### Frontend
 `npm run dev`  in /frontend starts frontend on 3000. The frontend uses Vite as its development server, React Router for routing, Tailwind for CSS utility classes, and DaisyUI for prebuilt CSS components. Nginx is deployed as a webserver to serve the static files built by Vite's production build process.
