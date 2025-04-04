@@ -11,7 +11,9 @@ const ProfilePage = () => {
 
   const fetchValues = async () => {
     try {
-      const response = await axios.get(api.endpoints.values);
+      const response = await axios.get(api.endpoints.values, {
+        withCredentials: true
+      });
       setValues(response.data);
       setLoading(false);
     } catch (error) {
@@ -28,7 +30,7 @@ const ProfilePage = () => {
   const handleValueEdit = async (value, newName, newColor) => {
     try {
       await axios.patch(`${api.endpoints.values}/${value.VID}`, {
-        Name: newName,
+        description: newName,
         color: newColor
       });
       fetchValues();
@@ -37,24 +39,26 @@ const ProfilePage = () => {
     }
   };
 
-  const handleInputEdit = async (input, newName) => {
+  const handleHabitEdit = async (habit, newName) => {
     try {
-      await axios.patch(`${api.endpoints.habits}/${input.IID}`, {
+      await axios.patch(`${api.endpoints.habits}/${habit.IID}`, {
         Name: newName
+      }, {
+        withCredentials: true
       });
       fetchValues();
     } catch (error) {
-      console.error('Error updating input:', error);
+      console.error('Error updating habit:', error);
     }
   };
 
-  const handleInputDelete = async (input) => {
-    if (window.confirm('Are you sure you want to delete this input?')) {
+  const handleHabitDelete = async (habit) => {
+    if (window.confirm('Are you sure you want to delete this habit?')) {
       try {
-        await axios.delete(`${api.endpoints.habits}/${input.IID}`);
+        await axios.delete(`${api.endpoints.habits}/${habit.IID}`);
         fetchValues();
       } catch (error) {
-        console.error('Error deleting input:', error);
+        console.error('Error deleting habit:', error);
       }
     }
   };
@@ -76,8 +80,8 @@ const ProfilePage = () => {
   }
 
   return (
-<>
-<div className="flex items-center justify-between mb-8">
+    <>
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-base-content dark:text-base-200">Values</h1>
       </div>
 
@@ -92,8 +96,9 @@ const ProfilePage = () => {
               key={value.VID}
               value={value}
               onValueEdit={handleValueEdit}
-              onInputEdit={handleInputEdit}
-              onInputDelete={handleInputDelete}
+              onHabitEdit={handleHabitEdit}
+              onHabitDelete={handleHabitDelete}
+              onHabitCreated={fetchValues}
             />
           ))}
         </div>

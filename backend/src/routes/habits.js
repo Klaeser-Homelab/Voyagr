@@ -10,7 +10,7 @@ router.get('/api/habits', requireAuth, async (req, res) => {
       include: [
         {
           model: Item,
-          where: { user_id: req.user.id },
+          where: { user_id: req.session.user.id },
           required: true
         },
         {
@@ -37,7 +37,7 @@ router.post('/api/habits', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
-      user_id: req.user.id, // Assuming you have user authentication
+      user_id: req.session.user.id,
       type: 'habit'
     });
 
@@ -71,7 +71,7 @@ router.get('/api/habits/:id', requireAuth, async (req, res) => {
       include: [
         {
           model: Item,
-          where: { user_id: req.user.id },
+          where: { user_id: req.session.user.id },
           required: true
         },
         {
@@ -149,7 +149,7 @@ router.get('/api/habits/:id/events', requireAuth, async (req, res) => {
         where: { item_id: req.params.id },
         include: [{
           model: Item,
-          where: { user_id: req.user.id },
+          where: { user_id: req.session.user.id },
           required: true
         }],
         required: true

@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import EditInputCard from './EditInputCard';
+import EditHabitCard from './EditHabitCard';
+import HabitForm from './HabitForm';
 
 const EditValueCard = ({ 
   value, 
   onValueEdit, 
-  onInputEdit, 
-  onInputDelete 
+  onHabitEdit, 
+  onHabitDelete,
+  onHabitCreated
 }) => {
   const [editingValue, setEditingValue] = useState(false);
-  const [valueName, setValueName] = useState(value.Name);
-  const [valueColor, setValueColor] = useState(value.Color);
+  const [valueName, setValueName] = useState(value.description);
+  const [valueColor, setValueColor] = useState(value.color);
+  const [showHabitForm, setShowHabitForm] = useState(false);
 
   const handleValueEdit = () => {
     onValueEdit(value, valueName, valueColor);
@@ -20,7 +23,7 @@ const EditValueCard = ({
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg">
       <div 
         className="p-4 transition-colors duration-200"
-        style={{ backgroundColor: value.Color }}
+        style={{ backgroundColor: value.color }}
       >
         {editingValue ? (
           <div className="space-y-4">
@@ -54,28 +57,45 @@ const EditValueCard = ({
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">{value.Name}</h3>
-            <button
-              onClick={() => setEditingValue(true)}
-              className="p-1 text-white hover:text-gray-200 rounded"
-              aria-label="Edit value"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-            </button>
+            <h3 className="text-lg font-semibold text-white">{value.description}</h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setEditingValue(true)}
+                className="text-white hover:text-gray-200"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => setShowHabitForm(!showHabitForm)}
+                className="text-white hover:text-gray-200"
+              >
+                {showHabitForm ? 'Hide Habit Form' : 'Add Habit'}
+              </button>
+            </div>
           </div>
         )}
       </div>
       
-      {value.Inputs && value.Inputs.length > 0 && (
+      {showHabitForm && (
+        <div className="p-4 border-t border-gray-200">
+          <HabitForm 
+            value={value}
+            onHabitUpdated={() => {
+              setShowHabitForm(false);
+              if (onHabitCreated) onHabitCreated();
+            }}
+          />
+        </div>
+      )}
+
+      {value.habits && value.habits.length > 0 && (
         <div className="p-2 space-y-2">
-          {value.Inputs.map(input => (
-            <EditInputCard
-              key={input.IID}
-              input={{ ...input, color: value.Color }}
-              onInputEdit={onInputEdit}
-              onInputDelete={onInputDelete}
+          {value.habits.map(habit => (
+            <EditHabitCard
+              key={habit.IID}
+              habit={{ ...habit, color: value.color }}
+              onHabitEdit={onHabitEdit}
+              onHabitDelete={onHabitDelete}
             />
           ))}
         </div>

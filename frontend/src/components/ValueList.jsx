@@ -29,6 +29,7 @@ function ValueList() {
     try {
       // Submit the session
       const eventResponse = await axios.post(api.endpoints.events, {
+        withCredentials: true,
         VID: activeValue.VID,
         IID: activeInput?.IID,
         duration: 30 * 60, // 30 minutes in seconds
@@ -45,7 +46,9 @@ function ValueList() {
       
       console.log('Completed todos:', completedTodos);
       if (completedTodos.length > 0) {
-        await axios.post(`${api.endpoints.todos}/batchprocess`, completedTodos);
+        await axios.post(`${api.endpoints.todos}/batchprocess`, {
+          withCredentials: true,
+        }, completedTodos);
         console.log('Completed todos processed:', completedTodos);
       }
 

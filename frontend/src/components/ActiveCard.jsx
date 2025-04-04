@@ -27,8 +27,7 @@ function ActiveCard({ item, onTodosUpdate }) {
 
   const isValue = 'VID' in item;
   const color = item.color;
-  const name = isValue ? item.Name : item.Name;
-  const description = isValue ? item.Description : item.Description;
+  const name = item.description;
 
   const fetchTodos = async () => {
     try {

@@ -4,18 +4,34 @@ import ChooseTheme from './ChooseTheme';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth0 } from '@auth0/auth0-react';
 import { api } from '../config/api';
+import axios from 'axios';
 
 const Header = () => {
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
-  const handleLogout = () => {
-    logout({ 
-      logoutParams: {
-        returnTo: window.location.origin 
-      }
-    });
+  const handleLogout = async () => {
+    try {
+      // First, log out from our backend to destroy the session
+      await axios.post(`${api.endpoints.users}/logout`, {}, { withCredentials: true });
+      console.log('Backend logout successful');
+      
+      // Then, log out from Auth0
+      logout({ 
+        logoutParams: {
+          returnTo: window.location.origin 
+        }
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still try to logout from Auth0 even if backend logout fails
+      logout({ 
+        logoutParams: {
+          returnTo: window.location.origin 
+        }
+      });
+    }
   };
   
   return (

@@ -1,7 +1,7 @@
 // src/components/Callback.jsx
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { api } from '../config/api';
 
@@ -9,40 +9,59 @@ function Callback() {
   const { 
     isAuthenticated, 
     user, 
-    isLoading: auth0Loading, 
-    getAccessTokenSilently  // Use this instead of getTokenSilently
-  } = useAuth0();  const navigate = useNavigate();
+    isLoading: auth0Loading,
+    getAccessTokenSilently 
+  } = useAuth0();  
+  const navigate = useNavigate();
   const [status, setStatus] = useState('Authenticating...');
-
+  
   useEffect(() => {
+    let mounted = true;
+
     const setupUser = async () => {
-      if (!isAuthenticated || !user) return;
-
       try {
-
-        const token = await getAccessTokenSilently();
-        console.log(token);
+        if (!mounted) return;
+        setStatus('Getting access token...');
+        
+        // Get the access token from Auth0
+        const accessToken = await getAccessTokenSilently();
+        console.log('Got access token');
 
         setStatus('Creating user account...');
-        // Create/update user in your backend
-        await axios.post(`${api.endpoints.users}/auth0`, user, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          withCredentials: true
-        });
+        
+        // Send the access token to backend
+        const response = await axios.post(`${api.endpoints.users}/auth0`, 
+          {}, // No need to send code anymore
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true
+          }
+        );
+
+        if (!mounted) return;
+        console.log('Backend response:', response.data);
         
         setStatus('Redirecting to home...');
         navigate('/');
       } catch (error) {
+        if (!mounted) return;
         console.error('Error setting up user:', error);
         setStatus('Error setting up account. Please try again.');
       }
     };
 
-    setupUser();
-  }, [isAuthenticated, user, navigate]);
+    // Only run setup if we're authenticated
+    if (isAuthenticated && !auth0Loading) {
+      setupUser();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated, auth0Loading, getAccessTokenSilently, navigate]);
 
   if (auth0Loading) {
     return (

@@ -8,7 +8,7 @@ const getEventSegments = ({ completedEvents }) => {
     const now = new Date();
     if (now < workdayStart) {
       return [{
-        name: 'Upcoming',
+        name: 'Remaining',
         color: '#f5f5f5',
         percent: '100'
       }];
@@ -16,7 +16,7 @@ const getEventSegments = ({ completedEvents }) => {
     
     const minutesSinceStart = Math.max(0, (now - workdayStart) / 1000 / 60);
     const unusedPercent = ((Math.min(minutesSinceStart, workdayMinutes) / workdayMinutes) * 100).toFixed(1);
-    const upcomingPercent = (100 - unusedPercent).toFixed(1);
+    const remainingPercent = (100 - unusedPercent).toFixed(1);
     
     return [
       {
@@ -25,9 +25,9 @@ const getEventSegments = ({ completedEvents }) => {
         percent: unusedPercent
       },
       {
-        name: 'Upcoming',
+        name: 'Remaining',
         color: '#f5f5f5',
-        percent: upcomingPercent
+        percent: remainingPercent
       }
     ];
   }
@@ -54,11 +54,11 @@ const getEventSegments = ({ completedEvents }) => {
   // Calculate total duration of all events (in minutes)
   const totalEventDuration = completedEvents.reduce((sum, event) => sum + event.duration, 0);
   
-  // Calculate unused past time (excluding upcoming time)
+  // Calculate unused past time (excluding remaining time)
   const unusedDuration = Math.max(0, Math.min(minutesSinceStart, workdayMinutes) - (totalEventDuration / 60));
   
-  // Calculate upcoming time
-  const upcomingDuration = Math.max(0, workdayMinutes - Math.min(minutesSinceStart, workdayMinutes));
+  // Calculate remaining time
+  const remainingDuration = Math.max(0, workdayMinutes - Math.min(minutesSinceStart, workdayMinutes));
 
   // Convert to percentage segments including unused time
   const segments = Object.values(valueSegments).map(segment => ({
@@ -76,12 +76,12 @@ const getEventSegments = ({ completedEvents }) => {
     });
   }
 
-  // Add upcoming time segment if there is any
-  if (upcomingDuration > 0) {
+  // Add remaining time segment if there is any
+  if (remainingDuration > 0) {
     segments.push({
-      name: 'Upcoming',
+      name: 'remaining',
       color: '#f5f5f5',
-      percent: ((upcomingDuration / workdayMinutes) * 100).toFixed(1)
+      percent: ((remainingDuration / workdayMinutes) * 100).toFixed(1)
     });
   }
 

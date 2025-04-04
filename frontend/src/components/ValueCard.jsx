@@ -22,16 +22,16 @@ function ValueCard({ value }) {
         className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"    
         style={{ backgroundColor: value.color }}
       >
-        <h3 className="text-lg font-semibold text-white">{value.Name}</h3>
+        <h3 className="text-lg font-semibold text-white">{value.description}</h3>
         <PlayIcon className="size-6 text-white" onClick={handleValueClick} />
       </div>
       
-      {value.Inputs && value.Inputs.length > 0 && (
+      {value.habits && value.habits.length > 0 && (
         <div className="p-2 space-y-2">
-          {value.Inputs.map(input => (
+          {value.habits.map(habit => (
             <InputCard
-              key={input.IID}
-              input={{ ...input, color: value.color }}
+              key={habit.IID}
+              input={{ ...habit, color: value.color }}
             />
           ))}
         </div>

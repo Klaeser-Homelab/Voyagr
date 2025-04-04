@@ -12,7 +12,9 @@ export const TodayProvider = ({ children }) => {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${api.endpoints.events}/today`);
+      const response = await axios.get(`${api.endpoints.events}/today`, {
+        withCredentials: true
+      });
       setEvents(response.data);
       setError(null);
     } catch (error) {

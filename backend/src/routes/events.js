@@ -8,14 +8,11 @@ const Sequelize = require('sequelize');
 // GET all events for the current user
 router.get('/api/events', requireAuth, async (req, res) => {
   try {
-    if (parseInt(req.params.id) !== req.session.user.id) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
     const events = await Event.findAll({
       include: [
         {
           model: Item,
-          where: { user_id: req.user.id },
+          where: { user_id: req.session.user.id },
           required: true
         },
         {
@@ -38,46 +35,81 @@ router.get('/api/events', requireAuth, async (req, res) => {
 // GET today's events for the current user
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
+    console.log('Fetching today\'s events for user:', req.session.user.id);
+    
+    // First get today's events for the user
     const events = await Event.findAll({
-      attributes: [
-        'item_id',
-        'duration',
-        'created_at',
-        'parent_id',
-        [Sequelize.col('Value.color'), 'color'],
-        [Sequelize.col('Value.description'), 'valueDescription'],
-        [Sequelize.col('Habit.description'), 'habitDescription']
-      ],
       include: [
         {
           model: Item,
-          where: { user_id: req.user.id },
+          where: { 
+            user_id: req.session.user.id,
+            created_at: {
+              [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
+            }
+          },
           required: true
         },
         {
-          model: Value,
-          attributes: []
-        },
-        {
-          model: Habit,
-          attributes: []
-        },
-        {
           model: Todo,
-          attributes: ['item_id', 'content', 'completed', 'updated_at'],
+          attributes: ['item_id', 'description', 'completed', 'updated_at'],
           where: {
             completed: true
           },
           required: false
         }
-      ],
+      ]
+    });
+
+    // Get event IDs to fetch related data
+    const eventIds = events.map(event => event.item_id);
+    const parentIds = events.map(event => event.parent_id);
+    
+    // Get values and habits in separate queries
+    const values = await Value.findAll({
       where: {
-        updated_at: {
-          [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
+        item_id: parentIds
+      },
+      attributes: ['item_id', 'description', 'color']
+    });
+    
+    const habits = await Habit.findAll({
+      where: {
+        item_id: parentIds
+      },
+      attributes: ['item_id', 'description'],
+      include: [{
+        model: Value,
+        attributes: ['color']
+      }]
+    });
+    
+    // Create maps for efficient lookups
+    const valueMap = new Map(values.map(value => [value.item_id, value]));
+    const habitMap = new Map(habits.map(habit => [habit.item_id, habit]));
+    
+    // Enrich events with related data
+    const enrichedEvents = events.map(event => {
+      const eventData = event.toJSON();
+      
+      if (event.parent_type === 'value') {
+        const value = valueMap.get(event.parent_id);
+        if (value) {
+          eventData.valueDescription = value.description;
+          eventData.color = value.color;
+        }
+      } else if (event.parent_type === 'habit') {
+        const habit = habitMap.get(event.parent_id);
+        if (habit) {
+          eventData.habitDescription = habit.description;
+          eventData.color = habit.Value?.color;
         }
       }
+      
+      return eventData;
     });
-    res.json(events);
+
+    res.json(enrichedEvents);
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({ error: error.message });
@@ -89,7 +121,7 @@ router.post('/api/events', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
-      user_id: req.user.id,
+      user_id: req.session.user.id,
       type: 'event'
     });
 
@@ -138,7 +170,7 @@ router.delete('/api/events/:id', requireAuth, async (req, res) => {
       where: { item_id: req.params.id },
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }]
     });

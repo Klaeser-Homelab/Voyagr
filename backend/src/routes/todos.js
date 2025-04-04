@@ -9,7 +9,7 @@ router.post('/api/todos', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
-      user_id: req.user.id,
+      user_id: req.session.user.id,
       type: 'todo'
     });
 
@@ -53,7 +53,7 @@ router.get('/api/todos/completed', requireAuth, async (req, res) => {
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }],
       where: { completed: true }
@@ -70,7 +70,7 @@ router.get('/api/todos/completed/today/noevent', requireAuth, async (req, res) =
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }],
       where: { 
@@ -92,7 +92,7 @@ router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
       include: [
         {
           model: Item,
-          where: { user_id: req.user.id },
+          where: { user_id: req.session.user.id },
           required: true
         },
         {
@@ -127,7 +127,7 @@ router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }],
       where: { 
@@ -153,7 +153,7 @@ router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => 
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }],
       where: { 
@@ -175,7 +175,7 @@ router.patch('/api/todos/:id', requireAuth, async (req, res) => {
       where: { item_id: req.params.id },
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }]
     });
@@ -200,7 +200,7 @@ router.delete('/api/todos/:id', requireAuth, async (req, res) => {
       where: { item_id: req.params.id },
       include: [{
         model: Item,
-        where: { user_id: req.user.id },
+        where: { user_id: req.session.user.id },
         required: true
       }]
     });

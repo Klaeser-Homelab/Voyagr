@@ -1,140 +1,139 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const jwksRsa = require('jwks-rsa');
-const util = require('util');
-
-// Create a JWKS client to fetch public keys from Auth0
-const client = jwksRsa({
-  jwksUri: `https://dev-m0q23jbgtbwidn00.us.auth0.com/.well-known/jwks.json`,  // Your Auth0 domain
-  cache: true,
-  rateLimit: true,
-  jwksRequestsPerMinute: 5
-});
-
-// Promisify the key-fetching
-const getSigningKey = util.promisify(client.getSigningKey);
-
-async function verifyToken(token) {
-  try {
-    // Debug log the token
-    console.log('Token to verify:', token.substring(0, 20) + '...');
-    
-    const decodedToken = jwt.decode(token, { complete: true });
-    console.log('Decoded token header:', decodedToken?.header);
-    
-    if (!decodedToken) {
-      throw new Error('Invalid token format');
-    }
-
-    const { kid } = decodedToken.header;
-    if (!kid) {
-      throw new Error('Token header missing kid');
-    }
-
-    const payload = jwt.verify(token, publicKey, {
-      audience: process.env.AUTH0_AUDIENCE || 'https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/',
-      issuer: `https://dev-m0q23jbgtbwidn00.us.auth0.com/`,
-      algorithms: ['RS256']
-    });
-
-    console.log('Token verified successfully');
-    return verified;
-  } catch (error) {
-    console.error('Token verification failed:', error.message);
-    throw error;
-  }
-}
+const axios = require('axios');
+const requireAuth = require('../middleware/auth');
 
 // POST /api/users/auth0
 // Creates or updates a user based on Auth0 data
 router.post('/api/users/auth0', async (req, res) => {
-  try {  
+  try {
+    // Get the access token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'No bearer token provided' });
+      return res.status(401).json({ error: 'No access token provided' });
     }
 
-    const token = authHeader.split(' ')[1];
-    console.log('Received token:', token.substring(0, 20) + '...'); // Debug log
+    const accessToken = authHeader.split(' ')[1];
+    console.log('Received access token');
 
-    try {
-      await verifyToken(token);
-    } catch (error) {
-      console.error('Token verification error:', error);
-      return res.status(401).json({ 
-        error: 'Token verification failed',
-        details: error.message 
-      });
-    }
+    // Get user info from Auth0 using the access token
+    const userResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
 
-    // Get the user data from Auth0
-    const auth0User = req.body;
-    
-    if (!auth0User || !auth0User.sub) {
-      return res.status(400).json({ 
-        error: 'Invalid Auth0 user data. Missing required fields.' 
-      });
-    }
+    const auth0User = userResponse.data;
+    console.log('Auth0 user data:', auth0User);
 
-    // Use the findOrCreateFromAuth0 method from the User model
-    const user = await User.findOrCreateFromAuth0(auth0User);
-    
-    // Update last login
-    await user.updateLastLogin();
+    // Find or create user in your database
+    const [user] = await User.findOrCreate({
+      where: { auth0_id: auth0User.sub },
+      defaults: {
+        email: auth0User.email,
+        username: auth0User.nickname || auth0User.email,
+        display_name: auth0User.name,
+        avatar_url: auth0User.picture,
+        last_login: new Date()
+      }
+    });
 
-    // Return user data (excluding sensitive fields)
+    // Update session
     req.session.user = {
       id: user.id,
-      email: user.email,
-      username: user.username,
-      display_name: user.display_name,
-      avatar_url: user.avatar_url,
-      preferences: user.preferences,
-      last_login: user.last_login
+      auth0Id: auth0User.sub,
+      email: user.email
     };
 
-    res.status(200).json(req.session.user);
+     // Force session save and wait for completion
+     await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+
+    console.log('Session saved:', req.session);
+
+    res.json({
+      message: 'Authentication successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        display_name: user.display_name,
+        avatar_url: user.avatar_url
+      }
+    });
+
   } catch (error) {
-    console.error('Error in /api/users/auth0:', error);
+    console.error('Error in /api/users/auth0:', error.response?.data || error);
     res.status(500).json({ 
-      error: 'Failed to process Auth0 user data',
+      error: 'Authentication failed',
+      details: error.message 
+    });
+  }
+});
+
+// POST /api/users/logout
+// Destroys the session and logs the user out
+router.post('/api/users/logout', requireAuth, async (req, res) => {
+  try {
+    console.log('Logging out user:', req.session.user);
+    
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ error: 'Logout failed', details: err.message });
+      }
+      
+      // Clear the session cookie
+      res.clearCookie('connect.sid');
+      
+      res.json({ message: 'Logout successful' });
+    });
+  } catch (error) {
+    console.error('Error in /api/users/logout:', error);
+    res.status(500).json({ 
+      error: 'Logout failed', 
       details: error.message 
     });
   }
 });
 
 // GET /api/users/me
-// Get current user's data
-router.get('/api/users/me', async (req, res) => {
+// Gets current user information from the session
+router.get('/api/users/me', requireAuth, async (req, res) => {
   try {
-    // The user should be attached to req by the auth middleware
-    if (!req.user || !req.user.auth0_id) {
-      return res.status(401).json({ error: 'Not authenticated' });
+    // If requireAuth middleware passed, we have a valid session
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'No active session' });
     }
-
-    const user = await User.findByAuth0Id(req.user.auth0_id);
+    
+    // Get user data
+    const user = await User.findByPk(req.session.user.id);
+    
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Return user data (excluding sensitive fields)
-    const userData = {
+    
+    res.json({
       id: user.id,
       email: user.email,
       username: user.username,
       display_name: user.display_name,
-      avatar_url: user.avatar_url,
-      preferences: user.preferences,
-      last_login: user.last_login
-    };
-
-    res.status(200).json(userData);
+      avatar_url: user.avatar_url
+    });
   } catch (error) {
     console.error('Error in /api/users/me:', error);
     res.status(500).json({ 
-      error: 'Failed to fetch user data',
+      error: 'Failed to get user information', 
       details: error.message 
     });
   }

@@ -5,10 +5,15 @@ const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 
 // GET all values
 router.get('/api/values', requireAuth, async (req, res) => {
-  console.log("Values route");
+  console.log('Values session print:', req.session.user.id);
+  
   try {
     const values = await Value.findAll({
       include: [{
+        model: Item,
+        where: { user_id: req.session.user.id },
+        required: true
+      }, {
         model: Habit,
         attributes: ['item_id', 'description']
       }],
@@ -16,6 +21,7 @@ router.get('/api/values', requireAuth, async (req, res) => {
     });
     res.json(values);
   } catch (error) {
+    console.log('Error in /api/values:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -25,7 +31,7 @@ router.post('/api/values', requireAuth, async (req, res) => {
   try {
     // First create the base item
     const item = await Item.create({
-      user_id: req.user.id, // Assuming you have user authentication
+      user_id: req.session.user.id, // Use session user ID
       type: 'value'
     });
 
