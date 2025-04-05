@@ -4,7 +4,7 @@ import { api } from '../config/api';
 
 const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
   const [formData, setFormData] = useState({
-    Name: habitToEdit?.Name || '',
+    Name: habitToEdit?.description || '',
     isScheduled: false,
     startTime: habitToEdit?.startTime || '',
     endTime: habitToEdit?.endTime || '',
@@ -26,7 +26,7 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
   useEffect(() => {
     if (habitToEdit) {
       setFormData({
-        Name: habitToEdit.Name,
+        Name: habitToEdit.description,
         isScheduled: habitToEdit.isScheduled,
         startTime: habitToEdit.startTime,
         endTime: habitToEdit.endTime,
@@ -37,10 +37,18 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate that we have a value.VID (parent_id) before proceeding
+    if (!value || !value.VID) {
+      setError('Cannot create habit: Missing parent value ID');
+      console.error('Missing value.VID:', value);
+      return;
+    }
+    
     try {
       const submitData = {
-        Name: formData.Name,
-        VID: value.VID,
+        description: formData.Name,
+        parent_id: value.VID,
         ...(formData.isScheduled ? {
           startTime: formData.startTime,
           endTime: formData.endTime,
@@ -52,17 +60,23 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
         })
       };
 
+      console.log('Submitting habit data:', submitData);
+      console.log('Value being used:', value);
+
       if (habitToEdit) {
         // Update existing habit
+        console.log('Updating habit with ID:', habitToEdit.IID);
         await axios.put(`${api.endpoints.habits}/${habitToEdit.IID}`, submitData, {
           withCredentials: true
         });
         setMessage('Habit updated successfully!');
       } else {
         // Create new habit
-        await axios.post(api.endpoints.habits, submitData, {
+        console.log('Creating new habit with parent_id:', submitData.parent_id);
+        const response = await axios.post(api.endpoints.habits, submitData, {
           withCredentials: true
         });
+        console.log('Habit created successfully:', response.data);
         setMessage('Habit created successfully!');
       }
       
@@ -76,6 +90,8 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
       setError(null);
       if (onHabitUpdated) onHabitUpdated();
     } catch (err) {
+      console.error("Habit submission error:", err);
+      console.error("Error details:", err.response?.data);
       setError(err.response?.data?.error || 'Failed to save habit');
       setMessage(null);
     }

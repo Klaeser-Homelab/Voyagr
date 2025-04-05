@@ -88,9 +88,9 @@ const EditValueCard = ({
         </div>
       )}
 
-      {value.habits && value.habits.length > 0 && (
+      {value.Inputs && value.Inputs.length > 0 && (
         <div className="p-2 space-y-2">
-          {value.habits.map(habit => (
+          {value.Inputs.map(habit => (
             <EditHabitCard
               key={habit.IID}
               habit={{ ...habit, color: value.color }}

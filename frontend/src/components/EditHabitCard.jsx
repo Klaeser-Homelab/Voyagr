@@ -13,9 +13,9 @@ const EditHabitCard = ({
     <div className="flex items-center gap-2 p-2 bg-white rounded shadow">
       <input
         type="text"
-        defaultValue={habit.Name}
+        defaultValue={habit.description}
         onBlur={(e) => {
-          if (e.target.value !== habit.Name) {
+          if (e.target.value !== habit.description) {
             onHabitEdit(habit, e.target.value);
           }
         }}

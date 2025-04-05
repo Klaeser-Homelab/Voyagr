@@ -42,7 +42,7 @@ const ProfilePage = () => {
   const handleHabitEdit = async (habit, newName) => {
     try {
       await axios.patch(`${api.endpoints.habits}/${habit.IID}`, {
-        Name: newName
+        description: newName
       }, {
         withCredentials: true
       });

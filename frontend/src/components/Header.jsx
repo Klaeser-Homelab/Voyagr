@@ -11,6 +11,11 @@ const Header = () => {
   const currentTheme = getCurrentTheme();
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
+  // Add debug logging
+  console.log('Auth0 User Data:', user);
+  console.log('Is Authenticated:', isAuthenticated);
+  console.log('User Picture Available:', user?.picture);
+
   const handleLogout = async () => {
     try {
       // First, log out from our backend to destroy the session
@@ -50,17 +55,15 @@ const Header = () => {
         {isAuthenticated ? (
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
-                {user?.picture ? (
-                  <img
-                    alt="User avatar"
-                    src={user.picture}
-                    className="w-10 h-10 rounded-full"
-                  />
-                ) : (
-                  <UserCircleIcon className="w-10 h-10" />
-                )}
-              </div>
+              {user?.picture ? (
+                <img
+                  alt="User avatar"
+                  src={user.picture}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <UserCircleIcon className="w-10 h-10" />
+              )}
             </div>
             <ul
               tabIndex={0}
@@ -88,7 +91,6 @@ const Header = () => {
               <li>
                 <button 
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 hover:bg-base-300"
                 >
                   Logout
                 </button>
