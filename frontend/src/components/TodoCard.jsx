@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { api } from "../config/api";
 import axios from "axios";
 
-const Todo = ({todo, onToggle, onDelete}) => {
+const TodoCard = ({todo, onToggle, onDelete}) => {
   const [completed, setCompleted] = useState(todo.completed); // Local state for checkbox
   const [isHovered, setIsHovered] = useState(false); // State to track hover
 
@@ -51,4 +51,4 @@ const Todo = ({todo, onToggle, onDelete}) => {
   );
 };
 
-export default Todo;
+export default TodoCard;

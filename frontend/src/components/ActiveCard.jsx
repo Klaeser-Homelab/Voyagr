@@ -4,7 +4,7 @@ import { api } from '../config/api';
 import { useTimer } from '../context/TimerContext';
 import { useSelection } from '../context/SelectionContext';
 import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/outline';
-import Todo from './Todo';
+import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 
 function ActiveCard({ item, onTodosUpdate }) {
