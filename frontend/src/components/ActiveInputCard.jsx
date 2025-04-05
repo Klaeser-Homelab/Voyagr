@@ -1,6 +1,6 @@
 import React from 'react';
-import Todo from './Todo';
-import TodoForm from './TodoForm';
+import Todo from './Todo.jsx';
+import TodoForm from './TodoForm.jsx';
 
 const ActiveInputCard = ({ input, onClose }) => {
   if (!input) return null;

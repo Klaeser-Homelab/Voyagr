@@ -5,8 +5,8 @@ import InputCard from './InputCard';
 import { useTimer } from '../context/TimerContext';
 import { useSelection } from '../context/SelectionContext';
 import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/outline';
-import Todo from './Todo';
-import TodoForm from './TodoForm';
+import Todo from './Todo.jsx';
+import TodoForm from './TodoForm.jsx';
 
 function ActiveValueCard({ value, onTodosUpdate }) {
   const [todos, setTodos] = useState([]);
