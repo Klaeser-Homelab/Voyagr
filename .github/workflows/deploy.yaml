@@ -8,6 +8,7 @@ jobs:
   build-and-deploy:
     name: Deploy to LXC
     runs-on: self-hosted
+    environment: prod
     
     env:
       DOCKER_HOST: tcp://10.0.0.35:2375
