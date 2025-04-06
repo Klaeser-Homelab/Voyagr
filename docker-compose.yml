@@ -44,9 +44,9 @@ services:
     image: postgres:16
     container_name: voyagr-db
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: postgres
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -54,16 +54,16 @@ services:
     networks:
       - voyagr-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
     command: >
       bash -c '
         echo "Database Environment Variables:"
-        echo "POSTGRES_DB: $${POSTGRES_DB}"
-        echo "POSTGRES_USER: $${POSTGRES_USER}"
-        echo "POSTGRES_PASSWORD: $${POSTGRES_PASSWORD}"
+        echo "DB_NAME: $${DB_NAME}"
+        echo "DB_USER: $${DB_USER}"
+        echo "DB_PASSWORD: $${DB_PASSWORD}"
         docker-entrypoint.sh postgres'
 
   pgadmin:

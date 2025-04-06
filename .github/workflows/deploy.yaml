@@ -16,9 +16,6 @@ jobs:
       DOCKER_COMPOSE_FILE: docker-compose.yml
       FRONTEND_IMAGE: voyagr-frontend:latest
       BACKEND_IMAGE: voyagr-backend:latest
-      AUTH0_DOMAIN: dev-m0q23jbgtbwidn00.us.auth0.com
-      AUTH0_CLIENT_ID: jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn
-      FRONTEND_URL: http://10.0.0.35
 
     steps:
       - name: Checkout code
@@ -44,7 +41,7 @@ jobs:
             echo "✅ .env file exists"
             echo "Contents:"
             while IFS='=' read -r key value; do
-              echo "$key=$value"
+                echo "$key=$value"
             done < .env
           else
             echo "❌ .env file not found"
