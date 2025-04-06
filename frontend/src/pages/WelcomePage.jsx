@@ -51,19 +51,23 @@ const WelcomePage = () => {
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <span className="text-primary mr-2">✓</span>
-                  <span>Define and track your core values</span>
+                  <span>Define and discover your core values</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">✓</span>
-                  <span>Create habits aligned with your values</span>
+                  <span>Create and track habits aligned with your values</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">✓</span>
-                  <span>Track your progress with visual analytics</span>
+                  <span>Create and track goals</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">✓</span>
-                  <span>Stay organized with daily tasks and goals</span>
+                  <span>Share your progress with your inner circle</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-primary mr-2">✓</span>
+                  <span>Configure Voyagr to your liking</span>
                 </li>
               </ul>
             </div>
