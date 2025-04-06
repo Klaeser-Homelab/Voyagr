@@ -30,12 +30,6 @@ Here's what you'll see when you get in
 
 ## Product
 
-### What's in a name?
-I'm not set on the name Voyagr, here's my thinking on names so far:
-- Voyagr - where will your Voyagr take you? - Uses metaphor of an adventure to help you work through your goals over time. This metaphor can be leaned into with various levels of gusto. Check out, a lots of gusto version: Navbar > Profile Dropwdown > Choose your Voyagr.
-- Valme/Valyou - value your time - live your values - more explicit than Voyagr metaphor.
-- whoami - [24601?](https://www.youtube.com/watch?v=VyOVA_W4og4) - bonus: people might mistake me for someone who knows a lot about programming.
-
 ### Mission - Why build Voyagr?
 - Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Voyagr I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project (you know who you are), I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
 - Fulfilling Lives: Most of us struggle at some point in our lives with the question of how we should spend our time? There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what matters. If Voyagr could help me on that, well, Voyagr that would be very personally compelling and that's enough for me to build it. If someone else finds it useful, even better.
