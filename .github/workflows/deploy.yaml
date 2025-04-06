@@ -34,6 +34,20 @@ jobs:
           AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }}
           EOF
 
+      - name: Debug Environment Variables
+        run: |
+          echo "=== Checking .env file contents ==="
+          if [ -f .env ]; then
+            echo "✅ .env file exists"
+            echo "Contents:"
+            while IFS='=' read -r key value; do
+                echo "$key=$value"
+              fi
+            done < .env
+          else
+            echo "❌ .env file not found"
+          fi
+
       - name: Build Frontend image
         run: |
           docker build \
@@ -84,20 +98,6 @@ jobs:
           docker --context ${{ env.DOCKER_CONTEXT_NAME }} compose --file ${{ env.DOCKER_COMPOSE_FILE }} \
             --env-file .env \
             up -d --remove-orphans
-
-      - name: Debug Environment Variables
-        run: |
-          echo "Checking .env file contents (with secrets redacted):"
-          echo "DB_USER exists: $(if [ -n "${{ secrets.DB_USER }}" ]; then echo "yes"; else echo "no"; fi)"
-          echo "DB_PASSWORD exists: $(if [ -n "${{ secrets.DB_PASSWORD }}" ]; then echo "yes"; else echo "no"; fi)"
-          echo "DB_NAME exists: $(if [ -n "${{ secrets.DB_NAME }}" ]; then echo "yes"; else echo "no"; fi)"
-          echo "DB_HOST exists: $(if [ -n "${{ secrets.DB_HOST }}" ]; then echo "yes"; else echo "no"; fi)"
-          echo "DB_PORT exists: $(if [ -n "${{ secrets.DB_PORT }}" ]; then echo "yes"; else echo "no"; fi)"
-          
-          echo "Checking Docker container environment:"
-          docker --context ${{ env.DOCKER_CONTEXT_NAME }} compose --file ${{ env.DOCKER_COMPOSE_FILE }} \
-            --env-file .env \
-            exec -T postgres printenv | grep POSTGRES
 
       - name: Cleanup
         if: always()

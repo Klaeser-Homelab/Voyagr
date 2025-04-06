@@ -86,18 +86,18 @@ function ProtectedRoute({ children }) {
 function App() {
   return (
     <Auth0Provider
-    domain="dev-m0q23jbgtbwidn00.us.auth0.com"
-    clientId="jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn"
-    authorizationParams={{
-      redirect_uri: "http://localhost:3000/auth/callback",
-      audience: "https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/",
-      scope: "openid profile email"
-    }}
-    cacheLocation="localstorage"
-    useRefreshTokens={true}
+      domain={import.meta.env.VITE_AUTH0_DOMAIN}
+      clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+      authorizationParams={{
+        redirect_uri: window.location.origin + "/auth/callback",
+        audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/`,
+        scope: "openid profile email"
+      }}
+      cacheLocation="localstorage"
+      useRefreshTokens={true}
     >
-    <ThemeProvider>
-      <Router>
+      <ThemeProvider>
+        <Router>
           <TimerProvider>
             <SelectionProvider>
               <TodayProvider>
@@ -124,8 +124,8 @@ function App() {
               </TodayProvider>
             </SelectionProvider>
           </TimerProvider>
-      </Router>
-    </ThemeProvider>
+        </Router>
+      </ThemeProvider>
     </Auth0Provider>
   );
 }
