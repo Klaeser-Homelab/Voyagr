@@ -26,9 +26,6 @@ services:
       SESSION_SECRET: ${SESSION_SECRET}
       FRONTEND_URL: ${FRONTEND_URL}
       NODE_ENV: production
-    depends_on:
-      postgres:
-        condition: service_healthy
 
 networks:
   voyagr-network:
