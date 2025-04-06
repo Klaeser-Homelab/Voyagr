@@ -27,6 +27,7 @@ jobs:
       AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
       NODE_ENV: production
       BACKEND_SESSION_SECRET: ${{ secrets.BACKEND_SESSION_SECRET }}
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,7 +36,7 @@ jobs:
         run: |
           echo "=== Checking environment variables ==="
           echo "Contents (with sensitive values redacted):"
-          env | grep -E "POSTGRES_|FRONTEND_|PGADMIN_|AUTH0_" | while IFS='=' read -r key value; do
+          env | grep -E "POSTGRES_|FRONTEND_|PGADMIN_|AUTH0_|NODE_ENV|BACKEND_SESSION_SECRET" | while IFS='=' read -r key value; do
             if [[ $key == *"PASSWORD"* ]] || [[ $key == *"SECRET"* ]]; then
               echo "$key=********"
             else
