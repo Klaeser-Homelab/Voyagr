@@ -16,6 +16,9 @@ jobs:
       DOCKER_COMPOSE_FILE: docker-compose.yml
       FRONTEND_IMAGE: voyagr-frontend:latest
       BACKEND_IMAGE: voyagr-backend:latest
+      AUTH0_DOMAIN: dev-m0q23jbgtbwidn00.us.auth0.com
+      AUTH0_CLIENT_ID: jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn
+      FRONTEND_URL: http://10.0.0.35
 
     steps:
       - name: Checkout code
@@ -26,11 +29,11 @@ jobs:
           cat << EOF > .env
           DB_USER=${{ secrets.DB_USER }}
           DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          FRONTEND_URL=${{ env.FRONTEND_URL }}
           PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }}
           PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}
-          AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}
-          AUTH0_CLIENT_ID=${{ secrets.AUTH0_CLIENT_ID }}
+          AUTH0_DOMAIN=${{ env.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID=${{ env.AUTH0_CLIENT_ID }}
           AUTH0_CLIENT_SECRET=${{ secrets.AUTH0_CLIENT_SECRET }}
           EOF
 
