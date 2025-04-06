@@ -1,5 +1,5 @@
 # Voyagr
-![Screenshot 2025-04-04 at 3 47 22 PM](https://github.com/user-attachments/assets/04cfd4cf-3605-44d5-a1a1-51ce868b74e6)
+![Screenshot 2025-04-05 at 6 03 37 PM](https://github.com/user-attachments/assets/147372c9-0f3e-4530-bfa5-34f29df3cc58)
 
 
 Discover and live your values. 
