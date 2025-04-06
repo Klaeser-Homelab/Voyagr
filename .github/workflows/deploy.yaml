@@ -17,8 +17,8 @@ jobs:
       FRONTEND_IMAGE: voyagr-frontend:latest
       BACKEND_IMAGE: voyagr-backend:latest
       # Environment variables for Docker Compose
-      POSTGRES_USER: ${{ secrets.DB_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       FRONTEND_URL: ${{ vars.FRONTEND_URL }}
       PGADMIN_EMAIL: ${{ secrets.PGADMIN_EMAIL }}
       PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }}
