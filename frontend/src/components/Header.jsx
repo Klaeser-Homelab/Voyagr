@@ -48,7 +48,7 @@ const Header = () => {
             alt="Logo" 
             className="w-10 h-10 object-cover rounded-full" 
           />
-          Journey
+          Voyagr
         </Link>
       </div>
       <div className="flex gap-2">
@@ -74,8 +74,8 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/journey">
-                  Change Journey
+                <Link to="/voyage">
+                  Change Voyage
                 </Link>
               </li>
               <li>

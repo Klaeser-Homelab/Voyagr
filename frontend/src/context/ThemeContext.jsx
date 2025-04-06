@@ -7,14 +7,14 @@ import mountain from '../assets/mountain.png';
 
 const themeData = {
   retro: {
-    name: 'Wild West on the Oregon Trail',
+    name: 'Travel West on the Oregon Trail',
     image: wagon,
-    description: 'The default theme, journey across the wild west',
+    description: 'The default theme, voyage across the American west',
   },
   dark: {
     name: 'Space',
     image: space,
-    description: 'Embark on an interstellar journey through the cosmos',
+    description: 'Embark on an interstellar expedition through the cosmos',
   },
   cyberpunk: {
     name: 'Cyberpunk',
@@ -22,7 +22,7 @@ const themeData = {
     description: 'Navigate the neon-lit streets of tomorrow',
   },
   nord: {
-    name: 'RSS Discovery journey to Antarctica',
+    name: 'RSS Discovery voyage to Antarctica',
     image: boat,
     description: 'Brave the frozen wilderness of the southern pole',
   },

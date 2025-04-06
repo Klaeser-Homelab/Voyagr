@@ -17,7 +17,7 @@ const WelcomePage = () => {
             <h1 className="text-5xl font-bold">Where are you headed?</h1>
             <p className="py-6">
               Discover your values, track your habits, and build a life aligned with what matters most to you.
-              Journey helps you stay focused on your personal growth and create meaningful daily routines.
+              Voyagr helps you stay focused on your personal growth and create meaningful daily routines.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <button 
@@ -75,7 +75,7 @@ const WelcomePage = () => {
         <div>
           <p>
             <a 
-              href="https://github.com/Klaeser-Homelab/Journey" 
+              href="https://github.com/Klaeser-Homelab/Voyagr" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-primary transition-colors"

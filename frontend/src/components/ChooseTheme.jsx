@@ -13,7 +13,7 @@ const ChooseTheme = () => {
   
   return (
     <div className="p-4">
-      <h3 className="font-medium mb-4">Choose your Journey Theme</h3>
+      <h3 className="font-medium mb-4">Choose your Voyage</h3>
       <div className="flex flex-wrap gap-4">
         {Object.entries(themeData).map(([value, data]) => (
           <div 

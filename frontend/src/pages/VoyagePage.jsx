@@ -1,10 +1,10 @@
 import ChooseTheme from '../components/ChooseTheme';
 
-const JourneyPage = () => {
+const VoyagePage = () => {
   return <div>
     <ChooseTheme />
     </div>;
 
 };
 
-export default JourneyPage;
+export default VoyagePage;

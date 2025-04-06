@@ -8,7 +8,7 @@ import Today from './components/Today';
 import ValueList from './components/ValueList';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
-import JourneyPage from './pages/JourneyPage';
+import VoyagePage from './pages/VoyagePage';
 import Header from './components/Header';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -115,9 +115,9 @@ function App() {
                       <ProfilePage />
                     </ProtectedRoute>
                   } />
-                  <Route path="/journey" element={
+                  <Route path="/voyage" element={
                     <ProtectedRoute>
-                      <JourneyPage />
+                      <VoyagePage />
                     </ProtectedRoute>
                   } />
                 </Routes>
