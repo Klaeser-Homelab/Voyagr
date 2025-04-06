@@ -29,6 +29,8 @@ app.set('trust proxy', 1);
 
 // Session middleware
 if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET) {
+  console.log('Node ENV:', process.env.NODE_ENV);
+  console.log('BACKEND_SESSION_SECRET:', process.env.BACKEND_SESSION_SECRET);
   throw new Error('SESSION_SECRET must be set in production');
 }
 
