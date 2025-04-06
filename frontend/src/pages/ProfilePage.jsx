@@ -81,10 +81,6 @@ const ProfilePage = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-base-content dark:text-base-200">Values</h1>
-      </div>
-
       <div className="space-y-6">
         <div className="bg-base-200 dark:bg-base-800 rounded-lg shadow p-6">
           <ValueForm onValueUpdated={fetchValues} />
