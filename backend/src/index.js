@@ -18,7 +18,8 @@ const port = process.env.PORT || 3001;
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-  sameSite: 'none'
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  secure: process.env.NODE_ENV === 'production'
 }));
 
 app.use(express.json());
@@ -27,16 +28,19 @@ app.use(express.json());
 app.set('trust proxy', 1);
 
 // Session middleware
+if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be set in production');
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: process.env.BACKEND_SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    domain: 'localhost',
-    path: '/', 
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    ...(process.env.NODE_ENV === 'production' && { domain: 'voyagr.me' })
   }
 }));
 
