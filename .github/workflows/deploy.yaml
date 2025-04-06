@@ -11,10 +11,10 @@ jobs:
     
     env:
       DOCKER_HOST: tcp://10.0.0.35:2375
-      DOCKER_CONTEXT_NAME: manageme-ctx
+      DOCKER_CONTEXT_NAME: voyagr-ctx
       DOCKER_COMPOSE_FILE: docker-compose.yml
-      FRONTEND_IMAGE: manageme-frontend:latest
-      BACKEND_IMAGE: manageme-backend:latest
+      FRONTEND_IMAGE: voyagr-frontend:latest
+      BACKEND_IMAGE: voyagr-backend:latest
       ENV_FILE_PATH: /env/.env
 
     steps:
@@ -56,7 +56,7 @@ jobs:
 
       - name: Create volume if not exists
         run: |
-          docker --context ${{ env.DOCKER_CONTEXT_NAME }} volume create manageme-db-data || true
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} volume create voyagr-db-data || true
 
       - name: Stop and remove existing containers
         run: |
@@ -73,13 +73,13 @@ jobs:
             up -d --remove-orphans
 
       - name: Dump frontend env vars
-        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-frontend printenv > frontend_env.txt
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec voyagr-frontend printenv > frontend_env.txt
 
       - name: Dump backend env vars
-        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-backend printenv > backend_env.txt
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec voyagr-backend printenv > backend_env.txt
 
       - name: Dump database env vars
-        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec manageme-db printenv > db_env.txt
+        run: docker --context ${{ env.DOCKER_CONTEXT_NAME }} exec voyagr-db printenv > db_env.txt
 
       - name: Upload env dumps
         uses: actions/upload-artifact@v4

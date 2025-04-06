@@ -1,31 +1,28 @@
 services:
   frontend:
-    image: manageme-frontend:latest
-    container_name: manageme-frontend
+    image: voyagr-frontend:latest
+    container_name: voyagr-frontend
     restart: unless-stopped
     ports:
       - "80:80"
     networks:
-      - manageme-network
+      - voyagr-network
     depends_on:
       - backend
   backend:
-    image: manageme-backend:latest
-    container_name: manageme-backend
+    image: voyagr-backend:latest
+    container_name: voyagr-backend
     restart: unless-stopped
     ports:
       - "3001:3001"
     networks:
-      - manageme-network
+      - voyagr-network
     environment:
-      # Sequelize environment variables
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: journeyman_db
+      DB_NAME: voyagr_db
       DB_USER: postgres
       DB_PASSWORD: postgres
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       SESSION_SECRET: ${SESSION_SECRET}
       FRONTEND_URL: ${FRONTEND_URL}
       NODE_ENV: production
@@ -35,9 +32,9 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: journeyman_db
+    container_name: voyagr_db
     environment:
-      POSTGRES_DB: journeyman_db
+      POSTGRES_DB: voyagr_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -45,7 +42,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - manageme-network
+      - voyagr-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -54,14 +51,14 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: manageme-pgadmin
+    container_name: voyagr-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
     networks:
-      - manageme-network
+      - voyagr-network
     depends_on:
       - postgres
 
@@ -69,5 +66,5 @@ volumes:
   postgres_data:
 
 networks:
-  manageme-network:
+  voyagr-network:
     external: true
