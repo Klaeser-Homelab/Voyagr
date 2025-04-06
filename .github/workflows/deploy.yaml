@@ -44,8 +44,7 @@ jobs:
             echo "✅ .env file exists"
             echo "Contents:"
             while IFS='=' read -r key value; do
-                echo "$key=$value"
-              fi
+              echo "$key=$value"
             done < .env
           else
             echo "❌ .env file not found"
