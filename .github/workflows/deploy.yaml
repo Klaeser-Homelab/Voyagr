@@ -33,9 +33,7 @@ jobs:
       BACKEND_SESSION_SECRET: ${{ secrets.BACKEND_SESSION_SECRET }}
       
       # FRONTEND
-      VITE_AUTH0_DOMAIN: dev-m0q23jbgtbwidn00.us.auth0.com
-      VITE_AUTH0_CLIENT_ID: jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn
-      VITE_BACKEND_URL: https://voyagr.me:3001
+      # frontend env variables are set at build time, see Build Frontend step below
   
     steps:
       - name: Checkout code
@@ -58,9 +56,9 @@ jobs:
           docker build \
             -f Dockerfile.frontend \
             -t ${{ env.FRONTEND_IMAGE }} \
-            --build-arg VITE_AUTH0_DOMAIN=${{ env.VITE_AUTH0_DOMAIN }} \
-            --build-arg VITE_AUTH0_CLIENT_ID=${{ env.VITE_AUTH0_CLIENT_ID }} \
-            --build-arg VITE_BACKEND_URL=${{ env.VITE_BACKEND_URL }} \
+            --build-arg VITE_AUTH0_DOMAIN=dev-m0q23jbgtbwidn00.us.auth0.com \
+            --build-arg VITE_AUTH0_CLIENT_ID=jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn \
+            --build-arg VITE_BACKEND_URL=https://voyagr.me:3001 \
             .
 
       - name: Build Backend image

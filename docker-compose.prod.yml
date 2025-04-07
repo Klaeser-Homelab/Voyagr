@@ -13,6 +13,8 @@ services:
     volumes:
       - /etc/letsencrypt/live/voyagr.me:/etc/nginx/ssl/live/voyagr.me:ro
       - /etc/letsencrypt/archive/voyagr.me:/etc/nginx/ssl/archive/voyagr.me:ro
+
+  backend:
     image: voyagr-backend:latest
     container_name: voyagr-backend
     restart: unless-stopped
