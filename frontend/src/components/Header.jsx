@@ -15,6 +15,8 @@ const Header = () => {
   console.log('Auth0 User Data:', user);
   console.log('Is Authenticated:', isAuthenticated);
   console.log('User Picture Available:', user?.picture);
+  console.log('Going to print Auth0 Domain');
+  console.log('Auth0 Domain:', import.meta.env.VITE_AUTH0_DOMAIN);
 
   const handleLogout = async () => {
     try {
