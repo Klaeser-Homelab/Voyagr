@@ -16,19 +16,7 @@ import WelcomePage from './pages/WelcomePage';
 import Callback from './components/Callback';
 
 function AppContent() {
-  const [values, setValues] = useState([]);
-  const { activeInput, activeValue, handleValueSelect, handleInputSelect } = useSelection();
   const { isAuthenticated, isLoading } = useAuth0();
-
-  const fetchValues = async () => {
-    try {
-      const response = await fetch('/api/values');
-      const data = await response.json();
-      setValues(data);
-    } catch (error) {
-      console.error('Error fetching values:', error);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -84,12 +72,6 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
-  console.log('Auth0 Environment Variables:', {
-    domain: import.meta.env.VITE_AUTH0_DOMAIN,
-    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-    backendUrl: import.meta.env.VITE_BACKEND_URL
-  });
-
   return (
     <Auth0Provider
       domain={import.meta.env.VITE_AUTH0_DOMAIN}

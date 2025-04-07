@@ -5,9 +5,14 @@ import { useTheme } from '../context/ThemeContext';
 
 const WelcomePage = () => {
   const { loginWithRedirect } = useAuth0();
-  const navigate = useNavigate();
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
+
+  console.log('Auth0 Environment Variables:', {
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    backendUrl: import.meta.env.VITE_BACKEND_URL
+  });
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
