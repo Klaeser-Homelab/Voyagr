@@ -84,6 +84,12 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
+  console.log('Auth0 Environment Variables:', {
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    backendUrl: import.meta.env.VITE_BACKEND_URL
+  });
+
   return (
     <Auth0Provider
       domain={import.meta.env.VITE_AUTH0_DOMAIN}

@@ -13,12 +13,6 @@ RUN npm install
 # Copy rest of frontend code
 COPY frontend/ .
 
-# Set VITE_BACKEND_URL as an environment variable
-ENV VITE_BACKEND_URL=http://10.0.0.35:3001
-
-# Debug: Print the environment variable
-RUN echo "Environment variable VITE_BACKEND_URL: $VITE_BACKEND_URL"
-
 # Build the app
 RUN npm run build
 
