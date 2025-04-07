@@ -46,9 +46,6 @@ app.use(session({
   }
 }));
 
-// Auth routes (including test route)
-//app.use(authRoutes);
-
 // Use the routes
 app.use(habitRoutes);
 app.use(valueRoutes);
@@ -62,7 +59,7 @@ const startServer = async () => {
     console.log('Database connection established successfully.');
     
     // Sync database (creates tables if they don't exist)
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.log('Database synchronized.');
 
     app.listen(port, () => {

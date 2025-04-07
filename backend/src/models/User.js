@@ -10,13 +10,11 @@ const User = sequelize.define('User', {
   auth0_id: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     comment: 'The user ID from Auth0'
   },
   email: {
     type: DataTypes.STRING,
     allowNull: true,
-    unique: true,
     validate: {
       isEmail: true
     }
@@ -61,11 +59,13 @@ const User = sequelize.define('User', {
   indexes: [
     {
       unique: true,
-      fields: ['auth0_id']
+      fields: ['auth0_id'],
+      name: 'users_auth0_id'
     },
     {
       unique: true,
       fields: ['email'],
+      name: 'users_email',
       where: {
         email: { [Op.ne]: null }
       }
