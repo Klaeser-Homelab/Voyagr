@@ -24,7 +24,7 @@ jobs:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: postgres
-      AUTH0_DOMAIN=dev-m0q23jbgtbwidn00.us.auth0.com
+      AUTH0_DOMAIN: dev-m0q23jbgtbwidn00.us.auth0.com
       # Backend Secrets - From GitHub Secrets
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
