@@ -1,13 +1,13 @@
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const BASE_URL = process.env.NODE_ENV === 'production' ? window.location.origin : 'http://localhost:3001';
 
 export const api = {
-  baseUrl: API_BASE_URL,
+  baseUrl: BASE_URL,
   endpoints: {
-    todos: `${API_BASE_URL}/api/todos`,
-    habits: `${API_BASE_URL}/api/habits`,
-    values: `${API_BASE_URL}/api/values`,
-    events: `${API_BASE_URL}/api/events`,
-    auth: `${API_BASE_URL}/auth`,
-    users: `${API_BASE_URL}/api/users`
+    todos: `${BASE_URL}/api/todos`,
+    habits: `${BASE_URL}/api/habits`,
+    values: `${BASE_URL}/api/values`,
+    events: `${BASE_URL}/api/events`,
+    auth: `${BASE_URL}/auth`,
+    users: `${BASE_URL}/api/users`
   }
-}; 
+};
