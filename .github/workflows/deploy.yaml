@@ -58,7 +58,7 @@ jobs:
             -t ${{ env.FRONTEND_IMAGE }} \
             --build-arg VITE_AUTH0_DOMAIN=dev-m0q23jbgtbwidn00.us.auth0.com \
             --build-arg VITE_AUTH0_CLIENT_ID=jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn \
-            --build-arg VITE_BACKEND_URL=http://10.0.0.35:3001 \
+            --build-arg VITE_BACKEND_URL=https://10.0.0.35:3001 \
             .
 
       - name: Build Backend image
