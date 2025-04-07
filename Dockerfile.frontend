@@ -13,6 +13,12 @@ RUN npm install
 # Copy rest of frontend code
 COPY frontend/ .
 
+# Set VITE_BACKEND_URL as an environment variable
+ENV VITE_AUTH0_DOMAIN=dev-m0q23jbgtbwidn00.us.auth0.com
+
+# Debug: Print the environment variable
+RUN echo "Environment variable VITE_AUTH0_DOMAIN: $VITE_AUTH0_DOMAIN"
+
 # Build the app
 RUN npm run build
 
