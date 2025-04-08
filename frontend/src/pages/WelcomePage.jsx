@@ -12,25 +12,15 @@ const WelcomePage = () => {
     <div className="min-h-screen bg-base-200 flex flex-col">
       <div className="flex-grow bg-base-200">
         
-        <div className="flex-col lg:flex-row-reverse">
-          <div className="text-center lg:text-left lg:ml-8">
-            <h1 className="text-5xl font-bold mt-30 mb-4">How It's Made</h1>
-            <div className="flex justify-center">
-              <Link to="/how-its-made" className="btn btn-primary">Learn More</Link>
-            </div>
-            <p className="py-6">
-              Voyagr is a playground project partially built for my own learning. Find out more about how I built it. 
-            </p>
-          </div>
-        </div>
-        <div className="flex-col lg:flex-row-reverse">
+        
+        <div className="flex-col lg:flex-row-reverse mt-20">
           <div className="text-center lg:text-left lg:ml-8">
             <h1 className="text-5xl font-bold">Where are you headed?</h1>
-            <p className="py-6">
+            <p className="py-6 px-5">
               Discover your values, track your habits, and build a life aligned with what matters most to you.
               Voyagr helps you stay focused on your personal growth and create meaningful daily routines.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 ml-10 mb-10">
               <button 
                 onClick={() => loginWithRedirect()}
                 className="btn btn-primary"
@@ -83,6 +73,17 @@ const WelcomePage = () => {
               </ul>
             </div>
           </div>
+          <div className="flex-col lg:flex-row-reverse">
+          <div className="text-center lg:text-left lg:ml-8">
+            <h1 className="text-5xl font-bold mt-20">How It's Made</h1>
+            <p className="py-6">
+              Voyagr is a learning project built by me, Reed Klaeser. Find out more about how I built it. 
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 ml-10 mb-10">
+              <Link to="/how-its-made" className="btn btn-primary">Learn More</Link>
+              </div>
+          </div>
+        </div>
         </div>
       </div>
       

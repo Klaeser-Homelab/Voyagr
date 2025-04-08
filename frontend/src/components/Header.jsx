@@ -79,11 +79,6 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/avatar">
-                  Avatar
-                </Link>
-              </li>
-              <li>
                 <button 
                   onClick={handleLogout}
                 >

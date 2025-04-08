@@ -1,0 +1,453 @@
+// Contents of Todo.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Item = require('./Item');
+const Event = require('./Event');
+
+const Todo = sequelize.define('Todo', {
+  item_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: Item,
+      key: 'id'
+    }
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  parent_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Event,
+      key: 'item_id'
+    }
+  },
+  completed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  }
+}, {
+  tableName: 'todos',
+  timestamps: true,
+  underscored: true
+});
+
+module.exports = Todo;
+
+// Contents of User.js
+const { DataTypes, Op } = require('sequelize');
+const sequelize = require('../config/database');
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  auth0_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    comment: 'The user ID from Auth0'
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    validate: {
+      isEmail: true
+    }
+  },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  display_name: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  avatar_url: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  last_login: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  metadata: {
+    type: DataTypes.JSONB,
+    allowNull: false,
+    defaultValue: {},
+    comment: 'Additional user metadata from Auth0'
+  },
+  preferences: {
+    type: DataTypes.JSONB,
+    allowNull: false,
+    defaultValue: {
+      theme: 'light',
+      notifications: true,
+      email_notifications: true
+    }
+  }
+}, {
+  tableName: 'users',
+  timestamps: true,
+  underscored: true,
+  paranoid: true, // Enables soft deletes
+  indexes: [
+    {
+      unique: true,
+      fields: ['auth0_id'],
+      name: 'users_auth0_id'
+    },
+    {
+      unique: true,
+      fields: ['email'],
+      name: 'users_email',
+      where: {
+        email: { [Op.ne]: null }
+      }
+    }
+  ]
+});
+
+// Instance methods
+User.prototype.updateLastLogin = async function() {
+  this.last_login = new Date();
+  return this.save();
+};
+
+// Class methods
+User.findByAuth0Id = async function(auth0Id) {
+  return User.findOne({
+    where: { auth0_id: auth0Id }
+  });
+};
+
+User.findOrCreateFromAuth0 = async function(auth0User) {
+  const [user] = await User.findOrCreate({
+    where: { auth0_id: auth0User.sub },
+    defaults: {
+      email: auth0User.email,
+      username: auth0User.nickname || auth0User.email.split('@')[0],
+      display_name: auth0User.name,
+      avatar_url: auth0User.picture,
+      metadata: {
+        email_verified: auth0User.email_verified,
+        locale: auth0User.locale,
+        updated_at: auth0User.updated_at
+      }
+    }
+  });
+
+  // Update user info if it has changed in Auth0
+  if (user.email !== auth0User.email ||
+      user.display_name !== auth0User.name ||
+      user.avatar_url !== auth0User.picture) {
+    user.email = auth0User.email;
+    user.display_name = auth0User.name;
+    user.avatar_url = auth0User.picture;
+    await user.save();
+  }
+
+  return user;
+};
+
+module.exports = User;
+
+// Contents of Value.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Item = require('./Item');
+
+
+const Value = sequelize.define('Value', {
+  item_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: Item,
+      key: 'id'
+    }
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  color: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
+}, {
+  tableName: 'values',
+  timestamps: true,
+  underscored: true
+});
+
+module.exports = Value;
+
+// Contents of Habit.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Item = require('./Item');
+const Value = require('./Value');
+
+const Habit = sequelize.define('Habit', {
+  item_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: Item,
+      key: 'id'
+    }
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  parent_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Value,
+      key: 'item_id'
+    }
+  }
+}, {
+  tableName: 'habits',
+  timestamps: true,
+  underscored: true,
+  hooks: {
+    afterFind: async (habits) => {
+      if (!habits) return;
+      
+      // Handle both single instance and array of instances
+      const habitArray = Array.isArray(habits) ? habits : [habits];
+      
+      // Get all unique parent_ids
+      const parentIds = [...new Set(habitArray.map(habit => habit.parent_id))];
+      
+      // Fetch all relevant values in one query
+      const values = await Value.findAll({
+        where: {
+          item_id: parentIds
+        },
+        attributes: ['item_id', 'color']
+      });
+
+      // Create a map for quick lookup
+      const colorMap = new Map(values.map(value => [value.item_id, value.color]));
+
+      // Append color to each habit
+      habitArray.forEach(habit => {
+        if (habit && typeof habit === 'object') {
+          habit.color = colorMap.get(habit.parent_id) || null;
+        }
+      });
+    }
+  }
+});
+
+module.exports = Habit;
+
+// Contents of associations.js
+// Import model factories
+const Item = require('./Item');
+const Value = require('./Value');
+const Habit = require('./Habit');
+const Event = require('./Event');
+const Todo = require('./Todo');
+
+// Value associations
+Value.belongsTo(Item, { foreignKey: 'item_id' });
+Value.hasMany(Habit, { foreignKey: 'parent_id' });
+Value.hasMany(Event, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'value'
+  }
+});
+
+// Habit associations
+Habit.belongsTo(Item, { foreignKey: 'item_id' });
+Habit.belongsTo(Value, { foreignKey: 'parent_id' });
+Habit.hasMany(Event, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'habit'
+  }
+});
+
+// Event associations
+Event.belongsTo(Item, { foreignKey: 'item_id' });
+Item.hasOne(Event, { foreignKey: 'item_id' });
+Event.belongsTo(Habit, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'habit'
+  }
+});
+Event.belongsTo(Value, {
+  foreignKey: 'parent_id',
+  constraints: false,
+  scope: {
+    parent_type: 'value'
+  }
+});
+Event.hasMany(Todo, { foreignKey: 'parent_id' });
+
+// Todo associations
+Todo.belongsTo(Item, { foreignKey: 'item_id' });
+Todo.belongsTo(Event, { foreignKey: 'parent_id' });
+
+// Item associations
+Item.hasOne(Value, { foreignKey: 'item_id' });
+
+// Export models
+module.exports = {
+  Item,
+  Value,
+  Habit,
+  Event,
+  Todo
+};
+
+// Contents of Item.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Item = sequelize.define('Item', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIn: [['value', 'habit', 'event', 'todo']]
+    }
+  }
+}, {
+  tableName: 'items',
+  timestamps: true,
+  underscored: true
+});
+
+module.exports = Item;
+
+// Contents of Event.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const Item = require('./Item');
+const Habit = require('./Habit');
+const Value = require('./Value');
+
+const Event = sequelize.define('Event', {
+  item_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    references: {
+      model: Item,
+      key: 'id'
+    }
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  parent_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  parent_type: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isIn: [['habit', 'value']]
+    }
+  },
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  }
+}, {
+  tableName: 'events',
+  timestamps: true,
+  underscored: true,
+  hooks: {
+    afterFind: async (events) => {
+      if (!events) return;
+      
+      // Handle both single instance and array of instances
+      const eventArray = Array.isArray(events) ? events : [events];
+      
+      // Separate events by parent type
+      const valueEvents = eventArray.filter(event => event.parent_type === 'value');
+      const habitEvents = eventArray.filter(event => event.parent_type === 'habit');
+      
+      // Get colors for direct value parents
+      if (valueEvents.length > 0) {
+        const valueParentIds = [...new Set(valueEvents.map(event => event.parent_id))];
+        const values = await Value.findAll({
+          where: {
+            item_id: valueParentIds
+          },
+          attributes: ['item_id', 'color']
+        });
+        const valueColorMap = new Map(values.map(value => [value.item_id, value.color]));
+        
+        valueEvents.forEach(event => {
+          if (event && typeof event === 'object') {
+            event.color = valueColorMap.get(event.parent_id) || null;
+          }
+        });
+      }
+      
+      // Get colors for habit parents (requires two queries)
+      if (habitEvents.length > 0) {
+        // First get the habits
+        const habitParentIds = [...new Set(habitEvents.map(event => event.parent_id))];
+        const habits = await Habit.findAll({
+          where: {
+            item_id: habitParentIds
+          },
+          attributes: ['item_id', 'parent_id']
+        });
+        
+        // Then get the values for those habits
+        const valueParentIds = [...new Set(habits.map(habit => habit.parent_id))];
+        const values = await Value.findAll({
+          where: {
+            item_id: valueParentIds
+          },
+          attributes: ['item_id', 'color']
+        });
+        
+        // Create maps for lookups
+        const valueColorMap = new Map(values.map(value => [value.item_id, value.color]));
+        const habitValueMap = new Map(habits.map(habit => [habit.item_id, habit.parent_id]));
+        
+        habitEvents.forEach(event => {
+          if (event && typeof event === 'object') {
+            const valueId = habitValueMap.get(event.parent_id);
+            event.color = valueColorMap.get(valueId) || null;
+          }
+        });
+      }
+    }
+  }
+});
+
+module.exports = Event; 
