@@ -29,7 +29,7 @@ Here's what you'll see when you get in
 ![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
 
 ## Inspiration
-Many of us struggle at some point in our lives with the question of how we should spend our time. There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what you decide matters most. Attention is difficult and Voyagr is built to help me maintain it. Several books got me thinking along these lines and I wanted to mention them here. 
+Many of us struggle at some point in our lives with the question of how we should spend our time. There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what you decide matters most. Attention is difficult and Voyagr is built to help maintain it. Several books got me thinking along these lines and I wanted to mention them here. 
 - [The Suble Art of not giving a f*ck - Manson](https://www.goodreads.com/book/show/28257707-the-subtle-art-of-not-giving-a-f-ck)
 - [Atomic Habits - Clear](https://www.goodreads.com/book/show/40121378-atomic-habits?from_search=true&from_srp=true&qid=pTZ9qbuEcd&rank=1)
 - [Four Thousand Weeks - Burkeman](https://www.goodreads.com/book/show/54785515-four-thousand-weeks?ref=nav_sb_ss_1_19)
