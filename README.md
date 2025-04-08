@@ -31,17 +31,16 @@ Many of us struggle at some point in our lives with the question of how we shoul
 - [Four Thousand Weeks - Burkeman](https://www.goodreads.com/book/show/54785515-four-thousand-weeks?ref=nav_sb_ss_1_19)
 
 ## Building Voyagr
-[How its made](https://voyagr.me/how-its-made) is a good place to start understanding the system.
+Follow these steps to build Voyagr locally. [How its made](https://voyagr.me/how-its-made) is a good place to build an understanding of the system.
 
-### Frontend
-`npm run dev`  in /frontend starts frontend on 3000. The frontend uses Vite as its development server, React Router for routing, Tailwind for CSS utility classes, and DaisyUI for prebuilt CSS components. Nginx is deployed as a webserver to serve the static files built by Vite and a reverse proxy to expose my server to the internet.
+### 1. .env
+.env files must be configured in both the frontend and backend directories. See .env.backend.example and .env.frontend.example for guidance since actual .env files are not in source control for security. You'll need to get the values marked as secrets from Reed. Or if you are Reed, you'll need to track down the secrets.
 
-### Database
-The Postgres database used for development runs in a Docker instance within Docker desktop. A separate Postgres database is used in production. PgAdmin is deployed alongside the Postgres database to provide a web gui for interacting with the database.
+### 2. Database
 `docker compose -f docker-compose.dev.yml up -d` will run the docker-compose.dev.yml that includes the build information for the Docker instance. Once the database is built, login to PgAdmin and change the password from the default.
 
-### Backend
-`npm run dev` in /backend starts backend on 3001. The backend will error if you have not built the Database or it is not currently running in Docker Desktop. The backend uses a Node.js web framework called Express. Sequalize is used as a Node.js Object-Relational Manager to interact with the database with types.
+### 3. Backend
+`npm run dev` in /backend starts backend on 3001.
 
-### Deployment
-Voyagr is deployed to self-hosted docker containers running on Proxmox. The deployment is configured using GitHub Actions configured in `.github/workflows/deploy.yaml`.  Dockerfiles that build the layers of the containers and a docker-compose file that configures the services run in the container. Environment variables are created in deploy.yaml and passed to the buildtime for the frontend and runtime for the backend. For development, .env files must be configured in both the frontend and backend directories. See .env.backend.example and .env.frontend.example for guidance since actual .env files are not in source control for security.
+### 4. Frontend
+`npm run dev`  in /frontend starts frontend on 3000. 
