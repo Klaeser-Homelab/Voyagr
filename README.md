@@ -1,5 +1,5 @@
 # Voyagr
-![Screenshot 2025-04-05 at 6 03 37 PM](https://github.com/user-attachments/assets/147372c9-0f3e-4530-bfa5-34f29df3cc58)
+![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
 
 Voyagr is a learning project and a tool I use to manage my day. You can give [Voyagr](https://voyagr.me/) a try as well, though there is currently no onboarding and the app is an alpha that is not hardened for production use.
 
@@ -23,10 +23,6 @@ See [issues](https://github.com/Klaeser-Homelab/Voyagr/issues) for details.
 - [ ] Initiate habits and session from places smart home buttons.
 - [ ] Voyagr API allows habit tracking to be recorded from self-management apps.
 - [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide".
-
-Here's what you'll see when you get in
-
-![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
 
 ## Inspiration
 Many of us struggle at some point in our lives with the question of how we should spend our time. There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what you decide matters most. Attention is difficult and Voyagr is built to help maintain it. Several books got me thinking along these lines and I wanted to mention them here. 
