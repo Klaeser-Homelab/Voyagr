@@ -35,7 +35,6 @@ router.get('/api/events', requireAuth, async (req, res) => {
 // GET today's events for the current user
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
-    console.log('Fetching today\'s events for user:', req.session.user.id);
     
     // First get today's events for the user
     const events = await Event.findAll({

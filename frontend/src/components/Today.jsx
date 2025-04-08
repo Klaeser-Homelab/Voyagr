@@ -49,7 +49,7 @@ function Today() {
               <div className="flex-1 flex flex-col gap-2">
                 {eventsInHour.reverse().map(event => (
                   <div 
-                    key={event.EID} 
+                    key={event.item_id} 
                     className="card bg-base-200 p-2 flex flex-col gap-2"
                     style={{ 
                       borderLeft: `4px solid ${event.color || '#ddd'}`
@@ -66,7 +66,7 @@ function Today() {
                     {event.Todos && event.Todos.length > 0 && (
                       <div className="pl-4 text-sm space-y-1">
                         {event.Todos.map(todo => (
-                          <div key={todo.DOID} className="flex items-center gap-2">
+                          <div key={todo.item_id} className="flex items-center gap-2">
                             <span className="text-base-content/70">•</span>
                             <span>{todo.description}</span>
                           </div>

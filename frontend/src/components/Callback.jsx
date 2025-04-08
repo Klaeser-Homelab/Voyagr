@@ -25,7 +25,6 @@ function Callback() {
         
         // Get the access token from Auth0
         const accessToken = await getAccessTokenSilently();
-        console.log('Got access token');
 
         setStatus('Creating user account...');
         
@@ -42,7 +41,6 @@ function Callback() {
         );
 
         if (!mounted) return;
-        console.log('Backend response:', response.data);
         
         setStatus('Redirecting to home...');
         navigate('/');

@@ -73,8 +73,11 @@ function ValueList() {
 
         <div className="flex flex-wrap gap-4">
           {values.map(value => (
-            <div key={value.id} className="flex-1 basis-[40vw]">
-              <ValueCard value={value} />
+            <div key={value.item_id} className="flex-1 basis-[40vw]">
+              <ValueCard 
+              key={value.item_id}
+              value={value} 
+              />
             </div>
           ))}
         </div>
@@ -105,6 +108,7 @@ function ValueList() {
 
       <div className="min-w-[30vw] flex-1 basis-[40vw]">
         <ActiveCard 
+          key={activeEvent.item.item_id}
           item={activeEvent.item} 
         />
       </div>
