@@ -8,9 +8,6 @@ const requireAuth = require('../middleware/auth');
 // Creates or updates a user based on Auth0 data
 router.post('/api/users/auth0', async (req, res) => {
   try {
-    // Log the incoming request
-    console.log('Incoming request to /api/users/auth0');
-
     // Get the access token from the Authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -19,10 +16,6 @@ router.post('/api/users/auth0', async (req, res) => {
     }
 
     const accessToken = authHeader.split(' ')[1];
-    console.log('Received access token:', accessToken);
-
-    // Log the Auth0 domain
-    console.log('AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
 
     // Get user info from Auth0 using the access token
     const userResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
@@ -32,7 +25,6 @@ router.post('/api/users/auth0', async (req, res) => {
     });
 
     const auth0User = userResponse.data;
-    console.log('Auth0 user data:', auth0User);
 
     // Find or create user in your database
     const [user] = await User.findOrCreate({
@@ -64,8 +56,6 @@ router.post('/api/users/auth0', async (req, res) => {
         resolve();
       });
     });
-
-    console.log('Session saved:', req.session);
 
     res.json({
       message: 'Authentication successful',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useTheme } from '../context/ThemeContext';
+import { Link } from 'react-router-dom';
 
 const WelcomePage = () => {
   const { loginWithRedirect } = useAuth0();
@@ -9,8 +10,20 @@ const WelcomePage = () => {
 
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
-      <div className="hero flex-grow bg-base-200">
-        <div className="hero-content flex-col lg:flex-row-reverse">
+      <div className="flex-grow bg-base-200">
+        
+        <div className="flex-col lg:flex-row-reverse">
+          <div className="text-center lg:text-left lg:ml-8">
+            <h1 className="text-5xl font-bold mt-30 mb-4">How It's Made</h1>
+            <div className="flex justify-center">
+              <Link to="/how-its-made" className="btn btn-primary">Learn More</Link>
+            </div>
+            <p className="py-6">
+              Voyagr is a playground project partially built for my own learning. Find out more about how I built it. 
+            </p>
+          </div>
+        </div>
+        <div className="flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left lg:ml-8">
             <h1 className="text-5xl font-bold">Where are you headed?</h1>
             <p className="py-6">
@@ -36,7 +49,7 @@ const WelcomePage = () => {
               </button>
             </div>
           </div>
-          <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100 mx-auto">
             <div className="card-body">
               <div className="flex justify-center mb-4">
                 <img 

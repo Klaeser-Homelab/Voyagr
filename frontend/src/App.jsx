@@ -14,7 +14,7 @@ import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 import WelcomePage from './pages/WelcomePage';
 import Callback from './components/Callback';
-
+import HowItsMade from './pages/HowItsMade';
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth0();
 
@@ -92,6 +92,7 @@ function App() {
                 <Header />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
+                  <Route path="/how-its-made" element={<HowItsMade />} />
                   <Route path="/auth/callback" element={<Callback />} />
                   <Route path="/history" element={
                     <ProtectedRoute>

@@ -5,9 +5,7 @@ const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 const { Sequelize } = require('sequelize');
 
 // GET all values
-router.get('/api/values', requireAuth, async (req, res) => {
-  console.log('Values session print:', req.session.user.id);
-  
+router.get('/api/values', requireAuth, async (req, res) => {  
   try {
     const values = await Value.findAll({
       include: [{    

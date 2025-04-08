@@ -6,6 +6,8 @@ const SelectionContext = createContext();
 
 export const SelectionProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
+  const [todos, setTodos] = useState(null);
+  const [activeItem, setActiveItem] = useState(null);
   const { isBreak, startTimer, resetTimer, mode, setIsBreak, setMinutes, getElapsedTime } = useTimer();
 
   const updateEvent = async () => {
@@ -27,7 +29,7 @@ export const SelectionProvider = ({ children }) => {
       );
       
       // Process completed todos with the event ID
-      const completedTodos = activeEvent.todos
+      const completedTodos = todos
         .filter(todo => todo.completed)
         .map(todo => ({
           ...todo,
@@ -62,19 +64,17 @@ export const SelectionProvider = ({ children }) => {
     });
   };
 
-  const fetchTodos = async () => {
-    console.log('fetching todos for event', activeEvent);
-    if (!activeEvent) {
-      throw new Error('activeEvent is null');
+  const fetchTodos = async (parent_id) => {
+    if (!parent_id) {
+      throw new Error('parent_id is null');
     }
     try {
-      const response = await axios.get(`${api.endpoints.todos}/${activeEvent.parent_id}`, {
+      const response = await axios.get(`${api.endpoints.todos}/${parent_id}`, {
         withCredentials: true
       });
 
       console.debug('Todos fetched:', response.data);
-      activeEvent.todos = response.data;
-      setActiveEvent(activeEvent);
+      setTodos(response.data);
     } catch (error) {
       console.error('Error fetching todos:', error);
     }
@@ -86,6 +86,7 @@ export const SelectionProvider = ({ children }) => {
       return;
     }
     console.log('creating event for item', item);
+    setActiveItem(item);
 
     try {
       const eventResponse = await axios.post(api.endpoints.events, {
@@ -95,13 +96,10 @@ export const SelectionProvider = ({ children }) => {
         withCredentials: true
       });
 
-      console.debug('Event created:', eventResponse.data);
-      const event =eventResponse.data;
-      event.item = item;
-      setActiveEvent(event);
-      if (activeEvent) {
-        fetchTodos();
-      }
+      console.debug('Event created');
+      setActiveEvent(eventResponse.data);
+      fetchTodos(eventResponse.data.item_id);
+      
       startTimer();
     } catch (error) {
       console.error('Error creating event:', error);
@@ -111,6 +109,9 @@ export const SelectionProvider = ({ children }) => {
   return (
     <SelectionContext.Provider value={{
       activeEvent,
+      todos,
+      setTodos,
+      activeItem,
       deleteEvent,
       updateEvent,
       createEvent,

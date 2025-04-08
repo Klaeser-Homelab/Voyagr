@@ -8,8 +8,7 @@ import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 
 function ActiveCard({ item }) {
-  const { activeEvent, setActiveEvent } = useSelection();
-  const currentTodos = activeEvent.todos;
+  const { todos, setTodos } = useSelection();
 
   console.log('activeEvent', activeEvent);
 
@@ -26,14 +25,12 @@ function ActiveCard({ item }) {
   } = useTimer();
 
   useEffect(() => {
-    console.log('todos updated in activeEvent:', currentTodos);
-  }, [currentTodos]);
+    console.log('todos updated in activeEvent:', todos);
+  }, [todos]);
 
   useEffect(() => {
   }, [item.item_id]);
 
- 
-  
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -45,28 +42,15 @@ function ActiveCard({ item }) {
   };
 
   const deleteTodo = (todo) => {
-    const newTodos = currentTodos.filter(t => t.item_id !== todo.item_id);
-  
-  // Create a new activeEvent object with updated todos
-  const updatedEvent = {
-    ...activeEvent,
-    todos: newTodos
-  };
-
-  // Update the activeEvent state
-  setActiveEvent(updatedEvent);
+    const newTodos = todos.filter(t => t.item_id !== todo.item_id);
+    setTodos(newTodos);
     axios.delete(`${api.endpoints.todos}/${todo.item_id}`, {
       withCredentials: true
     });
   };
 
   const addTodo = (todo) => {
-    const newTodos = [...currentTodos, todo];
-    const updatedEvent = {
-      ...activeEvent,
-      todos: newTodos
-    };
-    setActiveEvent(updatedEvent);
+    setTodos([...todos, todo]);
   };
 
   return (
@@ -142,9 +126,9 @@ function ActiveCard({ item }) {
       </div>
       
       <div className="p-2 space-y-2">
-        {currentTodos.map(todo => (
+        {todos.map(todo => (
           <Todo 
-            key={todo.DOID} 
+            key={todo.item_id} 
             todo={todo} 
             onToggle={toggleTodo}
             onDelete={deleteTodo}

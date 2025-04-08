@@ -9,7 +9,7 @@ import ActiveCard from './ActiveCard';
 
 function ValueList() {
   const { activeEvent, updateEvent, deleteEvent,
-    isBreak, mode } = useSelection();
+    isBreak, mode, activeItem } = useSelection();
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,7 +53,7 @@ function ValueList() {
 </button>
         </div>
         <div className="flex flex-wrap gap-4">
-        <ActiveBreakCard value={activeEvent.item} />
+        <ActiveBreakCard value={activeItem} />
 
         </div>
       </div>
@@ -108,8 +108,8 @@ function ValueList() {
 
       <div className="min-w-[30vw] flex-1 basis-[40vw]">
         <ActiveCard 
-          key={activeEvent.item.item_id}
-          item={activeEvent.item} 
+          key={activeItem.item_id}
+          item={activeItem} 
         />
       </div>
     </div>
