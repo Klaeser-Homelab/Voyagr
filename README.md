@@ -13,7 +13,7 @@ Voyagr is a habit tracker and self-management app that helps you discover and li
 - [ ] Build a data-model that allows a simpler frontend (fewer conditionals and flags) because objects own their state and behavior.
 
 ## What features exist and are planned?
-See issues for details
+See [issues](https://github.com/Klaeser-Homelab/Voyagr/issues) for details.
 - [x] Create and record values.
 - [x] Manage your time using a pomodoro timer, stopwatch, and tasks.
 - [ ] Visualize your progress using a habit tracker.  
