@@ -4,27 +4,18 @@ import { api } from '../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useSelection } from '../context/SelectionContext';
 function TodoForm({ item, onTodoAdded }) {
-  const { activeValue, activeInput } = useSelection();
+  const { activeEvent } = useSelection();
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('submitting todo');
     
-    // Determine the type and referenceId based on what's active
-    const type = activeInput ? 'input' : 'value';
-    const referenceId = activeInput ? activeInput.IID : activeValue?.VID;
-
-    if (!referenceId) {
-      console.warn('No active value or input selected');
-      return;
-    }
-
     try {
       const response = await axios.post(api.endpoints.todos, {
         description,
-        type,
-        referenceId
-      });
+        parent_id: activeEvent.item_id,
+      }, { withCredentials: true });
       
       setDescription('');
       

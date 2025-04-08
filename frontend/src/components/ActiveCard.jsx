@@ -7,10 +7,11 @@ import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/ou
 import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 
-function ActiveCard({ item, onTodosUpdate }) {
-  const [todos, setTodos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+function ActiveCard({ item }) {
+  const { activeEvent, setActiveEvent } = useSelection();
+  const currentTodos = activeEvent.todos;
+
+  console.log('activeEvent', activeEvent);
 
   const { 
     startTimer, 
@@ -23,71 +24,49 @@ function ActiveCard({ item, onTodosUpdate }) {
     adjustTime,
     toggleMode
   } = useTimer();
-  const { activeValue, activeInput, handleValueSelect, handleInputSelect } = useSelection();
-
-  const isValue = 'VID' in item;
-  const color = item.color;
-  const name = item.description;
-
-  const fetchTodos = async () => {
-    try {
-      const endpoint = isValue 
-        ? `${api.endpoints.todos}/incomplete/value/${item.VID}`
-        : `${api.endpoints.todos}/incomplete/input/${item.IID}`;
-      
-      const response = await axios.get(endpoint);
-      setTodos(response.data);
-      setLoading(false);
-      if (onTodosUpdate) {
-        onTodosUpdate(response.data);
-      }
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-      setError('Failed to load todos');
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchTodos();
-  }, [isValue ? item.VID : item.IID]);
+    console.log('todos updated in activeEvent:', currentTodos);
+  }, [currentTodos]);
 
+  useEffect(() => {
+  }, [item.item_id]);
+
+ 
+  
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const updateTodoState = (todoId, completed) => {
-    setTodos(currentTodos => {
-      const newTodos = currentTodos.map(todo => 
-        todo.DOID === todoId ? { ...todo, completed } : todo
-      );
-      if (onTodosUpdate) {
-        onTodosUpdate(newTodos);
-      }
-      return newTodos;
+  const toggleTodo = (todo) => {
+    todo.completed = !todo.completed;
+  };
+
+  const deleteTodo = (todo) => {
+    const newTodos = currentTodos.filter(t => t.item_id !== todo.item_id);
+  
+  // Create a new activeEvent object with updated todos
+  const updatedEvent = {
+    ...activeEvent,
+    todos: newTodos
+  };
+
+  // Update the activeEvent state
+  setActiveEvent(updatedEvent);
+    axios.delete(`${api.endpoints.todos}/${todo.item_id}`, {
+      withCredentials: true
     });
   };
 
-  const deleteTodo = (todoId) => {
-    setTodos(currentTodos => {
-      const newTodos = currentTodos.filter(todo => todo.DOID !== todoId);
-      if (onTodosUpdate) {
-        onTodosUpdate(newTodos);
-      }
-      return newTodos;
-    });
-  };
-
-  const addTodo = (newTodo) => {
-    setTodos(currentTodos => {
-      const newTodos = [...currentTodos, newTodo];
-      if (onTodosUpdate) {
-        onTodosUpdate(newTodos);
-      }
-      return newTodos;
-    });
+  const addTodo = (todo) => {
+    const newTodos = [...currentTodos, todo];
+    const updatedEvent = {
+      ...activeEvent,
+      todos: newTodos
+    };
+    setActiveEvent(updatedEvent);
   };
 
   return (
@@ -96,9 +75,9 @@ function ActiveCard({ item, onTodosUpdate }) {
     >
       <div 
         className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"    
-        style={{ backgroundColor: color }}
+        style={{ backgroundColor: item.color }}
       >
-        <h3 className="text-lg font-semibold text-white">{name}</h3>
+        <h3 className="text-lg font-semibold text-white">{item.description}</h3>
         <div className="flex items-center gap-4">
           {mode === 'timer' && (
             <div className="flex items-center gap-2">
@@ -163,11 +142,11 @@ function ActiveCard({ item, onTodosUpdate }) {
       </div>
       
       <div className="p-2 space-y-2">
-        {todos.map(todo => (
+        {currentTodos.map(todo => (
           <Todo 
             key={todo.DOID} 
             todo={todo} 
-            onToggle={updateTodoState}
+            onToggle={toggleTodo}
             onDelete={deleteTodo}
           />
         ))}

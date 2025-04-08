@@ -13,35 +13,17 @@ router.post('/api/todos', requireAuth, async (req, res) => {
       type: 'todo'
     });
 
-    const { content, type, parent_id } = req.body;
+    const { description, parent_id, parent_type } = req.body;
     
     const todo = await Todo.create({
       item_id: item.id,
-      content,
-      type,
+      description,
       parent_id,
+      parent_type,
       completed: false
     });
 
-    // Return the todo with its item data
-    const fullTodo = await Todo.findByPk(todo.item_id, {
-      include: [
-        {
-          model: Item,
-          attributes: ['created_at']
-        },
-        {
-          model: Event,
-          attributes: ['description']
-        },
-        {
-          model: Value,
-          attributes: ['description', 'color']
-        }
-      ]
-    });
-
-    res.status(201).json(fullTodo);
+    res.status(201).json(todo);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -131,9 +113,7 @@ router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
         required: true
       }],
       where: { 
-        completed: false,
-        type: 'habit',
-        parent_id: habitId
+        completed: false
       }
     });
     res.json(todos);
@@ -157,9 +137,7 @@ router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => 
         required: true
       }],
       where: { 
-        completed: false,
-        type: 'value',
-        parent_id: valueId
+        completed: false
       }
     });
     res.json(todos);

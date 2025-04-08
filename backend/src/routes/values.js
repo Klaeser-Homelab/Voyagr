@@ -2,6 +2,7 @@ const express = require('express');
 const requireAuth = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
+const { Sequelize } = require('sequelize');
 
 // GET all values
 router.get('/api/values', requireAuth, async (req, res) => {
@@ -9,15 +10,20 @@ router.get('/api/values', requireAuth, async (req, res) => {
   
   try {
     const values = await Value.findAll({
-      include: [{
-        model: Item,
-        where: { user_id: req.session.user.id },
-        required: true
-      }, {
+      include: [{    
         model: Habit,
-        attributes: ['item_id', 'description']
+        attributes: {
+          include: [
+            [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+          ]
+        }
       }],
-      order: [['created_at', 'DESC']]
+      order: [['created_at', 'DESC']],
+      attributes: {
+        include: [
+          [Sequelize.literal("'value'"), 'type'] // Hardcode the type as 'value'
+        ]
+      }
     });
     res.json(values);
   } catch (error) {

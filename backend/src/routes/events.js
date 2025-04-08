@@ -125,39 +125,20 @@ router.post('/api/events', requireAuth, async (req, res) => {
       type: 'event'
     });
 
-    const { parent_id, duration, type } = req.body;
+    const { parent_id, duration, parent_type } = req.body;
     
     // parent_id (Value ID) is required
     if (!parent_id) {
       return res.status(400).json({ error: 'parent_id is required' });
     }
-
     const event = await Event.create({
       item_id: item.id,
-      parent_id,
-      duration,
-      type: type || 'session'
+      parent_id: parent_id,
+      duration: duration,
+      parent_type: parent_type
     });
 
-    // Return the event with its item data
-    const fullEvent = await Event.findByPk(event.item_id, {
-      include: [
-        {
-          model: Item,
-          attributes: ['created_at']
-        },
-        {
-          model: Value,
-          attributes: ['description', 'color']
-        },
-        {
-          model: Habit,
-          attributes: ['description']
-        }
-      ]
-    });
-
-    res.status(201).json(fullEvent);
+    res.status(201).json(event);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -193,5 +174,50 @@ router.delete('/api/events/:id', requireAuth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// UPDATE event
+router.put('/api/events/:id', requireAuth, async (req, res) => {
+  try {
+    const { duration } = req.body;
+    const event = await Event.findByPk(req.params.id);
+    event.duration = duration;
+    await event.save();
+    res.status(200).json(event);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE event
+router.delete('/api/events/:id', requireAuth, async (req, res) => {
+  try {
+    const event = await Event.findOne({
+      where: { item_id: req.params.id },  
+      include: [{
+        model: Item,
+        where: { user_id: req.session.user.id },
+        required: true
+      }]
+    }); 
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Find the associated item 
+    const item = await Item.findByPk(event.item_id);
+
+    // Delete both the event and its item
+    await event.destroy();
+    if (item) {
+      await item.destroy();
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 module.exports = router; 

@@ -11,13 +11,6 @@ const Header = () => {
   const currentTheme = getCurrentTheme();
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
-  // Add debug logging
-  console.log('Auth0 User Datas:', user);
-  console.log('Is Authenticateds:', isAuthenticated);
-  console.log('User Picture Available:', user?.picture);
-  console.log('Going to print Auth0 Domain');
-  console.log('Auth0 Domain:', import.meta.env.VITE_AUTH0_DOMAIN);
-
   const handleLogout = async () => {
     try {
       // First, log out from our backend to destroy the session

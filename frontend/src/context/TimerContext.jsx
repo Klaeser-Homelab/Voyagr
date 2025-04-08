@@ -18,6 +18,10 @@ export const TimerProvider = ({ children }) => {
     setIsActiveEvent(false);
   };
 
+  const getElapsedTime = () => {
+    return (minutes * 60 + seconds) * 1000;
+  };
+
   const resetTimer = () => {
     setIsActiveEvent(false);
     if (mode === 'timer') {
@@ -104,7 +108,8 @@ export const TimerProvider = ({ children }) => {
       setMinutes,
       setSeconds,
       setIsBreak,
-      setStopwatchTime
+      setStopwatchTime,
+      getElapsedTime
     }}>
       {children}
     </TimerContext.Provider>

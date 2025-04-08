@@ -2,29 +2,28 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 import { useTimer } from "../context/TimerContext";
 import { useSelection } from "../context/SelectionContext";
 
-const InputCard = ({ input}) => {
+const HabitCard = ({ habit}) => {
   const { startTimer } = useTimer();
-  const { activeInput, handleInputSelect } = useSelection();
+  const { handleInputSelect } = useSelection();
 
   const getScheduleText = () => {
-    if (!input.startTime || !input.endTime || !input.daysOfWeek) return null;
+    if (!habit.startTime || !habit.endTime || !habit.daysOfWeek) return null;
     
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const scheduledDays = input.daysOfWeek.map(day => days[day]).join(', ');
-    return `${input.startTime.slice(0, 5)} - ${input.endTime.slice(0, 5)} on ${scheduledDays}`;
+    const scheduledDays = habit.daysOfWeek.map(day => days[day]).join(', ');
+    return `${habit.startTime.slice(0, 5)} - ${habit.endTime.slice(0, 5)} on ${scheduledDays}`;
   };
 
   const handleInputClick = (e) => {
     e.stopPropagation();
-    handleInputSelect(input);
-    startTimer();
+    // TODO: Add habit to activeEvent
+    console.error('Not implemented');
   }
 
   return (
     <div 
-      key={input.IID} 
-      className={`rounded-md transition-all duration-200 cursor-pointer
-        ${activeInput?.IID === input.IID ? 'bg-base-100' : 'bg-base-100'}`}
+      key={habit.item_id} 
+      className={`rounded-md transition-all duration-200 cursor-pointer`}
     >
       <div className="flex items-center justify-between p-2">
         <div className="flex-grow">
@@ -32,9 +31,9 @@ const InputCard = ({ input}) => {
             <>
             <div 
               className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: input.color }}
+              style={{ backgroundColor: habit.color }}
             />
-            <h4 className="text-gray-700">{input.Name}</h4>
+            <h4 className="text-gray-700">{habit.description}</h4>
             </>
             <PlayIcon className="size-6 text-black" onClick={handleInputClick} />
           </div>
@@ -54,4 +53,4 @@ const InputCard = ({ input}) => {
   );
 };
 
-export default InputCard; 
+export default HabitCard; 
