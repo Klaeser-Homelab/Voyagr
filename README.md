@@ -31,9 +31,10 @@ Many of us struggle at some point in our lives with the question of how we shoul
 - [Four Thousand Weeks - Burkeman](https://www.goodreads.com/book/show/54785515-four-thousand-weeks?ref=nav_sb_ss_1_19)
 
 ## Building Voyagr
+[How its made](https://voyagr.me/how-its-made) is a good place to start understanding the system.
 
 ### Frontend
-`npm run dev`  in /frontend starts frontend on 3000. The frontend uses Vite as its development server, React Router for routing, Tailwind for CSS utility classes, and DaisyUI for prebuilt CSS components. Nginx is deployed as a webserver to serve the static files built by Vite's production build process.
+`npm run dev`  in /frontend starts frontend on 3000. The frontend uses Vite as its development server, React Router for routing, Tailwind for CSS utility classes, and DaisyUI for prebuilt CSS components. Nginx is deployed as a webserver to serve the static files built by Vite and a reverse proxy to expose my server to the internet.
 
 ### Database
 The Postgres database used for development runs in a Docker instance within Docker desktop. A separate Postgres database is used in production. PgAdmin is deployed alongside the Postgres database to provide a web gui for interacting with the database.
@@ -43,4 +44,4 @@ The Postgres database used for development runs in a Docker instance within Dock
 `npm run dev` in /backend starts backend on 3001. The backend will error if you have not built the Database or it is not currently running in Docker Desktop. The backend uses a Node.js web framework called Express. Sequalize is used as a Node.js Object-Relational Manager to interact with the database with types.
 
 ### Deployment
-Voyagr is deployed to self-hosted docker containers running on Proxmox. The deployment is configured using GitHub Actions configured in `.github/workflows/deploy.yaml`.  Dockerfiles that build the layers of the containers and a docker-compose file that configures the services run in the container. Environment variables are configured in a .env file on the developer's machine and on the Proxmox build server that hydrates the environment variables for the containers that host the website.
+Voyagr is deployed to self-hosted docker containers running on Proxmox. The deployment is configured using GitHub Actions configured in `.github/workflows/deploy.yaml`.  Dockerfiles that build the layers of the containers and a docker-compose file that configures the services run in the container. Environment variables are created in deploy.yaml and passed to the buildtime for the frontend and runtime for the backend. For development, .env files must be configured in both the frontend and backend directories. See .env.backend.example and .env.frontend.example for guidance since actual .env files are not in source control for security.
