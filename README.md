@@ -7,22 +7,22 @@ Voyagr is a learning project and a tool I use to manage my day. You can give [Vo
 Voyagr is a habit tracker and self-management app that helps you discover and live your values. You can think of it as a cross between a habit tracker like [Habatica](https://habitica.com/) or [Finch](https://finchcare.com/) and a pomodoro timer like [Session](https://www.stayinsession.com/). Voyagr helps you define who you are and how you want to live by creating a process for value selection and habit definition. Habits in Voyagr can have fine-tuned requirements including time based requirements. Habits can also be configured to be scheduled or unscheduled and can be suggested as breaks after Pomodoro sessions.
 
 ## Learning objectives
-- [x] Configure self-hosted production environment
-- [x] Build a CI/CD pipeline with testing and automatic deployments
-- [x] Build a flexible frontend with dark/light themes that looks good on desktop and mobile
-- [ ] Build a data-model that allows a simpler frontend (fewer conditionals and flags) because objects own their own state and behavior
+- [x] Configure self-hosted production environment.
+- [x] Build a CI/CD pipeline with testing and automatic deployments.
+- [x] Build a flexible frontend with dark/light themes that looks good on desktop and mobile.
+- [ ] Build a data-model that allows a simpler frontend (fewer conditionals and flags) because objects own their state and behavior.
 
 ## What features exist and are planned?
 See issues for details
-- [x] Create and record values  
-- [x] Manage your time using a pomodoro timer, stopwatch, and tasks  
-- [ ] Visualize your progress using a habit tracker  
-- [ ] Gamify progress so it feels good to value your time  
-- [ ] Share your Voyagr with different levels of a support network  
-- [ ] Discover and share values and habits
-- [ ] Initiate habits and session from places smart home buttons
-- [ ] Voyagr API allows habit tracking to be recorded from self-management apps
-- [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide"
+- [x] Create and record values.
+- [x] Manage your time using a pomodoro timer, stopwatch, and tasks.
+- [ ] Visualize your progress using a habit tracker.  
+- [ ] Gamify progress so it feels good to value your time.  
+- [ ] Share your Voyagr with different levels of a support network. 
+- [ ] Discover and share values and habits.
+- [ ] Initiate habits and session from places smart home buttons.
+- [ ] Voyagr API allows habit tracking to be recorded from self-management apps.
+- [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide".
 
 Here's what you'll see when you get in
 
