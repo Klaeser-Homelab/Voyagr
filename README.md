@@ -1,13 +1,10 @@
 # Voyagr
 ![Screenshot 2025-04-05 at 6 03 37 PM](https://github.com/user-attachments/assets/147372c9-0f3e-4530-bfa5-34f29df3cc58)
 
-
-Discover and live your values. 
-
 Voyagr is a learning project and a tool I use to manage my day. You can give [Voyagr](https://voyagr.me/) a try as well, though there is currently no onboarding and the app is an alpha that is not hardened for production use.
 
 ## What is Voyagr?
-Voyagr is a habit tracker and self-management app. You can think of it as a cross between a habit tracker like [Habatica](https://habitica.com/) or [Finch](https://finchcare.com/) and a pomodoro timer like [Session](https://www.stayinsession.com/). Voyagr helps you define who you are and how you want to live by creating a process for value selection and habit definition. Habits in Voyagr can have fine-tuned requirements including time based requirements. Habits can also be configured to be scheduled or unscheduled and can be suggested as breaks after Pomodoro sessions.
+Voyagr is a habit tracker and self-management app that helps you discover and live your values. You can think of it as a cross between a habit tracker like [Habatica](https://habitica.com/) or [Finch](https://finchcare.com/) and a pomodoro timer like [Session](https://www.stayinsession.com/). Voyagr helps you define who you are and how you want to live by creating a process for value selection and habit definition. Habits in Voyagr can have fine-tuned requirements including time based requirements. Habits can also be configured to be scheduled or unscheduled and can be suggested as breaks after Pomodoro sessions.
 
 ## Learning objectives
 - [x] Configure self-hosted production environment
