@@ -4,8 +4,16 @@
 
 Discover and live your values. 
 
-### Where does Voyagr fit?
-Voyagr is a self-definition and self-management app. Self-definition means that Voyagr helps you define who you are and how you want to live. It does this by creating a process for value selection and a community for sharing values. Self-definition alone is a powerful concept and I considered limiting Voyagr's scope to just that. However, there is so much to be gained by going one step further and applying a vision of self-defintion to a process of self-management that I think this extra step is a must. Great self-management apps exist ( [Session](https://www.stayinsession.com/) ), so do habit forming apps ( [Finch](https://finchcare.com/) ) but I think they miss out on this powerful combination of self-definition and self-management.
+Voyagr is a learning project and a tool I use to manage my day. You can give [Voyagr](https://voyagr.me/) a try as well, though there is currently no onboarding and the app is an alpha that is not hardened for production use.
+
+## What is Voyagr?
+Voyagr is a habit tracker and self-management app. You can think of it as a cross between a habit tracker like [Habatica](https://habitica.com/) or [Finch](https://finchcare.com/) and a pomodoro timer like [Session](https://www.stayinsession.com/). Voyagr helps you define who you are and how you want to live by creating a process for value selection and habit definition. Habits in Voyagr can have fine-tuned requirements including time based requirements. Habits can also be configured to be scheduled or unscheduled and can be suggested as breaks after Pomodoro sessions.
+
+## Learning objectives
+- [x] Configure self-hosted production environment
+- [x] Build a CI/CD pipeline with testing and automatic deployments
+- [x] Build a flexible frontend with dark/light themes that looks good on desktop and mobile
+- [ ] Build a data-model that allows a simpler frontend (fewer conditionals and flags) because objects own their own state and behavior
 
 ## What features exist and are planned?
 See issues for details
@@ -19,23 +27,15 @@ See issues for details
 - [ ] Voyagr API allows habit tracking to be recorded from self-management apps
 - [ ] The app's personality is configurable. Supportive, chiding, etc. This will be packaged as "Choose your guide"
 
-## Using Voyagr
-Right now I use Voyagr on my network at home. ~Two~ One issue~s~ must be completed before others can use Voyagr. 
-- [x] [Create Login](https://github.com/Klaeser-Homelab/Voyagr/issues/27)
-- [ ] [Configure external access](https://github.com/Klaeser-Homelab/Voyagr/issues/29) - server:port where I host Voyagr must be opened up to the wider internet
-
 Here's what you'll see when you get in
 
 ![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
 
-## Product
-
-### Mission - Why build Voyagr?
-- Learning: My recent projects have relied on abstractions like full-stack web frameworks and cloud hosting. With Voyagr I want to strip back these abstractions which is why its built using separate frontend and backend frameworks and is self hosted on a micro pc plugged into my router. As a consequence of learning being my primary motivation, I will likely leave some features underdeveloped and others overdeveloped. For instance, UX may take a backseat to caching or observability both of which I'm looking to learn. If anyone else joins this project (you know who you are), I'd encourage them to follow this same logic and contribute what interests them rather than what is needed. This may duplicate work, for instance, deployments may need to be shifted from my proxmox server to a cloud provider in the future but that's a cost I'm willing to pay for learning.
-- Fulfilling Lives: Most of us struggle at some point in our lives with the question of how we should spend our time? There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what matters. If Voyagr could help me on that, well, Voyagr that would be very personally compelling and that's enough for me to build it. If someone else finds it useful, even better.
-
-### How many people want this kind of thing?
-- [SensorTower](https://app.sensortower.com/overview/1528595748?country=US) estimates Finch has 700K monthly downloads and $2 million in monthly revenue. Perhaps there are people out there who would use Voyagr. I'm not sure.
+## Inspiration
+Many of us struggle at some point in our lives with the question of how we should spend our time. There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what you decide matters most. Attention is difficult and Voyagr is built to help me maintain it. Several books got me thinking along these lines and I wanted to mention them here. 
+- [The Suble Art of not giving a f*ck - Manson](https://www.goodreads.com/book/show/28257707-the-subtle-art-of-not-giving-a-f-ck)
+- [Atomic Habits - Clear](https://www.goodreads.com/book/show/40121378-atomic-habits?from_search=true&from_srp=true&qid=pTZ9qbuEcd&rank=1)
+- [Four Thousand Weeks - Burkeman](https://www.goodreads.com/book/show/54785515-four-thousand-weeks?ref=nav_sb_ss_1_19)
 
 ## Building Voyagr
 
