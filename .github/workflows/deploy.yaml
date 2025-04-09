@@ -58,7 +58,8 @@ jobs:
             -f Dockerfile.frontend \
             -t ${{ env.FRONTEND_IMAGE }} \
             --build-arg VITE_AUTH0_DOMAIN=dev-m0q23jbgtbwidn00.us.auth0.com \
-            --build-arg VITE_AUTH0_CLIENT_ID=jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn \            .
+            --build-arg VITE_AUTH0_CLIENT_ID=jJhP7FGnwad8ibaRpnhOjdHqJ69eilVn \            
+            .
 
       - name: Build Backend image
         run: |
