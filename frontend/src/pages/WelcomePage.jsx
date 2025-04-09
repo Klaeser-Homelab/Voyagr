@@ -75,7 +75,7 @@ const WelcomePage = () => {
           </div>
           <div className="flex-col lg:flex-row-reverse">
           <div className="text-center lg:text-left lg:ml-8">
-            <h1 className="text-5xl font-bold mt-20">How It's Made</h1>
+            <h1 className="text-5xl font-bold mt-20">How it's made</h1>
             <p className="py-6">
               Voyagr is a learning project built by me, Reed Klaeser. Find out more about how I built it. 
             </p>

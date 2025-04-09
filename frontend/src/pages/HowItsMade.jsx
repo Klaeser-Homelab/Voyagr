@@ -6,7 +6,7 @@ const HowItsMade = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">How It's Made</h1>
+      <h1 className="text-3xl font-bold mb-4">How it's made</h1>
       <p>This page describes Voyagr's architecture.</p>
       <h2 className="text-2xl font-semibold mt-6">Front End</h2>
       <p>The React frontend uses React Router for routing, Tailwind for CSS utility classes, DaisyUI for prebuilt CSS components, and Vite for building the application. Nginx is deployed as a webserver to serve the static files built by Vite and a reverse proxy to expose my server to the internet.</p>
