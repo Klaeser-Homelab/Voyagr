@@ -18,14 +18,14 @@ const port = process.env.PORT || 3001;
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-  sameSite: 'none',
+  sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production'
 }));
 
 console.log('CORS middleware configuration:', {
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: 'true',
-  sameSite: 'none',
+  sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production'
 });
 
@@ -48,7 +48,7 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'none'
+    sameSite: 'lax'
   }
 }));
 
@@ -61,7 +61,7 @@ console.log('Session middleware configuration:', {
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: 'lax',
     domain: process.env.NODE_ENV === 'production' ? 'voyagr.me' : 'not set'
   }
 });
