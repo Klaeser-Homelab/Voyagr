@@ -39,10 +39,10 @@ services:
         condition: service_healthy
 
     redis:
-    image: redis:latest
-    container_name: manageme-redis
-    ports:
-      - "6379:6379"
+      image: redis:latest
+      container_name: manageme-redis
+      ports:
+        - "6379:6379"
 
   postgres:
     image: postgres:16
