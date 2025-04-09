@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
-import schema from '../../public/assets/schema.jpg';
+import schema from '../assets/schema.jpg';
 const HowItsMade = () => {
   const { theme, themeData, handleThemeChange } = useTheme();
 
