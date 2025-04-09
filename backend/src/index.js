@@ -46,6 +46,19 @@ app.use(session({
   }
 }));
 
+console.log('Session middleware configuration:', {
+  secret: process.env.BACKEND_SESSION_SECRET ? '****' : 'not set', // Mask the secret for security
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    domain: process.env.NODE_ENV === 'production' ? 'voyagr.me' : 'not set'
+  }
+});
+
+
 // Use the routes
 app.use(habitRoutes);
 app.use(valueRoutes);
