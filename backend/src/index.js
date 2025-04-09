@@ -13,7 +13,7 @@ const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const router = express.Router();
 
-const redisURL = 'redis://manageme-redis:6379'
+const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
 const redisClient = createClient( {url: redisURL} )
 
 redisClient.connect().catch(console.error)
