@@ -18,9 +18,16 @@ const port = process.env.PORT || 3001;
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  sameSite: 'none',
   secure: process.env.NODE_ENV === 'production'
 }));
+
+console.log('CORS middleware configuration:', {
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: 'true',
+  sameSite: 'none',
+  secure: process.env.NODE_ENV === 'production'
+});
 
 app.use(express.json());
 
@@ -45,12 +52,7 @@ app.use(session({
   }
 }));
 
-console.log('CORS middleware configuration:', {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  secure: process.env.NODE_ENV === 'production'
-});
+
 
 console.log('Session middleware configuration:', {
   secret: process.env.BACKEND_SESSION_SECRET ? '****' : 'not set', // Mask the secret for security
