@@ -33,8 +33,16 @@ services:
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       BACKEND_SESSION_SECRET: ${BACKEND_SESSION_SECRET}
     depends_on:
+      - redis:
+        condition: service_healthy
       postgres:
         condition: service_healthy
+
+    redis:
+    image: redis:latest
+    container_name: manageme-redis
+    ports:
+      - "6379:6379"
 
   postgres:
     image: postgres:16

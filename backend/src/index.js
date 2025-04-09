@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
+const {RedisStore} = require("connect-redis")
+const {createClient} = require('redis');
 //const { authMiddleware, handleAuth0User, authRoutes } = require('./middleware/auth');
 const sequelize = require('./config/database');
 const habitRoutes = require('./routes/habits');
@@ -10,6 +12,9 @@ const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const router = express.Router();
+
+const redisClient = createClient();
+redisClient.connect().catch(console.error)
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -42,17 +47,17 @@ if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET
 }
 
 app.use(session({
-  secret: process.env.BACKEND_SESSION_SECRET,
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.BACKEND_SESSION_SECRET, // replace with your own secret
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production', // Set to true if using HTTPS
     httpOnly: true,
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 }));
-
-
 
 console.log('Session middleware configuration:', {
   secret: process.env.BACKEND_SESSION_SECRET ? '****' : 'not set', // Mask the secret for security
@@ -61,8 +66,9 @@ console.log('Session middleware configuration:', {
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    sameSite: 'lax',
-    domain: process.env.NODE_ENV === 'production' ? 'voyagr.me' : 'not set'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24,
+    domain:'not set'
   }
 });
 
