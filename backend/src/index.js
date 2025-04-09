@@ -13,10 +13,9 @@ const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const router = express.Router();
 
-const redisClient = createClient({
-  host: 'manageme-redis', // Use the service name defined in Docker Compose
-  port: 6379
-});
+const redisURL = 'redis://manageme-redis:6379'
+const redisClient = redis.createClient( {url: redisURL} )
+
 redisClient.connect().catch(console.error)
 
 const app = express();
