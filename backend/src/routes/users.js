@@ -17,6 +17,8 @@ router.post('/api/users/auth0', async (req, res) => {
 
     const accessToken = authHeader.split(' ')[1];
 
+    console.log('Access token:', accessToken);
+
     // Get user info from Auth0 using the access token
     const userResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
       headers: {
@@ -37,6 +39,8 @@ router.post('/api/users/auth0', async (req, res) => {
         last_login: new Date()
       }
     });
+
+    console.log('User:', user);
 
     // Update session
     req.session.user = {
