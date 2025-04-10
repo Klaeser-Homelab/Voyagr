@@ -57,7 +57,7 @@ function Today() {
                   >
                     <div className="flex justify-between items-center">
                       <span className="font-medium">
-                        Event ({Math.round(event.duration / 60)} min)
+                        Event ({Math.round(event.duration / (1000 * 60))} min)
                       </span>
                       <span className="text-sm text-base-content/70">
                         {event.inputName || event.valueName}

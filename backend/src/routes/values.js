@@ -62,10 +62,11 @@ router.post('/api/values', requireAuth, async (req, res) => {
 });
 
 // PUT update value
-router.put('/api/values/:id', requireAuth, async (req, res) => {
+router.put('/api/values', requireAuth, async (req, res) => {
+  console.log("PUT request received");
   try {
-    const { description, color } = req.body;
-    const value = await Value.findByPk(req.params.id);
+    const { item_id, description, color } = req.body;
+    const value = await Value.findByPk(item_id);
     
     if (!value) {
       return res.status(404).json({ error: 'Value not found' });

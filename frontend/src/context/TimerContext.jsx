@@ -3,94 +3,61 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const TimerContext = createContext();
 
 export const TimerProvider = ({ children }) => {
+  const [elapsedTime, setElapsedTime] = useState(0); // Time in milliseconds
   const [isActiveEvent, setIsActiveEvent] = useState(false);
   const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
-  const [minutes, setMinutes] = useState(30);
-  const [seconds, setSeconds] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
-  const [stopwatchTime, setStopwatchTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
-  const startTimer = () => {
+  const startTimer = (duration) => {
     setIsActiveEvent(true);
+    setDuration(duration);
   };
 
   const stopTimer = () => {
     setIsActiveEvent(false);
   };
 
-  const getElapsedTime = () => {
-    return (minutes * 60 + seconds) * 1000;
-  };
-
   const resetTimer = () => {
     setIsActiveEvent(false);
-    if (mode === 'timer') {
-      setIsBreak(false);
-      setMinutes(30);
-      setSeconds(0);
-    } else {
-      setStopwatchTime(0);
-    }
+    setElapsedTime(0);
+    setIsBreak(false);
   };
 
   const toggleMode = () => {
-    setIsActiveEvent(false);
     setMode(mode === 'timer' ? 'stopwatch' : 'timer');
-    resetTimer();
   };
 
-  const adjustTime = (minutesToAdd) => {
-    const newMinutes = minutes + minutesToAdd;
-    if (newMinutes >= 0) {
-      setMinutes(newMinutes);
-      setSeconds(0);
-    }
-  };
+  useEffect(() => {
+    //console.log("duration", duration);
+  }, [elapsedTime]);
 
   useEffect(() => {
     let interval = null;
 
-    if (isBreak || isActiveEvent) {
+    if (isActiveEvent) {
       interval = setInterval(() => {
-        if (isBreak) {
-          if (seconds === 0) {
-            if (minutes === 0) {
-              setIsBreak(false);
-              setMinutes(30);
-              setSeconds(0);
-              stopTimer();
-            } else {
-              setMinutes(minutes - 1);
-              setSeconds(59);
-            }
-          } else {
-            setSeconds(seconds - 1);
-          }
-        } else if (mode === 'timer') {
-          if (seconds === 0) {
-            if (minutes === 0) {
-              if (isBreak) {
-                setMinutes(30);
-                setIsBreak(false);
-              } else {
-                setMinutes(5);
-                setIsBreak(true);
-              }
-            } else {
-              setMinutes(minutes - 1);
-              setSeconds(59);
-            }
-          } else {
-            setSeconds(seconds - 1);
-          }
-        } else {
-          setStopwatchTime(prev => prev + 1);
-        }
+        setElapsedTime(prev => prev + 1000);
       }, 1000);
     }
 
     return () => clearInterval(interval);
-  }, [isBreak, isActiveEvent, minutes, seconds, mode]);
+  }, [isActiveEvent]);
+
+  const getRemainingTime = () => {
+    const totalMiliSeconds = Math.max(0, duration - elapsedTime); // 30 minutes countdown
+    const minutes = Math.floor(totalMiliSeconds / 60000);
+    const seconds = Math.floor((totalMiliSeconds % 60000) / 1000);
+    return { minutes, seconds };
+  };
+
+  const getStopwatchTime = () => {
+    return Math.floor(elapsedTime / 1000); // Time in seconds
+  };
+
+  const adjustTime = (time) => {
+    setDuration(prev => prev + (time * 60000));
+  };
 
   return (
     <TimerContext.Provider value={{
@@ -100,16 +67,11 @@ export const TimerProvider = ({ children }) => {
       resetTimer,
       mode,
       toggleMode,
-      minutes,
-      seconds,
-      isBreak,
-      stopwatchTime,
+      elapsedTime,
       adjustTime,
-      setMinutes,
-      setSeconds,
-      setIsBreak,
-      setStopwatchTime,
-      getElapsedTime
+      getRemainingTime,
+      getStopwatchTime,
+      isBreak
     }}>
       {children}
     </TimerContext.Provider>

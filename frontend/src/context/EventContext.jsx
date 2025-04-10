@@ -3,14 +3,29 @@ import axios from 'axios';
 import { api } from '../config/api';
 import { useTimer } from './TimerContext';
 import { useToday } from './TodayContext';
-const SelectionContext = createContext();
+const EventContext = createContext();
 
-export const SelectionProvider = ({ children }) => {
+export const EventProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
   const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
-  const { isBreak, startTimer, resetTimer, mode, setIsBreak, setMinutes, getElapsedTime } = useTimer();
+  const {startTimer, resetTimer, mode, setMinutes, getStopwatchTime } = useTimer();
+  const [breaks, setBreaks] = useState([]);
   const { fetchEvents } = useToday();
+  const [isBreak, setIsBreak] = useState(false);
+  const fetchBreaks = async () => {
+    const response = await axios.get(api.endpoints.breaks);
+    setBreaks(response.data);
+  }
+
+  const transitionToBreak = async () => {
+    setIsBreak(true);
+    if (breaks.length > 0) {
+      createEvent(breaks[0]);
+    } else {
+      setActiveItem(null);
+    }
+  }
 
   const updateEvent = async () => {
     try {
@@ -18,7 +33,7 @@ export const SelectionProvider = ({ children }) => {
       const eventResponse = await axios.put(
         `${api.endpoints.events}/${activeEvent.item_id}`,
         {
-          duration: getElapsedTime(),
+          duration: getStopwatchTime(),
         },
         {
           withCredentials: true
@@ -44,9 +59,13 @@ export const SelectionProvider = ({ children }) => {
       }
 
       // Reset timer and start break
-      resetTimer();
-      setIsBreak(true);
-      setMinutes(5); // Set break time
+      if (!isBreak) {
+        transitionToBreak();
+      }
+      else{
+        setActiveItem(null);
+        setActiveEvent(null);
+      }
       // After successful submission, refetch Today's events
       await fetchEvents();
     } catch (error) {
@@ -62,32 +81,36 @@ export const SelectionProvider = ({ children }) => {
     });
   };
 
-  const createEvent = async ({item}) => {
-    if (!item) {
-      console.error('Item is null or undefined:', item);
+  const createEvent = async ({input}) => {
+    if (!input) {
+      console.error('Input is null or undefined:', input);
       return;
     }
-    console.log('creating event for item', item);
-    setActiveItem(item);
+    console.log('created event for: ', input);
+    setActiveItem(input);
 
     try {
       const eventResponse = await axios.post(api.endpoints.events, {
-        parent_id: item.item_id,
-        parent_type: item.type
+        parent_id: input.item_id,
+        parent_type: input.type
       }, {
         withCredentials: true
       });
 
       console.debug('Event created');
       setActiveEvent(eventResponse.data);
-      startTimer();
+      if (input.duration) {
+        startTimer(input.duration); // habit
+      } else {
+        startTimer(1800000); // value
+      }
     } catch (error) {
       console.error('Error creating event:', error);
     }
   };
 
   return (
-    <SelectionContext.Provider value={{
+    <EventContext.Provider value={{
       activeEvent,
       todos,
       setTodos,
@@ -102,14 +125,14 @@ export const SelectionProvider = ({ children }) => {
       setMinutes
     }}>
       {children}
-    </SelectionContext.Provider>
+    </EventContext.Provider>
   );
 };
 
-export const useSelection = () => {
-  const context = useContext(SelectionContext);
+export const useEvent = () => {
+  const context = useContext(EventContext);
   if (!context) {
-    throw new Error('useSelection must be used within a SelectionProvider');
+    throw new Error('useEvent must be used within a EventProvider');
   }
   return context;
 }; 

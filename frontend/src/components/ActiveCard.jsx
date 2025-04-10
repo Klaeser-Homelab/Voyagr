@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
 import { useTimer } from '../context/TimerContext';
-import { useSelection } from '../context/SelectionContext';
+import { useEvent } from '../context/EventContext';
 import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/outline';
 import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 
-
 function ActiveCard({ item }) {
-  const { todos, setTodos } = useSelection();
+  const { todos, setTodos } = useEvent();
 
   const { 
     startTimer, 
     stopTimer, 
     isActiveEvent, 
-    minutes, 
-    seconds,
     mode,
-    stopwatchTime,
+    getStopwatchTime,
     adjustTime,
-    toggleMode
+    toggleMode,
+    getRemainingTime
   } = useTimer();
+
+  const [displayTime, setDisplayTime] = useState(getRemainingTime());
 
   useEffect(() => {
     console.log('todos updated in activeEvent:', todos);
   }, [todos]);
+
+  useEffect(() => {
+    const { minutes, seconds } = getRemainingTime();
+    setDisplayTime({ minutes, seconds });
+  }, [getRemainingTime]);
 
   useEffect(() => {
   }, [item.item_id]);
@@ -105,9 +108,9 @@ function ActiveCard({ item }) {
          
           <div className="text-2xl font-mono text-white">
             {mode === 'timer' ? (
-              `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+              `${String(displayTime.minutes).padStart(2, '0')}:${String(displayTime.seconds).padStart(2, '0')}`
             ) : (
-              formatTime(stopwatchTime)
+              formatTime(getStopwatchTime())
             )}
           </div>
           <button 

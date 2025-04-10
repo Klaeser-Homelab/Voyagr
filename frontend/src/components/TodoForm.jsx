@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useSelection } from '../context/SelectionContext';
+import { useEvent } from '../context/EventContext';
 function TodoForm({ item, onTodoAdded }) {
-  const { activeEvent } = useSelection();
+  const { activeEvent } = useEvent();
   const [description, setDescription] = useState('');
 
   const handleSubmit = async (e) => {

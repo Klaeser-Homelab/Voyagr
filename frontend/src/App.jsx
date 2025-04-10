@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 
 import { TimerProvider } from './context/TimerContext';
-import { SelectionProvider, useSelection } from './context/SelectionContext';
+import { EventProvider } from './context/EventContext';
 import Today from './components/Today';
 import ValueList from './components/ValueList';
 import HistoryPage from './pages/HistoryPage';
@@ -88,8 +88,7 @@ function App() {
         <Router>
           <TimerProvider>
           <TodayProvider>
-            <SelectionProvider>
-             
+            <EventProvider>
                 <Header />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
@@ -111,7 +110,7 @@ function App() {
                     </ProtectedRoute>
                   } />
                 </Routes>
-              </SelectionProvider>
+              </EventProvider>
             </TodayProvider>
           </TimerProvider>
         </Router>

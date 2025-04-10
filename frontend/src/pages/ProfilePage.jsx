@@ -89,10 +89,9 @@ const ProfilePage = () => {
         <div className="column left-column">
           {values.map(value => (
             <EditValueCard
-              key={value.VID}
+              key={value.item_id}
               value={value}
               onValueEdit={handleValueEdit}
-              onHabitEdit={handleHabitEdit}
               onHabitDelete={handleHabitDelete}
               onHabitCreated={fetchValues}
             />

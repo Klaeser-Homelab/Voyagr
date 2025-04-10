@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import EditHabitCard from './EditHabitCard';
 import HabitForm from './HabitForm';
+import axios from 'axios';
+import { api } from '../config/api';
 
 const EditValueCard = ({ 
   value, 
-  onValueEdit, 
-  onHabitEdit, 
   onHabitDelete,
   onHabitCreated
 }) => {
@@ -15,8 +15,19 @@ const EditValueCard = ({
   const [showHabitForm, setShowHabitForm] = useState(false);
 
   const handleValueEdit = () => {
-    onValueEdit(value, valueName, valueColor);
-    setEditingValue(false);
+    try {
+      axios.put(api.endpoints.values, {
+        item_id: value.item_id,
+        description: valueName,
+        color: valueColor
+      },
+      {
+        withCredentials: true
+      }
+    );
+    } catch (error) {
+      console.error("error updating value", error);
+    }
   };
 
   return (
@@ -88,13 +99,12 @@ const EditValueCard = ({
         </div>
       )}
 
-      {value.Inputs && value.Inputs.length > 0 && (
+      {value.Habits && value.Habits.length > 0 && (
         <div className="p-2 space-y-2">
-          {value.Inputs.map(habit => (
+          {value.Habits.map(habit => (
             <EditHabitCard
-              key={habit.IID}
+              key={habit.item_id}
               habit={{ ...habit, color: value.color }}
-              onHabitEdit={onHabitEdit}
               onHabitDelete={onHabitDelete}
             />
           ))}

@@ -3,12 +3,11 @@ import axios from 'axios';
 import { api } from '../config/api';
 import ValueCard from './ValueCard';
 import ActiveBreakCard from './ActiveBreakCard';
-import { useSelection } from '../context/SelectionContext';
+import { useEvent } from '../context/EventContext';
 import ActiveCard from './ActiveCard';
 
 function ValueList() {
-  const { activeEvent, updateEvent, deleteEvent,
-    isBreak, mode, activeItem } = useSelection();
+  const { isBreak, mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

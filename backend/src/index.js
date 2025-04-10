@@ -75,6 +75,7 @@ console.log('Session middleware configuration:', {
 });
 
 
+
 // Use the routes
 app.use(habitRoutes);
 app.use(valueRoutes);
@@ -98,5 +99,25 @@ const startServer = async () => {
     console.error('Unable to start server:', error);
   }
 };
+
+
+const listRoutes = (app) => {
+  console.log("Listing routes");
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) { // Routes registered directly on the app
+      console.log(`${middleware.route.stack[0].method.toUpperCase()} ${middleware.route.path}`);
+    } else if (middleware.name === 'router') { // Router middleware
+      middleware.handle.stack.forEach((handler) => {
+        const route = handler.route;
+        if (route) {
+          console.log(`${route.stack[0].method.toUpperCase()} ${route.path}`);
+        }
+      });
+    }
+  });
+};
+
+// List all routes
+listRoutes(app);
 
 startServer(); 

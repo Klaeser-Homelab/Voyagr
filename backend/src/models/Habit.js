@@ -23,6 +23,11 @@ const Habit = sequelize.define('Habit', {
       model: Value,
       key: 'item_id'
     }
+  },
+  duration: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 30 * 60 * 1000 // 30 minutes in milliseconds
   }
 }, {
   tableName: 'habits',

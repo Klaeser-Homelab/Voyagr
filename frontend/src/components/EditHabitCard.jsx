@@ -1,19 +1,32 @@
 import React from 'react';
+import axios from 'axios';
+import { api } from '../config/api';
 
 const EditHabitCard = ({
   habit,
-  onHabitEdit,
   onHabitDelete
 }) => {
+  const [localDuration, setLocalDuration] = React.useState(habit.duration);
+  const [localDescription, setLocalDescription] = React.useState(habit.description);
+
   const handleDelete = () => {
     onHabitDelete(habit);
   };
 
-  const handlePropertyChange = (property, value) => {
-    onHabitEdit(habit, habit.description, {
-      ...habit,
-      [property]: value
-    });
+  const updateHabit = (description, duration) => {
+    try {
+      axios.put(api.endpoints.habits, {
+          item_id: habit.item_id,
+          description: description,
+          duration: duration
+        },
+        {
+          withCredentials: true
+        }
+      );
+    } catch (error) {
+      console.error("error updating habit", error);
+    }
   };
 
   return (
@@ -21,12 +34,8 @@ const EditHabitCard = ({
       <div className="flex items-center gap-2">
         <input
           type="text"
-          defaultValue={habit.description}
-          onBlur={(e) => {
-            if (e.target.value !== habit.description) {
-              onHabitEdit(habit, e.target.value);
-            }
-          }}
+          value={localDescription}
+          onChange={(e) => setLocalDescription(e.target.value)}
           className="flex-1 px-2 py-1 border-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
         />
         <button
@@ -42,25 +51,23 @@ const EditHabitCard = ({
       
       <div className="flex items-center gap-4 text-sm">
         <label className="flex items-center gap-2 cursor-pointer">
+          <span className="text-gray-600">Duration (minutes):</span>
           <input
-            type="checkbox"
-            className="checkbox checkbox-primary checkbox-sm"
-            checked={habit.scheduled || false}
-            onChange={(e) => handlePropertyChange('scheduled', e.target.checked)}
+            type="number"
+            className="input input-primary input-sm"
+            value={localDuration / 60000}
+            onChange={(e) => setLocalDuration(e.target.value * 60000)}
           />
-          <span className="text-gray-600">Scheduled</span>
-        </label>
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-primary checkbox-sm"
-            checked={habit.break_suggestion || false}
-            onChange={(e) => handlePropertyChange('break_suggestion', e.target.checked)}
-          />
-          <span className="text-gray-600">Break suggestion</span>
         </label>
       </div>
+
+      <button
+        onClick={() => updateHabit(localDescription, localDuration )}
+        className="text-blue-500 hover:text-blue-700"
+        title="Save changes"
+      >
+        Save
+      </button>
     </div>
   );
 };

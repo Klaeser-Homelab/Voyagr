@@ -1,11 +1,10 @@
 import React from 'react';
 import HabitCard from './HabitCard';
 import { PlayIcon } from '@heroicons/react/24/outline';
-import { useTimer } from '../context/TimerContext';
-import { useSelection } from '../context/SelectionContext';
+import { useEvent } from '../context/EventContext';
 
 function ValueCard({ value }) {
-  const { createEvent } = useSelection();
+  const { createEvent } = useEvent();
 
   return (
     <div 
@@ -16,7 +15,7 @@ function ValueCard({ value }) {
         style={{ backgroundColor: value.color }}
       >
         <h3 className="text-lg font-semibold text-white">{value.description}</h3>
-        <PlayIcon className="size-6 text-white" onClick={() => createEvent({item: value})} />
+        <PlayIcon className="size-6 text-white" onClick={() => createEvent({input: value})} />
       </div>
       
       {value.Habits && value.Habits.length > 0 && (

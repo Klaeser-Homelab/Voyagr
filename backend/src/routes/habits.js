@@ -91,16 +91,16 @@ router.get('/api/habits/:id', requireAuth, async (req, res) => {
 });
 
 // UPDATE habit
-router.put('/api/habits/:id', requireAuth, async (req, res) => {
+router.put('/api/habits', requireAuth, async (req, res) => {
   try {
-    const { description, parent_id } = req.body;
-    const habit = await Habit.findByPk(req.params.id);
+    const { item_id, description, duration } = req.body;
+    const habit = await Habit.findByPk(item_id);
     
     if (!habit) {
       return res.status(404).json({ error: 'Habit not found' });
     }
 
-    await habit.update({ description, parent_id });
+    await habit.update({ description, duration });
     
     // Return the updated habit with its item data
     const fullHabit = await Habit.findByPk(habit.item_id, {
