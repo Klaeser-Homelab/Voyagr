@@ -2,20 +2,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import { useTimer } from './TimerContext';
+import { useToday } from './TodayContext';
 const SelectionContext = createContext();
 
 export const SelectionProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
-  const [todos, setTodos] = useState(null);
+  const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
   const { isBreak, startTimer, resetTimer, mode, setIsBreak, setMinutes, getElapsedTime } = useTimer();
+  const { fetchEvents } = useToday();
 
   const updateEvent = async () => {
-    if (!activeEvent.item) {
-      console.warn('No item selected, cannot submit session');
-      return;
-    }
-
     try {
       // Update duration of event
       const eventResponse = await axios.put(
@@ -27,20 +24,22 @@ export const SelectionProvider = ({ children }) => {
           withCredentials: true
         }
       );
+
+      console.log('updating todos', todos);
       
       // Process completed todos with the event ID
       const completedTodos = todos
         .filter(todo => todo.completed)
         .map(todo => ({
           ...todo,
-          EID: eventResponse.data.EID // Add the event ID to each completed todo
+          parent_id: activeEvent.item_id   // Add the event ID to each completed todo
         }));
       
       console.log('Completed todos:', completedTodos);
       if (completedTodos.length > 0) {
-        await axios.post(`${api.endpoints.todos}/batchprocess`, {
+        await axios.post(`${api.endpoints.todos}/batchprocess`, completedTodos, {
           withCredentials: true,
-        }, completedTodos);
+        });
         console.log('Completed todos processed:', completedTodos);
       }
 
@@ -48,7 +47,6 @@ export const SelectionProvider = ({ children }) => {
       resetTimer();
       setIsBreak(true);
       setMinutes(5); // Set break time
-
       // After successful submission, refetch Today's events
       await fetchEvents();
     } catch (error) {
@@ -62,22 +60,6 @@ export const SelectionProvider = ({ children }) => {
     await axios.delete(`${api.endpoints.events}/${activeEvent.item_id}`, {
       withCredentials: true,
     });
-  };
-
-  const fetchTodos = async (parent_id) => {
-    if (!parent_id) {
-      throw new Error('parent_id is null');
-    }
-    try {
-      const response = await axios.get(`${api.endpoints.todos}/${parent_id}`, {
-        withCredentials: true
-      });
-
-      console.debug('Todos fetched:', response.data);
-      setTodos(response.data);
-    } catch (error) {
-      console.error('Error fetching todos:', error);
-    }
   };
 
   const createEvent = async ({item}) => {
@@ -98,8 +80,6 @@ export const SelectionProvider = ({ children }) => {
 
       console.debug('Event created');
       setActiveEvent(eventResponse.data);
-      fetchTodos(eventResponse.data.item_id);
-      
       startTimer();
     } catch (error) {
       console.error('Error creating event:', error);

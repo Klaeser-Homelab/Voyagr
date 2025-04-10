@@ -32,11 +32,9 @@ router.get('/api/events', requireAuth, async (req, res) => {
   }
 });
 
-// GET today's events for the current user
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
-    
-    // First get today's events for the user
+    // Get today's events for the user's items
     const events = await Event.findAll({
       include: [
         {
@@ -50,65 +48,45 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
           required: true
         },
         {
-          model: Todo,
-          attributes: ['item_id', 'description', 'completed', 'updated_at'],
-          where: {
-            completed: true
-          },
+          model: Value,
+          attributes: ['color'],
+          required: false
+        },
+        {
+          model: Habit,
+          attributes: [],
+          include: [{
+            model: Value,
+            attributes: ['color']
+          }],
           required: false
         }
       ]
     });
 
-    // Get event IDs to fetch related data
+    // Get todos associated with today's events
     const eventIds = events.map(event => event.item_id);
-    const parentIds = events.map(event => event.parent_id);
-    
-    // Get values and habits in separate queries
-    const values = await Value.findAll({
+    const todos = await Todo.findAll({
       where: {
-        item_id: parentIds
-      },
-      attributes: ['item_id', 'description', 'color']
-    });
-    
-    const habits = await Habit.findAll({
-      where: {
-        item_id: parentIds
-      },
-      attributes: ['item_id', 'description'],
-      include: [{
-        model: Value,
-        attributes: ['color']
-      }]
-    });
-    
-    // Create maps for efficient lookups
-    const valueMap = new Map(values.map(value => [value.item_id, value]));
-    const habitMap = new Map(habits.map(habit => [habit.item_id, habit]));
-    
-    // Enrich events with related data
-    const enrichedEvents = events.map(event => {
-      const eventData = event.toJSON();
-      
-      if (event.parent_type === 'value') {
-        const value = valueMap.get(event.parent_id);
-        if (value) {
-          eventData.valueDescription = value.description;
-          eventData.color = value.color;
-        }
-      } else if (event.parent_type === 'habit') {
-        const habit = habitMap.get(event.parent_id);
-        if (habit) {
-          eventData.habitDescription = habit.description;
-          eventData.color = habit.Value?.color;
-        }
+        parent_id: eventIds
       }
-      
+    });
+
+    // Combine events and todos
+    const eventsWithTodos = events.map(event => {
+      const eventData = event.toJSON();
+      eventData.todos = todos.filter(todo => todo.parent_id === event.item_id);
+
+      if(event.parent_type === 'value') {
+        eventData.color = event.Value?.color;
+      } else if (event.parent_type === 'habit') {
+        eventData.color = event.Habit?.Value?.color;
+      }
+
       return eventData;
     });
 
-    res.json(enrichedEvents);
+    res.json(eventsWithTodos);
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({ error: error.message });

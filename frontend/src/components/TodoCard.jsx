@@ -9,17 +9,7 @@ const TodoCard = ({todo, onToggle, onDelete}) => {
   const handleToggle = () => {
     const newCompleted = !completed;
     setCompleted(newCompleted);
-    onToggle(todo.DOID, newCompleted);
-  };
-
-  const handleDelete = async (todoId) => {
-    try {
-      await axios.delete(`${api.endpoints.todos}/${todoId}`);
-      console.debug("Todo deleted:", todoId);
-      onDelete(todoId); // Update local state after successful deletion
-    } catch (error) {
-      console.error("Error deleting todo:", error);
-    }
+    onToggle(todo);
   };
 
    return (
@@ -42,7 +32,7 @@ const TodoCard = ({todo, onToggle, onDelete}) => {
         {isHovered && (
         <button
           className="text-red-500 hover:text-red-700"
-          onClick={() => handleDelete(todo.DOID)}
+          onClick={() => onDelete(todo)}
         >
           ✕
         </button>

@@ -45,7 +45,21 @@ const HowItsMade = () => {
       </p>
       <h3 className="text-xl font-semibold mt-4">Environment Variables and Secrets</h3>
       <p>Environment variables are hardcoded in <kbd className="kbd">deploy.yaml</kbd>. Vite requires the environment variables to be passed in at buildtime. The frontend contains no secrets so this isn't a security issue. Secrets used by the backend are hosted by GitHub Secrets and passed in as variables to the <kbd className="kbd">deploy.yaml</kbd> and onto the container runtime from there.</p>
-
+    <h2 className="text-xl font-semibold mt-4">Challenges</h2>
+    <p>
+      Unclear requirement - todos: I didn't intend for Voyagr to be todo app but I wanted a way to support a user thinking through what they needed to accomplish in an active session. 
+      This could have been done with a free form text body but I found that unstructured when I used Session so I introduced todos. With any todo feature you can create todos ahead of time and work on them later so that is what I created. 
+      Todos could be created in values or habits and were pulled into the active session.
+      This confused the data model because the parents of todos could either be a value, a habit, or an event. 
+      I could have made it work but instead I took a step back and decided that todos cannot be created ahead of time.
+      With that decision, I get the actual value I set out to get, adding structure to the event and don't take on the complexity of a todo app.
+      Environment variables: At first, I didn't think to provide environment variables as part of the docker container. Instead I manually added them to the environment of the container. Just like the old days, this was a pain to debug because I had to log on to servers.
+      So I decided to manage the environment variables in code. Unfortunately, I hadn't yet disambiguated the <kbd className="kbd">deploy.yaml</kbd> from the <kbd className="kbd">Dockerfiles</kbd> or the <kbd className="kbd">docker-compose.prod.yml</kbd> so my original attempt was a shot in the dark.
+      Eventually I took the time and understood the docker deployment workflow. I also made my repo public which enabled me to use GitHub hosted Environment Variables and Secrets. I admittedly, committed some secrets in code along the way but I've since changed them.
+      I'm very happy with the result as environment variables are now easily debugged.
+      Too much flexibility too early: Events can be initiated from either values or habits. This is so that a user doesn't have to have a specific habit that represents everything they do for that value.
+      I though this flexibility was a nice feature but I would rather have built a simpler solution first and then adjusted it. Something I don't understand is whether the incremental approach that works so well for the frontend extends to the data model.
+    </p>
     </div>
   );
 }

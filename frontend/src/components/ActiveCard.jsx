@@ -7,10 +7,9 @@ import { PlayIcon, PauseIcon, ClockIcon, StopIcon } from '@heroicons/react/24/ou
 import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 
+
 function ActiveCard({ item }) {
   const { todos, setTodos } = useSelection();
-
-  console.log('activeEvent', activeEvent);
 
   const { 
     startTimer, 
@@ -38,15 +37,13 @@ function ActiveCard({ item }) {
   };
 
   const toggleTodo = (todo) => {
+    console.log('toggling todo', todo);
     todo.completed = !todo.completed;
   };
 
   const deleteTodo = (todo) => {
     const newTodos = todos.filter(t => t.item_id !== todo.item_id);
     setTodos(newTodos);
-    axios.delete(`${api.endpoints.todos}/${todo.item_id}`, {
-      withCredentials: true
-    });
   };
 
   const addTodo = (todo) => {
@@ -126,13 +123,14 @@ function ActiveCard({ item }) {
       </div>
       
       <div className="p-2 space-y-2">
-        {todos.map(todo => (
-          <Todo 
-            key={todo.item_id} 
-            todo={todo} 
-            onToggle={toggleTodo}
-            onDelete={deleteTodo}
-          />
+      {todos.length > 0 &&
+    todos.map(todo => (
+      <Todo 
+        key={todo.item_id} 
+        todo={todo} 
+        onToggle={toggleTodo}
+        onDelete={deleteTodo}
+      />
         ))}
         <TodoForm 
           item={item}

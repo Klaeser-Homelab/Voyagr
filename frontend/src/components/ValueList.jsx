@@ -4,7 +4,6 @@ import { api } from '../config/api';
 import ValueCard from './ValueCard';
 import ActiveBreakCard from './ActiveBreakCard';
 import { useSelection } from '../context/SelectionContext';
-import { useToday } from '../context/TodayContext';
 import ActiveCard from './ActiveCard';
 
 function ValueList() {

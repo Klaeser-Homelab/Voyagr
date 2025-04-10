@@ -13,6 +13,7 @@ router.post('/api/todos', requireAuth, async (req, res) => {
       type: 'todo'
     });
 
+    // Parent is an event not a habit or value
     const { description, parent_id, parent_type } = req.body;
     
     const todo = await Todo.create({
@@ -98,6 +99,17 @@ router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
   }
 });
 
+router.post('/api/todos/batchprocess', requireAuth, async (req, res) => {
+  try {
+    const todos = req.body;
+    for (const todo of todos) {
+      await Todo.update({ parent_id: todo.parent_id }, { where: { item_id: todo.item_id } });
+    }
+    res.status(200).json({ message: 'Todos updated' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // GET incomplete todos for a specific habit for the current user
 router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
   try {

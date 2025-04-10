@@ -87,8 +87,9 @@ function App() {
       <ThemeProvider>
         <Router>
           <TimerProvider>
+          <TodayProvider>
             <SelectionProvider>
-              <TodayProvider>
+             
                 <Header />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
@@ -110,8 +111,8 @@ function App() {
                     </ProtectedRoute>
                   } />
                 </Routes>
-              </TodayProvider>
-            </SelectionProvider>
+              </SelectionProvider>
+            </TodayProvider>
           </TimerProvider>
         </Router>
       </ThemeProvider>
