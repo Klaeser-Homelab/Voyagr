@@ -63,11 +63,11 @@ function Today() {
                         {event.inputName || event.valueName}
                       </span>
                     </div>
-                    {event.Todos && event.Todos.length > 0 && (
+                    {event.todos && event.todos.length > 0 && (
                       <div className="pl-4 text-sm space-y-1">
-                        {event.Todos.map(todo => (
+                        {event.todos.map(todo => (
                           <div key={todo.item_id} className="flex items-center gap-2">
-                            <span className="text-base-content/70">•</span>
+                            <span className="text-base-content/70">✓</span>
                             <span>{todo.description}</span>
                           </div>
                         ))}
