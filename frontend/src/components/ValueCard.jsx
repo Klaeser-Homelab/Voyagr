@@ -8,7 +8,7 @@ function ValueCard({ value }) {
 
   return (
     <div 
-      className={`bg-base-100 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg`}
+      className={`bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg`}
     >
       <div 
         className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"

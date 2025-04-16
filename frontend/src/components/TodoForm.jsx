@@ -49,8 +49,8 @@ function TodoForm({ item, onTodoAdded }) {
               handleSubmit(e);
             }
           }}
-          placeholder="Enter todo description"
-          className="input input-bordered flex-1 bg-gray-100"
+          placeholder="Enter todo"
+          className="input input-bordered flex-1 bg-gray-700 placeholder:text-white"
           required
         />
       </div>

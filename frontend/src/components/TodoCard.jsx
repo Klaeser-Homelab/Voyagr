@@ -13,7 +13,7 @@ const TodoCard = ({todo, onToggle, onDelete}) => {
   };
 
    return (
-    <div className="flex items-center gap-2 w-full bg-gray-100 p-2 rounded-md"
+    <div className="flex items-center gap-2 w-full bg-gray-600 p-2 rounded-md"
     onMouseEnter={() => setIsHovered(true)} // Show "X" on hover
     onMouseLeave={() => setIsHovered(false)} // Hide "X" when not hovering
     >

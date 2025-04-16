@@ -29,7 +29,7 @@ function Today() {
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   return (
-    <div className="container mx-auto max-w-2xl rounded-lg bg-base-100 shadow-lg p-4">
+    <div className="w-full border-t-2 border-gray-700 bg-gray-800 shadow-lg p-10">
       <EventBar completedEvents={events} />
       <Link to="/history" className="link link-hover text-base-content/70">
         History

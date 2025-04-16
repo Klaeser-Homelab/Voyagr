@@ -34,10 +34,10 @@ const HabitCard = ({ habit}) => {
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: habit.color }}
             />
-            <h4 className="text-gray-700">{habit.description}</h4>
+            <h4 className="text-white">{habit.description}</h4>
             </div>
             </>
-            <PlayIcon className="size-6 text-black" onClick={handleInputClick} />
+            <PlayIcon className="size-6 text-white" onClick={handleInputClick} />
           </div>
           
           {/* Schedule information */}

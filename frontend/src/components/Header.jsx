@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
-import ChooseTheme from './ChooseTheme';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth0 } from '@auth0/auth0-react';
 import { api } from '../config/api';
 import axios from 'axios';
-
+import logo from '../assets/star.png';
 const Header = () => {
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
@@ -35,11 +34,11 @@ const Header = () => {
   };
   
   return (
-    <header className="navbar bg-base-100 shadow-md">
+    <header className="navbar shadow-md">
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost normal-case text-xl">
+        <Link to="/" className="flex items-center text-xl">
           <img 
-            src={`${currentTheme.image}`}
+            src={logo}
             alt="Logo" 
             className="w-10 h-10 object-cover rounded-full" 
           />

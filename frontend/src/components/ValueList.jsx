@@ -40,11 +40,7 @@ function ValueList() {
 
   if (!activeEvent) {
     return (
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold mb-4">Start an Activity</h2>
-        </div>
-
+      <div className="md:py-14 lg:py-20 xl:py-28">
         <div className="container mx-auto grid md:grid-cols-2 gap-4">
           {values.map(value => (
             <div key={value.item_id}>
@@ -61,16 +57,14 @@ function ValueList() {
 
   if (activeEvent) {
     return (
-      <div className="p-4">
-      <div className="flex flex-wrap items-center justify-between mb-6">
-      <h2 className="text-2xl font-bold mb-4">Current Activity</h2>
-        <div className="flex items-center gap-4">
-<button 
-  onClick={deleteEvent}
-  className={`btn btn-dash btn-error`}
->
-  Abandon Session
-</button>
+      <div className="md:py-14 lg:py-20 xl:py-28">
+        <div className="flex items-center justify-center gap-4 p-4">
+          <button 
+            onClick={deleteEvent}
+            className={`btn btn-dash btn-error`}
+          >
+            Abandon Session
+          </button>
           <button 
             onClick={updateEvent}
             className={`btn btn-success ${mode === 'timer' ? 'btn-dash' : ''}`}
@@ -78,7 +72,6 @@ function ValueList() {
             Submit Session
           </button>
         </div>
-      </div>
 
       <div className="min-w-[30vw] flex-1 basis-[40vw]">
         <ActiveCard 

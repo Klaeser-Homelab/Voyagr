@@ -83,11 +83,11 @@ function ActiveCard({ item }) {
           </button>
         </div>
       </div>
-      <div className="flex flex-row justify-end items-center bg-base-100 gap-2">
+      <div className="flex flex-row justify-end items-center bg-gray-800 gap-2">
         <TimerControls mode={mode} />
       </div>
 
-      <div className="p-2 space-y-2">
+      <div className="p-2 space-y-2 bg-gray-800">
       {todos.length > 0 &&
     todos.map(todo => (
       <Todo 

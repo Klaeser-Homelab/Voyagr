@@ -37,17 +37,14 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-base-200">
-      <div className="drawer lg:drawer-open">
-        <input id="main-drawer" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content flex flex-col">
+        <div className="flex flex-col gap-80">
+          <div className="radial-glow"></div>
           <ValueList />
-          <div className="flex-1 p-4 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+          <div className="w-full">
             <Today />
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

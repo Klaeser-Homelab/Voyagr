@@ -8,8 +8,22 @@ const WelcomePage = () => {
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
 
+  const RadialGlow = styled.div`
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
+  background: radial-gradient(circle at 50% 0%, rgb(95, 90, 249, 0.3), transparent);
+  pointer-events: none;
+  z-index: 50;
+`;
+
   return (
     <div className="min-h-screen bg-base-200 flex flex-col">
+      <RadialGlow />
       <div className="flex-grow bg-base-200">
         
         
@@ -118,5 +132,6 @@ const WelcomePage = () => {
     </div>
   );
 };
+
 
 export default WelcomePage; 
