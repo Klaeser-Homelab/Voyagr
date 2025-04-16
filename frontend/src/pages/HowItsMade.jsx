@@ -1,10 +1,15 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import schema from '../assets/schema.jpg';
+import Header from '../components/Header';
+
 const HowItsMade = () => {
   const { theme, themeData, handleThemeChange } = useTheme();
 
   return (
+    <div>
+      <Header />
+    
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-4">How it's made</h1>
       <p>This page describes Voyagr's architecture.</p>
@@ -60,6 +65,7 @@ const HowItsMade = () => {
       Too much flexibility too early: Events can be initiated from either values or habits. This is so that a user doesn't have to have a specific habit that represents everything they do for that value.
       I though this flexibility was a nice feature but I would rather have built a simpler solution first and then adjusted it. Something I don't understand is whether the incremental approach that works so well for the frontend extends to the data model.
     </p>
+    </div>
     </div>
   );
 }

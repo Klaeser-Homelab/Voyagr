@@ -5,7 +5,6 @@ import { useToday } from '../context/TodayContext';
 
 function Today() {
   const { events, loading, error, fetchEvents } = useToday();
-  const currentHour = new Date().getHours();
   
   useEffect(() => {
     fetchEvents();
@@ -29,25 +28,22 @@ function Today() {
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   return (
-    <div className="w-full border-t-2 border-gray-700 bg-gray-800 shadow-lg p-10">
+    <div className="border-t-2 border-gray-700 bg-gray-800 shadow-lg p-5 h-full flex flex-col">
       <EventBar completedEvents={events} />
       <Link to="/history" className="link link-hover text-base-content/70">
         History
       </Link>
       <h2 className="text-2xl font-bold mb-4">Today's Activity</h2>
-      <div className="flex flex-col gap-4">
-        {Array.from(
-          { length: Math.max(0, currentHour - 7) }, 
-          (_, i) => currentHour - i
-        ).filter(hour => hour >= 8).map(hour => {
+      <div className="flex-1 flex flex-col gap-4">
+        {Array.from({ length: 13 }, (_, i) => i + 8).map(hour => {
           const eventsInHour = getEventsForHour(hour);
           return (
-            <div key={hour} className="flex flex-wrap gap-4 py-2 border-b border-base-200">
+            <div key={hour} className="flex flex-wrap gap-4 py-2 border-b border-base-200 flex-grow">
               <div className="w-20 font-medium text-base-content/70">
                 {formatHour(hour)}
               </div>
               <div className="flex-1 w-fit flex flex-col gap-2">
-                {eventsInHour.reverse().map(event => (
+                {eventsInHour.map(event => (
                   <div 
                     key={event.item_id} 
                     className="card bg-base-200 p-2 flex flex-col gap-2"

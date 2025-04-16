@@ -9,15 +9,43 @@ import ValueList from './components/ValueList';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import VoyagePage from './pages/VoyagePage';
-import Header from './components/Header';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 import WelcomePage from './pages/WelcomePage';
 import Callback from './components/Callback';
 import HowItsMade from './pages/HowItsMade';
 import { BreakCycleProvider } from './context/BreakCycleContext';
+import Menu from './components/Menu';
+import Settings from './components/Settings';
+
+const useIsLarge = () => {
+  const [isLarge, setIsLarge] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)'); // Tailwind's 'lg' breakpoint is 1024px
+
+    const handleMediaQueryChange = (event) => {
+      setIsLarge(event.matches);
+    };
+
+    // Set initial value
+    setIsLarge(mediaQuery.matches);
+
+    // Add event listener
+    mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      mediaQuery.removeEventListener('change', handleMediaQueryChange);
+    };
+  }, []);
+
+  return isLarge;
+};
+
 
 function AppContent() {
+  const isLarge = useIsLarge();
   const { isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) {
@@ -36,15 +64,15 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-base-200">
-        <div className="flex flex-col gap-80">
+        <div className="flex flex-col flex-grow overflow-y-auto h-full lg:flex-row justify-between gap-20">
           <div className="radial-glow"></div>
-          <ValueList />
-          <div className="w-full">
+          <div className="flex-grow flex justify-center w-full">
+            <ValueList />
+          </div>
+          <div className="hidden lg:block w-full max-w-2xl">
             <Today />
           </div>
         </div>
-      </div>
   );
 }
 
@@ -64,7 +92,7 @@ function ProtectedRoute({ children }) {
   }
   
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <WelcomePage />;
   }
   
   return children;
@@ -89,9 +117,13 @@ function App() {
           <TodayProvider>
             <BreakCycleProvider>
               <EventProvider>
-                <Header />
+              <div className="flex flex-col h-screen lg:flex-row justify-between gap-20">
+              <Menu />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
+                  <Route path="/welcome" element={<WelcomePage />} />
+                  <Route path="/today" element={<Today />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="/how-its-made" element={<HowItsMade />} />
                   <Route path="/auth/callback" element={<Callback />} />
                   <Route path="/history" element={
@@ -110,6 +142,7 @@ function App() {
                     </ProtectedRoute>
                   } />
                 </Routes>
+              </div>
               </EventProvider>
               </BreakCycleProvider>
             </TodayProvider>

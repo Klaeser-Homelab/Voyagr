@@ -31,13 +31,13 @@ const EditValueCard = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg">
+    <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg">
       <div 
-        className="p-4 transition-colors duration-200"
+        className="p-4 cursor-pointer transition-colors duration-200"
         style={{ backgroundColor: value.color }}
       >
         {editingValue ? (
-          <div className="space-y-4">
+          <div className="flex flex-col items-center justify-between space-y-4">
             <input
               type="text"
               value={valueName}
@@ -54,13 +54,13 @@ const EditValueCard = ({
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setEditingValue(false)}
-                className="px-3 py-1 text-white hover:text-gray-200"
+                className="btn btn-error px-3 py-1 hover:text-gray-200"
               >
                 Cancel
               </button>
               <button
                 onClick={handleValueEdit}
-                className="px-3 py-1 bg-white text-gray-800 rounded hover:bg-gray-100"
+                className="btn btn-primary px-3 py-1"
               >
                 Save
               </button>
@@ -68,22 +68,22 @@ const EditValueCard = ({
           </div>
         ) : (
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">{value.description}</h3>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setEditingValue(true)}
-                className="text-white hover:text-gray-200"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => setShowHabitForm(!showHabitForm)}
-                className="text-white hover:text-gray-200"
-              >
-                {showHabitForm ? 'Hide Habit Form' : 'Add Habit'}
-              </button>
+              <h3 className="text-lg font-semibold text-white">{value.description}</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEditingValue(true)}
+                  className="text-white hover:text-gray-200"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => setShowHabitForm(!showHabitForm)}
+                  className="btn btn-primary text-white hover:text-gray-200"
+                >
+                  +
+                </button>
+              </div>
             </div>
-          </div>
         )}
       </div>
       

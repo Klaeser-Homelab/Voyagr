@@ -40,8 +40,8 @@ function ValueList() {
 
   if (!activeEvent) {
     return (
-      <div className="md:py-14 lg:py-20 xl:py-28">
-        <div className="container mx-auto grid md:grid-cols-2 gap-4">
+        <div className="container p-14 w-full max-w-md flex flex-col gap-4">
+          <h1 className="text-2xl text-center font-bold">What's next?</h1>
           {values.map(value => (
             <div key={value.item_id}>
               <ValueCard 
@@ -51,7 +51,6 @@ function ValueList() {
             </div>
           ))}
         </div>
-      </div>
     );
   }
 

@@ -8,30 +8,8 @@ import logo from '../assets/star.png';
 const Header = () => {
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
-  const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+  const { loginWithRedirect, user } = useAuth0();
 
-  const handleLogout = async () => {
-    try {
-      // First, log out from our backend to destroy the session
-      await axios.post(`${api.endpoints.users}/logout`, {}, { withCredentials: true });
-      console.log('Backend logout successful');
-      
-      // Then, log out from Auth0
-      logout({ 
-        logoutParams: {
-          returnTo: window.location.origin 
-        }
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Still try to logout from Auth0 even if backend logout fails
-      logout({ 
-        logoutParams: {
-          returnTo: window.location.origin 
-        }
-      });
-    }
-  };
   
   return (
     <header className="navbar shadow-md">
@@ -46,48 +24,6 @@ const Header = () => {
         </Link>
       </div>
       <div className="flex gap-2">
-        {isAuthenticated ? (
-          <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-              {user?.picture ? (
-                <img
-                  alt="User avatar"
-                  src={user.picture}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <UserCircleIcon className="w-10 h-10" />
-              )}
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 shadow">
-              <li>
-                <Link to="/profile">
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link to="/voyage">
-                  Change Voyage
-                </Link>
-              </li>
-              <li>
-                <Link to="/history">
-                  History
-                </Link>
-              </li>
-              <li>
-                <button 
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </li>
-            </ul>
-          </div>
-        ) : (
-          <div className="flex gap-2">
             <button
               onClick={() => loginWithRedirect()}
               className="btn btn-primary"
@@ -104,8 +40,6 @@ const Header = () => {
             >
               Sign Up
             </button>
-          </div>
-        )}
       </div>
     </header>
   );
