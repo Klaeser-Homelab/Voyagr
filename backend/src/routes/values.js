@@ -2,7 +2,7 @@ const express = require('express');
 const requireAuth = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 // GET all values
 router.get('/api/values', requireAuth, async (req, res) => {  
@@ -16,6 +16,36 @@ router.get('/api/values', requireAuth, async (req, res) => {
           ]
         }
       }],
+      order: [['created_at', 'DESC']],
+      attributes: {
+        include: [
+          [Sequelize.literal("'value'"), 'type'] // Hardcode the type as 'value'
+        ]
+      }
+    });
+    res.json(values);
+  } catch (error) {
+    console.log('Error in /api/values:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/values/no-default-breaks', requireAuth, async (req, res) => {  
+  try {
+    const values = await Value.findAll({
+      include: [{    
+        model: Habit,
+        attributes: {
+          include: [
+            [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+          ]
+        }
+      }],
+      where: {
+        description: {
+          [Op.ne]: 'Default Break' // Exclude 'Default Break'
+        }
+      },
       order: [['created_at', 'DESC']],
       attributes: {
         include: [

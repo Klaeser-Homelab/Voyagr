@@ -34,7 +34,6 @@ router.get('/api/events', requireAuth, async (req, res) => {
 
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
-    // Get today's events for the user's items
     const events = await Event.findAll({
       include: [
         {
@@ -45,23 +44,20 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
               [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
             }
           },
+          attributes: [],
           required: true
         },
         {
           model: Value,
-          attributes: ['color'],
+          attributes: ['description', 'color'],
           required: false
         },
         {
           model: Habit,
-          attributes: [],
-          include: [{
-            model: Value,
-            attributes: ['color']
-          }],
+          attributes: ['description'],
           required: false
         }
-      ]
+      ],
     });
 
     // Get todos associated with today's events
@@ -77,14 +73,17 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
       const eventData = event.toJSON();
       eventData.todos = todos.filter(todo => todo.parent_id === event.item_id);
 
-      if(event.parent_type === 'value') {
-        eventData.color = event.Value?.color;
+      eventData.color = event.Value.color;
+
+      if(event.parent_habit_id == null) {
+        eventData.description = event.Value.description;
       } else if (event.parent_type === 'habit') {
-        eventData.color = event.Habit?.Value?.color;
+        eventData.description = event.Habit?.description;
       }
 
       return eventData;
     });
+
 
     res.json(eventsWithTodos);
   } catch (error) {
@@ -102,17 +101,16 @@ router.post('/api/events', requireAuth, async (req, res) => {
       type: 'event'
     });
 
-    const { parent_id, duration, parent_type } = req.body;
+    const { parent_value_id, parent_habit_id } = req.body;
     
     // parent_id (Value ID) is required
-    if (!parent_id) {
-      return res.status(400).json({ error: 'parent_id is required' });
+    if (!parent_value_id) {
+      return res.status(400).json({ error: 'parent_value_id is required' });
     }
     const event = await Event.create({
       item_id: item.id,
-      parent_id: parent_id,
-      duration: duration,
-      parent_type: parent_type
+      parent_value_id: parent_value_id,
+      parent_habit_id: parent_habit_id
     });
 
     res.status(201).json(event);

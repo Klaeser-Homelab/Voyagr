@@ -37,11 +37,11 @@ const getEventSegments = ({ completedEvents }) => {
 
   // Group events by value and sum their durations
   const valueSegments = completedEvents.reduce((acc, event) => {
-    const valueId = event.VID;
+    const valueId = event.parent_value_id;
     
     if (!acc[valueId]) {
       acc[valueId] = {
-        name: event.valueName || 'Unknown Value',
+        name: event.description,
         color: event.color || '#ddd',
         totalDuration: 0
       };
@@ -79,7 +79,7 @@ const getEventSegments = ({ completedEvents }) => {
   // Add remaining time segment if there is any
   if (remainingDuration > 0) {
     segments.push({
-      name: 'remaining',
+      name: 'Upcoming',
       color: '#f5f5f5',
       percent: ((remainingDuration / workdayMinutes) * 100).toFixed(1)
     });

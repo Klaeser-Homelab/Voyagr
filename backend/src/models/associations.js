@@ -18,8 +18,8 @@ Event.belongsTo(Item, { foreignKey: 'item_id' });
 Item.hasOne(Event, { foreignKey: 'item_id' });
 
 Event.hasMany(Todo, { foreignKey: 'parent_id' });
-Event.belongsTo(Value, {foreignKey: 'parent_id',});
-Event.belongsTo(Habit, {foreignKey: 'parent_id',});
+Event.belongsTo(Value, {foreignKey: 'parent_value_id',});
+Event.belongsTo(Habit, {foreignKey: 'parent_habit_id',});
 
 // Todo associations
 Todo.belongsTo(Item, { foreignKey: 'item_id' });

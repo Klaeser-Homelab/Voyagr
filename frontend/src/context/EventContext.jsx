@@ -3,6 +3,7 @@ import axios from 'axios';
 import { api } from '../config/api';
 import { useTimer } from './TimerContext';
 import { useToday } from './TodayContext';
+import { useBreakCycle } from './BreakCycleContext';
 const EventContext = createContext();
 
 export const EventProvider = ({ children }) => {
@@ -10,18 +11,14 @@ export const EventProvider = ({ children }) => {
   const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
   const {startTimer, resetTimer, mode, setMinutes, getStopwatchTime } = useTimer();
-  const [breaks, setBreaks] = useState([]);
   const { fetchEvents } = useToday();
-  const [isBreak, setIsBreak] = useState(false);
-  const fetchBreaks = async () => {
-    const response = await axios.get(api.endpoints.breaks);
-    setBreaks(response.data);
-  }
+  const { getBreak } = useBreakCycle();
 
   const transitionToBreak = async () => {
-    setIsBreak(true);
-    if (breaks.length > 0) {
-      createEvent(breaks[0]);
+    let breakItem = getBreak();
+    console.log('breakItem', breakItem);
+    if (breakItem) {
+      createEvent({input: breakItem});
     } else {
       setActiveItem(null);
     }
@@ -59,7 +56,7 @@ export const EventProvider = ({ children }) => {
       }
 
       // Reset timer and start break
-      if (!isBreak) {
+      if (!activeItem.is_break) {
         transitionToBreak();
       }
       else{
@@ -86,18 +83,28 @@ export const EventProvider = ({ children }) => {
       console.error('Input is null or undefined:', input);
       return;
     }
-    console.log('created event for: ', input);
     setActiveItem(input);
+
+    let parent_value_id = null;
+    let parent_habit_id = null;
+    if(input.type === 'habit') {
+      parent_habit_id = input.item_id;
+      parent_value_id = input.parent_id;
+    } else if(input.type === 'value') {
+      parent_value_id = input.item_id;
+    }
 
     try {
       const eventResponse = await axios.post(api.endpoints.events, {
-        parent_id: input.item_id,
-        parent_type: input.type
+        parent_value_id: parent_value_id,
+        parent_habit_id: parent_habit_id
       }, {
         withCredentials: true
       });
 
-      console.debug('Event created');
+      console.log('input', input);
+      console.log('eventResponse', eventResponse.data);
+
       setActiveEvent(eventResponse.data);
       if (input.duration) {
         startTimer(input.duration); // habit
@@ -118,10 +125,8 @@ export const EventProvider = ({ children }) => {
       deleteEvent,
       updateEvent,
       createEvent,
-      isBreak,
       resetTimer,
       mode,
-      setIsBreak,
       setMinutes
     }}>
       {children}

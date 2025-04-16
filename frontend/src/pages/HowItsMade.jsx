@@ -20,7 +20,7 @@ const HowItsMade = () => {
     <h4>Toggle the theme. Notice I have not implemented a theme responsive icon yet.</h4>
     
   </div>
-      <h3 className="text-xl font-semibold mt-4">Flexible - Works on Mobile</h3>
+      <h3 className="text-xl font-semibold mt-4">Responsive</h3>
       <p>Works just as well on mobile. Use dev tools to see for yourself. Steps: <kbd className="kbd">Right click</kbd> - <kbd className="kbd">Inspect</kbd> - <kbd className="kbd">toggle device toolbar</kbd> - <kbd className="kbd">Dimension tool</kbd> - <kbd className="kbd">switch to iPhone view</kbd>.</p>
 
       <h2 className="text-2xl font-semibold mt-6">Backend</h2>

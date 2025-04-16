@@ -29,11 +29,13 @@ const HabitCard = ({ habit}) => {
         <div className="flex-grow">
           <div className="flex items-center justify-between space-x-2">
             <>
+            <div className="flex items-center space-x-2">
             <div 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: habit.color }}
             />
             <h4 className="text-gray-700">{habit.description}</h4>
+            </div>
             </>
             <PlayIcon className="size-6 text-black" onClick={handleInputClick} />
           </div>

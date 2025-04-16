@@ -29,7 +29,7 @@ function Today() {
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   return (
-    <div className="bg-base-100 shadow-lg p-4 w-full">
+    <div className="container mx-auto max-w-2xl rounded-lg bg-base-100 shadow-lg p-4">
       <EventBar completedEvents={events} />
       <Link to="/history" className="link link-hover text-base-content/70">
         History
@@ -42,11 +42,11 @@ function Today() {
         ).filter(hour => hour >= 8).map(hour => {
           const eventsInHour = getEventsForHour(hour);
           return (
-            <div key={hour} className="flex gap-4 py-2 border-b border-base-200">
+            <div key={hour} className="flex flex-wrap gap-4 py-2 border-b border-base-200">
               <div className="w-20 font-medium text-base-content/70">
                 {formatHour(hour)}
               </div>
-              <div className="flex-1 flex flex-col gap-2">
+              <div className="flex-1 w-fit flex flex-col gap-2">
                 {eventsInHour.reverse().map(event => (
                   <div 
                     key={event.item_id} 
@@ -56,11 +56,8 @@ function Today() {
                     }}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">
-                        Event ({Math.round(event.duration / (1000 * 60))} min)
-                      </span>
-                      <span className="text-sm text-base-content/70">
-                        {event.inputName || event.valueName}
+                      <span className="font-medium whitespace-nowrap">
+                        {event.description} ({Math.round(event.duration / (1000 * 60))} min)
                       </span>
                     </div>
                     {event.todos && event.todos.length > 0 && (

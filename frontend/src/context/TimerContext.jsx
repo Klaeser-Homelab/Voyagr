@@ -6,22 +6,27 @@ export const TimerProvider = ({ children }) => {
   const [elapsedTime, setElapsedTime] = useState(0); // Time in milliseconds
   const [isActiveEvent, setIsActiveEvent] = useState(false);
   const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
-  const [isBreak, setIsBreak] = useState(false);
   const [duration, setDuration] = useState(0);
 
   const startTimer = (duration) => {
+    console.log("starting timer", elapsedTime);
     setIsActiveEvent(true);
     setDuration(duration);
   };
 
   const stopTimer = () => {
+    console.log("stopping timer: ", elapsedTime);
     setIsActiveEvent(false);
+  };
+
+  const resumeTimer = () => {
+    console.log("resuming timer: ", elapsedTime);
+    setIsActiveEvent(true);
   };
 
   const resetTimer = () => {
     setIsActiveEvent(false);
     setElapsedTime(0);
-    setIsBreak(false);
   };
 
   const toggleMode = () => {
@@ -67,11 +72,11 @@ export const TimerProvider = ({ children }) => {
       resetTimer,
       mode,
       toggleMode,
+      resumeTimer,
       elapsedTime,
       adjustTime,
       getRemainingTime,
       getStopwatchTime,
-      isBreak
     }}>
       {children}
     </TimerContext.Provider>

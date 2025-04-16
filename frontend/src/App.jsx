@@ -15,6 +15,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import WelcomePage from './pages/WelcomePage';
 import Callback from './components/Callback';
 import HowItsMade from './pages/HowItsMade';
+import { BreakCycleProvider } from './context/BreakCycleContext';
+
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth0();
 
@@ -88,7 +90,8 @@ function App() {
         <Router>
           <TimerProvider>
           <TodayProvider>
-            <EventProvider>
+            <BreakCycleProvider>
+              <EventProvider>
                 <Header />
                 <Routes>
                   <Route path="/" element={<AppContent />} />
@@ -111,6 +114,7 @@ function App() {
                   } />
                 </Routes>
               </EventProvider>
+              </BreakCycleProvider>
             </TodayProvider>
           </TimerProvider>
         </Router>

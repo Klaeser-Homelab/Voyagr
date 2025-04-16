@@ -15,6 +15,7 @@ export const TodayProvider = ({ children }) => {
       const response = await axios.get(`${api.endpoints.events}/today`, {
         withCredentials: true
       });
+      console.log('Events', response.data);
       setEvents(response.data);
       setError(null);
     } catch (error) {

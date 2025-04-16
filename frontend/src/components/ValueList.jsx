@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
 import ValueCard from './ValueCard';
-import ActiveBreakCard from './ActiveBreakCard';
 import { useEvent } from '../context/EventContext';
 import ActiveCard from './ActiveCard';
 
 function ValueList() {
-  const { isBreak, mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
+  const { mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchValues = async () => {
     try {
-      const response = await axios.get(api.endpoints.values, {
+      const response = await axios.get(api.endpoints.values + '/no-default-breaks', {
         withCredentials: true
       });
+
       setValues(response.data);
       setLoading(false);
     } catch (error) {
@@ -38,40 +38,16 @@ function ValueList() {
     return <div className="text-red-600">{error}</div>;
   }
 
-  if (isBreak) {
-    return (
-      <div className="p-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2>Break Time</h2>
-          <button 
-  onClick={deleteEvent}
-  className={`btn btn-dash btn-error`}
->
-  Abandon Session
-</button>
-        </div>
-        <div className="flex flex-wrap gap-4">
-        <ActiveBreakCard value={activeItem} />
-
-        </div>
-      </div>
-    );
-  }
-
   if (!activeEvent) {
     return (
       <div className="p-4">
         <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold mb-4">Start an Activity</h2>
-          <div className="flex items-center gap-4">
-        
+            <h2 className="text-2xl font-bold mb-4">Start an Activity</h2>
         </div>
 
-        </div>
-
-        <div className="flex flex-wrap gap-4">
+        <div className="container mx-auto grid md:grid-cols-2 gap-4">
           {values.map(value => (
-            <div key={value.item_id} className="flex-1 basis-[40vw]">
+            <div key={value.item_id}>
               <ValueCard 
               key={value.item_id}
               value={value} 
@@ -86,7 +62,7 @@ function ValueList() {
   if (activeEvent) {
     return (
       <div className="p-4">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between mb-6">
       <h2 className="text-2xl font-bold mb-4">Current Activity</h2>
         <div className="flex items-center gap-4">
 <button 
