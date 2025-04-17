@@ -16,7 +16,7 @@ function ActiveCard({ item }) {
     isActiveEvent, 
     mode,
     resumeTimer,
-    getStopwatchTime,
+    getElapsedMilliseconds,
     getRemainingTime
   } = useTimer();
 
@@ -69,7 +69,7 @@ function ActiveCard({ item }) {
             {mode === 'timer' ? (
               `${String(displayTime.minutes).padStart(2, '0')}:${String(displayTime.seconds).padStart(2, '0')}`
             ) : (
-              formatTime(getStopwatchTime())
+              formatTime(Math.floor(getElapsedMilliseconds() / 1000 )) // convert to seconds
             )}
           </div>
           <button 

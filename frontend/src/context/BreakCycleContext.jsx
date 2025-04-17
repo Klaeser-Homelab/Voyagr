@@ -11,15 +11,14 @@ export const BreakCycleProvider = ({ children }) => {
   
   // After 2 hours of work, you get a long break
   const updateCycleDuration = (duration) => {
-    console.log('updating break duration');  
-    console.log('old', breakDuration);
-    console.log('plus', duration);
     const newDuration = breakDuration + duration;
-    console.log('new', newDuration);
-    if (newDuration > 1000){
-      setBreakDuration(0);
+    console.log('newDuration', newDuration);
+    if (newDuration > 7200){ // 2 hours in seconds
+      console.log('resetting');
+      setBreakDuration(newDuration - 7200);
     }
     else{
+      console.log('not resetting');
       setBreakDuration(newDuration);
     }
   }
@@ -30,14 +29,13 @@ export const BreakCycleProvider = ({ children }) => {
         withCredentials: true
       });
       setBreaks(response.data);
-      console.log('breaks', response.data);
     } catch (error) {
       console.error('Failed to fetch breaks:', error);
     }
   }, []);
 
   const getBreak = (duration) => {
-    console.log('getting break');
+    console.log('getting break', duration);
     updateCycleDuration(duration);
     if (breakDuration < 500){
         return breaks[1];

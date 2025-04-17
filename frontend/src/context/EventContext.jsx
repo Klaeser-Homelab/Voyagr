@@ -10,27 +10,31 @@ export const EventProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
   const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
-  const {startTimer, resetTimer, mode, setMinutes, getStopwatchTime } = useTimer();
+  const {startTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds } = useTimer();
   const { fetchEvents } = useToday();
   const { getBreak } = useBreakCycle();
 
-  const transitionToBreak = async () => {
-    let breakItem = getBreak();
+  const transitionToBreak = async (duration) => {
+    console.log('transitioning to break', duration);
+    let breakItem = getBreak(duration);
     console.log('breakItem', breakItem);
     if (breakItem) {
+      console.log('creating break event');
       createEvent({input: breakItem});
     } else {
       setActiveItem(null);
     }
   }
 
-  const updateEvent = async () => {
+  const updateEvent = async () => {  
+    const duration = getElapsedMilliSeconds();
+    stopTimer();
     try {
       // Update duration of event
       const eventResponse = await axios.put(
         `${api.endpoints.events}/${activeEvent.item_id}`,
         {
-          duration: getStopwatchTime(),
+          duration: duration,
         },
         {
           withCredentials: true
@@ -57,7 +61,8 @@ export const EventProvider = ({ children }) => {
 
       // Reset timer and start break
       if (!activeItem.is_break) {
-        transitionToBreak();
+        console.log('calling transitioning to break', duration);
+        transitionToBreak(duration);
       }
       else{
         setActiveItem(null);
@@ -71,8 +76,8 @@ export const EventProvider = ({ children }) => {
   };
 
   const deleteEvent = async() => {
-    setActiveEvent(null);
     resetTimer();
+    setActiveEvent(null);
     await axios.delete(`${api.endpoints.events}/${activeEvent.item_id}`, {
       withCredentials: true,
     });
@@ -107,8 +112,10 @@ export const EventProvider = ({ children }) => {
 
       setActiveEvent(eventResponse.data);
       if (input.duration) {
+        console.log('starting timer', input.duration);
         startTimer(input.duration); // habit
       } else {
+        console.log('starting timer', 1800000);
         startTimer(1800000); // value
       }
     } catch (error) {
@@ -125,7 +132,6 @@ export const EventProvider = ({ children }) => {
       deleteEvent,
       updateEvent,
       createEvent,
-      resetTimer,
       mode,
       setMinutes
     }}>

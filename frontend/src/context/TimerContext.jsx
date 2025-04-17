@@ -9,13 +9,14 @@ export const TimerProvider = ({ children }) => {
   const [duration, setDuration] = useState(0);
 
   const startTimer = (duration) => {
-    console.log("starting timer", elapsedTime);
+    console.log("starting timer in TimerProvider", duration);
     setIsActiveEvent(true);
     setDuration(duration);
   };
 
   const stopTimer = () => {
     console.log("stopping timer: ", elapsedTime);
+    setElapsedTime(0);
     setIsActiveEvent(false);
   };
 
@@ -25,6 +26,7 @@ export const TimerProvider = ({ children }) => {
   };
 
   const resetTimer = () => {
+    console.log('resetting timer');
     setIsActiveEvent(false);
     setElapsedTime(0);
   };
@@ -56,8 +58,8 @@ export const TimerProvider = ({ children }) => {
     return { minutes, seconds };
   };
 
-  const getStopwatchTime = () => {
-    return Math.floor(elapsedTime / 1000); // Time in seconds
+  const getElapsedMilliseconds = () => {
+    return elapsedTime; // Time in seconds
   };
 
   const adjustTime = (time) => {
@@ -76,7 +78,7 @@ export const TimerProvider = ({ children }) => {
       elapsedTime,
       adjustTime,
       getRemainingTime,
-      getStopwatchTime,
+      getElapsedMilliseconds,
     }}>
       {children}
     </TimerContext.Provider>

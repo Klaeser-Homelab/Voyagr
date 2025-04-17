@@ -4,7 +4,7 @@ import { useEvent } from "../context/EventContext";
 
 const HabitCard = ({ habit}) => {
   const { startTimer } = useTimer();
-  const { handleInputSelect } = useEvent();
+  const { createEvent } = useEvent();
 
   const getScheduleText = () => {
     if (!habit.startTime || !habit.endTime || !habit.daysOfWeek) return null;
@@ -13,12 +13,6 @@ const HabitCard = ({ habit}) => {
     const scheduledDays = habit.daysOfWeek.map(day => days[day]).join(', ');
     return `${habit.startTime.slice(0, 5)} - ${habit.endTime.slice(0, 5)} on ${scheduledDays}`;
   };
-
-  const handleInputClick = (e) => {
-    e.stopPropagation();
-    // TODO: Add habit to activeEvent
-    console.error('Not implemented');
-  }
 
   return (
     <div 
@@ -37,7 +31,7 @@ const HabitCard = ({ habit}) => {
             <h4 className="text-white">{habit.description}</h4>
             </div>
             </>
-            <PlayIcon className="size-6 text-white" onClick={handleInputClick} />
+            <PlayIcon className="size-6 text-white" onClick={() => createEvent({input: habit})} />
           </div>
           
           {/* Schedule information */}
