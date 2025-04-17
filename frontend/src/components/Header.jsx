@@ -5,14 +5,14 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { api } from '../config/api';
 import axios from 'axios';
 import logo from '../assets/star.png';
-const Header = () => {
+const Header = ({className}) => {
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
   const { loginWithRedirect, user } = useAuth0();
 
   
   return (
-    <header className="navbar shadow-md">
+    <header className={`navbar shadow-md ${className}`}>
       <div className="flex-1">
         <Link to="/" className="flex items-center text-xl">
           <img 

@@ -27,7 +27,7 @@ export const EventProvider = ({ children }) => {
   }
 
   const updateEvent = async () => {  
-    const duration = getElapsedMilliSeconds();
+    const duration = getElapsedMilliseconds();
     stopTimer();
     try {
       // Update duration of event

@@ -18,37 +18,18 @@ import { BreakCycleProvider } from './context/BreakCycleContext';
 import Menu from './components/Menu';
 import Settings from './components/Settings';
 
-function Layout() {
-  const { isAuthenticated } = useAuth0();
-
-  if (!isAuthenticated) {
-    return <WelcomePage />;
-  }
-
+function AuthenticatedLayout() {
   return (
-    <div className="flex flex-col h-screen lg:flex-row justify-between gap-20">
+    <div className="flex flex-col h-screen lg:flex-row justify-between">
       <Menu />
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/today" element={<Today />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/how-its-made" element={<HowItsMade />} />
-        <Route path="/auth/callback" element={<Callback />} />
-        <Route path="/history" element={
-          <ProtectedRoute>
-            <HistoryPage />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        } />
-        <Route path="/voyage" element={
-          <ProtectedRoute>
-            <VoyagePage />
-          </ProtectedRoute>
-        } />
+        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/voyage" element={<VoyagePage />} />
+        <Route path="/*" element={<Navigate to="/home" />} />
       </Routes>
     </div>
   );
@@ -59,6 +40,7 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth0();
 
   if (!isAuthenticated) {
+    console.log("Not authenticated");
     return <WelcomePage />;
   }
   
@@ -84,7 +66,19 @@ function App() {
           <TodayProvider>
             <BreakCycleProvider>
               <EventProvider>
-                <Layout />
+              <Routes>
+                    {/* Public pages (no menu) */}
+                    <Route path="/" element={<WelcomePage />} />
+                    <Route path="/auth/callback" element={<Callback />} />
+                    <Route path="/how-its-made" element={<HowItsMade />} />
+
+                    {/* Authenticated layout (with menu) */}
+                    <Route path="/*" element={
+                      <ProtectedRoute>
+                        <AuthenticatedLayout />
+                      </ProtectedRoute>
+                    } />
+                  </Routes>
               </EventProvider>
               </BreakCycleProvider>
             </TodayProvider>

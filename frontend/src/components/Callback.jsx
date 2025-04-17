@@ -43,7 +43,7 @@ function Callback() {
         if (!mounted) return;
         
         setStatus('Redirecting to home...');
-        navigate('/');
+        navigate('/home');
       } catch (error) {
         if (!mounted) return;
         console.error('Error setting up user:', error);

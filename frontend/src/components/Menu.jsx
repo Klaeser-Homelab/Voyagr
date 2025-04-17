@@ -32,7 +32,7 @@ const useIsLarge = () => {
 
 
   export const Home = () => (
-    <Link to="/">
+    <Link to="/home">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
       </svg>
@@ -75,7 +75,7 @@ const Menu = ({className}) => {
 
     if (settings) {
         return (
-        <div className="order-first flex flex-col border-2 border-gray-600 rounded-lg justify-between items-center p-5 py-10">
+        <div className="order-first flex flex-col border-2 border-gray-600 rounded-lg justify-between items-center">
          <Settings />
         </div>
     )
@@ -83,7 +83,7 @@ const Menu = ({className}) => {
   
     if (isLarge) {
   return (
-    <div className="order-first flex flex-col border-2 border-gray-600 rounded-lg justify-between items-center p-5 py-10">
+    <div className="order-first flex flex-col border-r-2 border-gray-600 justify-between items-center p-5 py-10">
         <div className="flex flex-col gap-5">
             <Home />
             <Today />
@@ -97,7 +97,7 @@ const Menu = ({className}) => {
 }
 if(!isLarge) {
     return (
-        <div className="flex flex-row gap-5 justify-between order-last items-center p-5 border-2 border-gray-600 rounded-lg">
+        <div className="flex flex-row gap-5 justify-between order-last items-center p-5 border-t-2 border-gray-600 rounded-lg">
             <Home />
             <Today />
             <Profile />

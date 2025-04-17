@@ -10,19 +10,19 @@ const HowItsMade = () => {
     <div>
       <Header />
     
-    <div className="p-4">
+    <div className="p-4 m-20">
       <h1 className="text-3xl font-bold mb-4">How it's made</h1>
       <p>This page describes Voyagr's architecture.</p>
       <h2 className="text-2xl font-semibold mt-6">Front End</h2>
       <p>The React frontend uses React Router for routing, Tailwind for CSS utility classes, DaisyUI for prebuilt CSS components, and Vite for building the application. Nginx is deployed as a webserver to serve the static files built by Vite and a reverse proxy to expose my server to the internet.</p>
-      <h3 className="text-xl font-semibold mt-4">Flexibile - Themes</h3> 
+      <h3 className="text-xl font-semibold mt-4">Themes</h3> 
       <label className="flex cursor-pointer gap-2">
   <span className="label-text">Current</span>
   <input type="checkbox" value="dark" className="toggle theme-controller" />
   <span className="label-text">Dark</span>
 </label>
   <div>
-    <h4>Toggle the theme. Notice I have not implemented a theme responsive icon yet.</h4>
+    <h4>Even with DaisyUI themes implementing vastly different themes (light mode) is a lot of work and I don't have any plans to do that anytime soon.</h4>
     
   </div>
       <h3 className="text-xl font-semibold mt-4">Responsive</h3>
