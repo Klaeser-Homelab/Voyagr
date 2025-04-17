@@ -4,12 +4,18 @@ import { api } from '../config/api';
 import ValueCard from './ValueCard';
 import { useEvent } from '../context/EventContext';
 import ActiveCard from './ActiveCard';
+import { useBreakCycle } from '../context/BreakCycleContext';
 
 function ValueList() {
   const { mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
   const [values, setValues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { fetchBreaks } = useBreakCycle();
+
+  useEffect(() => {
+    fetchBreaks();
+  }, [fetchBreaks]);
 
   const fetchValues = async () => {
     try {
