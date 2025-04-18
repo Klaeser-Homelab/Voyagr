@@ -58,7 +58,7 @@ function App() {
       domain={import.meta.env.VITE_AUTH0_DOMAIN}
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
       authorizationParams={{
-        redirect_uri: `${window.location.origin}/auth/callback`,
+        redirect_uri: `${window.location.origin}/test-callback`,
         audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/`,
         scope: "openid profile email"
       }}
@@ -74,13 +74,7 @@ function App() {
               <Routes>
                     {/* Public pages (no menu) */}
                     <Route path="/" element={<WelcomePage />} />
-                    <Route path="/auth/*" element={
-                      <div>
-                        <h1>Auth route caught</h1>
-                        <p>Path: {window.location.pathname}</p>
-                        <p>Query: {window.location.search}</p>
-                      </div>
-                    } />
+                    <Route path="/test-callback" element={<Callback />} />
                     <Route path="/auth/callback" element={<TestCallback />} />
                     <Route path="/how-its-made" element={<HowItsMade />} />
 
