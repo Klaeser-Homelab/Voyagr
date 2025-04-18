@@ -6,6 +6,8 @@ import axios from 'axios';
 import { api } from '../config/api';
 
 function Callback() {
+
+  console.log('Callback');
   const { 
     isAuthenticated, 
     user, 
