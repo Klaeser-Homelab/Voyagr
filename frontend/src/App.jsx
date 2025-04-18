@@ -81,8 +81,7 @@ function App() {
                         <p>Query: {window.location.search}</p>
                       </div>
                     } />
-                    <Route path="/test-callback" element={<TestCallback />} />
-                    <Route path="/auth/callback" element={<Callback />} />
+                    <Route path="/auth/callback" element={<TestCallback />} />
                     <Route path="/how-its-made" element={<HowItsMade />} />
 
                     {/* Authenticated layout (with menu) */}
