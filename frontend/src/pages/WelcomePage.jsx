@@ -32,12 +32,12 @@ const WelcomePage = () => {
         <Header className="fixed top-0 left-0 w-full z-20"/>
         
         {/* Hero section with "Create yourself" */}
-        <div className="text-left mx-10 mt-60 mb-20 lg:ml-8 relative z-10">
+        <div className="text-left mx-10 mt-90 mb-20 lg:ml-8 relative z-10">
           <h1 className="text-7xl font-bold">Create yourself</h1>
           <p className="py-6 text-xl">
             Voyagr helps you build habits that bring your ideal self to life.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 mb-10">
+          <div className="flex flex-row gap-4 mb-10">
             <button 
               onClick={() => loginWithRedirect()}
               className="btn btn-primary"
