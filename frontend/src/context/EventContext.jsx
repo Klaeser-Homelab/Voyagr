@@ -23,6 +23,7 @@ export const EventProvider = ({ children }) => {
       createEvent({input: breakItem});
     } else {
       setActiveItem(null);
+      setActiveEvent(null);
     }
   }
 
@@ -32,7 +33,7 @@ export const EventProvider = ({ children }) => {
     try {
       // Update duration of event
       const eventResponse = await axios.put(
-        `${api.endpoints.events}/${activeEvent.item_id}`,
+        `${api.endpoints.events}/${activeEvent.id}`,
         {
           duration: duration,
         },
@@ -48,7 +49,7 @@ export const EventProvider = ({ children }) => {
         .filter(todo => todo.completed)
         .map(todo => ({
           ...todo,
-          parent_id: activeEvent.item_id   // Add the event ID to each completed todo
+          parent_id: activeEvent.id   // Add the event ID to each completed todo
         }));
       
       console.log('Completed todos:', completedTodos);
@@ -78,7 +79,7 @@ export const EventProvider = ({ children }) => {
   const deleteEvent = async() => {
     resetTimer();
     setActiveEvent(null);
-    await axios.delete(`${api.endpoints.events}/${activeEvent.item_id}`, {
+    await axios.delete(`${api.endpoints.events}/${activeEvent.id}`, {
       withCredentials: true,
     });
   };
@@ -93,10 +94,10 @@ export const EventProvider = ({ children }) => {
     let parent_value_id = null;
     let parent_habit_id = null;
     if(input.type === 'habit') {
-      parent_habit_id = input.item_id;
+      parent_habit_id = input.id;
       parent_value_id = input.parent_id;
     } else if(input.type === 'value') {
-      parent_value_id = input.item_id;
+      parent_value_id = input.id;
     }
 
     try {

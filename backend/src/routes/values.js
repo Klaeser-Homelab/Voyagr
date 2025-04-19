@@ -1,13 +1,16 @@
 const express = require('express');
 const requireAuth = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
-const { Item, Value, Habit, Event, Todo } = require('../models/associations');
+const { Value, Habit } = require('../models/associations');
 const { Sequelize, Op } = require('sequelize');
 
 // GET all values
 router.get('/api/values', requireAuth, async (req, res) => {  
   try {
+
+    // Find values associated with the current user
     const values = await Value.findAll({
+      where: { user_id: req.session.user.id }, // Directly filter by user_id
       include: [{    
         model: Habit,
         attributes: {
@@ -32,7 +35,15 @@ router.get('/api/values', requireAuth, async (req, res) => {
 
 router.get('/api/values/no-default-breaks', requireAuth, async (req, res) => {  
   try {
+
+    // Find values associated with the current user, excluding 'Default Break'
     const values = await Value.findAll({
+      where: {
+        user_id: req.session.user.id, // Directly filter by user_id
+        description: {
+          [Op.ne]: 'Default Break' // Exclude 'Default Break'
+        }
+      },
       include: [{    
         model: Habit,
         attributes: {
@@ -41,11 +52,6 @@ router.get('/api/values/no-default-breaks', requireAuth, async (req, res) => {
           ]
         }
       }],
-      where: {
-        description: {
-          [Op.ne]: 'Default Break' // Exclude 'Default Break'
-        }
-      },
       order: [['created_at', 'DESC']],
       attributes: {
         include: [
@@ -63,29 +69,15 @@ router.get('/api/values/no-default-breaks', requireAuth, async (req, res) => {
 // POST new value
 router.post('/api/values', requireAuth, async (req, res) => {
   try {
-    // First create the base item
-    const item = await Item.create({
-      user_id: req.session.user.id, // Use session user ID
-      type: 'value'
-    });
 
-    // Then create the value
     const { description, color } = req.body;
     const value = await Value.create({
-      item_id: item.id,
+      user_id: req.session.user.id,
       description,
       color
     });
 
-    // Return the value with its item data
-    const fullValue = await Value.findByPk(value.item_id, {
-      include: [{
-        model: Item,
-        attributes: ['created_at']
-      }]
-    });
-
-    res.status(201).json(fullValue);
+    res.status(201).json(value);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -95,24 +87,20 @@ router.post('/api/values', requireAuth, async (req, res) => {
 router.put('/api/values', requireAuth, async (req, res) => {
   console.log("PUT request received");
   try {
-    const { item_id, description, color } = req.body;
-    const value = await Value.findByPk(item_id);
+    const { id, description, color } = req.body;
+    // Find the value associated with the current user
+    const value = await Value.findOne({
+      where: { 
+        id: id,
+        user_id: req.session.user.id // Directly filter by user_id
+      }
+    });
     
     if (!value) {
-      return res.status(404).json({ error: 'Value not found' });
+      return res.status(404).json({ error: 'Value not found or not authorized' });
     }
 
-    await value.update({ description, color });
-    
-    // Return the updated value with its item data
-    const fullValue = await Value.findByPk(value.item_id, {
-      include: [{
-        model: Item,
-        attributes: ['created_at']
-      }]
-    });
-
-    res.json(fullValue);
+    res.json(value);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -121,20 +109,21 @@ router.put('/api/values', requireAuth, async (req, res) => {
 // DELETE value
 router.delete('/api/values/:id', requireAuth, async (req, res) => {
   try {
-    const value = await Value.findByPk(req.params.id);
+
+    // Find the value associated with the current user
+    const value = await Value.findOne({
+      where: { 
+        id: req.params.id,
+        user_id: req.session.user.id // Directly filter by user_id
+      }
+    });
     
     if (!value) {
-      return res.status(404).json({ error: 'Value not found' });
+      return res.status(404).json({ error: 'Value not found or not authorized' });
     }
 
-    // Find the associated item
-    const item = await Item.findByPk(value.item_id);
-    
-    // Delete both the value and its item
+    // Delete the value
     await value.destroy();
-    if (item) {
-      await item.destroy();
-    }
 
     res.status(204).send();
   } catch (error) {

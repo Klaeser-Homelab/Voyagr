@@ -1,27 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const requireAuth = require('../middleware/auth'); // Import the middleware
-const { Item, Value, Habit, Event, Todo } = require('../models/associations');
+const { Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize');
 
 // GET all events for the current user
 router.get('/api/events', requireAuth, async (req, res) => {
   try {
+
+    // Find events associated with the current user
     const events = await Event.findAll({
+      where: { user_id: req.session.user.id }, // Directly filter by user_id
       include: [
         {
-          model: Item,
-          where: { user_id: req.session.user.id },
-          required: true
-        },
-        {
           model: Habit,
-          attributes: ['item_id', 'description']
+          attributes: ['id', 'description']
         },
         {
           model: Value,
-          attributes: ['item_id', 'description', 'color']
+          attributes: ['id', 'description', 'color']
         }
       ],
       order: [['created_at', 'DESC']]
@@ -34,19 +32,15 @@ router.get('/api/events', requireAuth, async (req, res) => {
 
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
+    // Find today's events associated with the current user
     const events = await Event.findAll({
+      where: {
+        user_id: req.session.user.id, // Directly filter by user_id
+        created_at: {
+          [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
+        }
+      },
       include: [
-        {
-          model: Item,
-          where: { 
-            user_id: req.session.user.id,
-            created_at: {
-              [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
-            }
-          },
-          attributes: [],
-          required: true
-        },
         {
           model: Value,
           attributes: ['description', 'color'],
@@ -61,7 +55,7 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
     });
 
     // Get todos associated with today's events
-    const eventIds = events.map(event => event.item_id);
+    const eventIds = events.map(event => event.id);
     const todos = await Todo.findAll({
       where: {
         parent_id: eventIds
@@ -71,7 +65,7 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
     // Combine events and todos
     const eventsWithTodos = events.map(event => {
       const eventData = event.toJSON();
-      eventData.todos = todos.filter(todo => todo.parent_id === event.item_id);
+      eventData.todos = todos.filter(todo => todo.parent_id === event.id);
 
       eventData.color = event.Value.color;
 
@@ -95,11 +89,6 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
 // POST new event
 router.post('/api/events', requireAuth, async (req, res) => {
   try {
-    // First create the base item
-    const item = await Item.create({
-      user_id: req.session.user.id,
-      type: 'event'
-    });
 
     const { parent_value_id, parent_habit_id } = req.body;
     
@@ -108,7 +97,7 @@ router.post('/api/events', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'parent_value_id is required' });
     }
     const event = await Event.create({
-      item_id: item.id,
+      user_id: req.session.user.id,
       parent_value_id: parent_value_id,
       parent_habit_id: parent_habit_id
     });
@@ -122,27 +111,21 @@ router.post('/api/events', requireAuth, async (req, res) => {
 // DELETE event
 router.delete('/api/events/:id', requireAuth, async (req, res) => {
   try {
+
+    // Find the event associated with the current user
     const event = await Event.findOne({
-      where: { item_id: req.params.id },
-      include: [{
-        model: Item,
-        where: { user_id: req.session.user.id },
-        required: true
-      }]
+      where: { 
+        id: req.params.id,
+        user_id: req.session.user.id // Directly filter by user_id
+      }
     });
 
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
+      return res.status(404).json({ error: 'Event not found or not authorized' });
     }
 
-    // Find the associated item
-    const item = await Item.findByPk(event.item_id);
-    
-    // Delete both the event and its item
+    // Delete the event
     await event.destroy();
-    if (item) {
-      await item.destroy();
-    }
 
     res.status(204).send();
   } catch (error) {
@@ -153,46 +136,28 @@ router.delete('/api/events/:id', requireAuth, async (req, res) => {
 // UPDATE event
 router.put('/api/events/:id', requireAuth, async (req, res) => {
   try {
+
+    // Find the event associated with the current user
+    const event = await Event.findOne({
+      where: { 
+        id: req.params.id,
+        user_id: req.session.user.id // Directly filter by user_id
+      }
+    });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found or not authorized' });
+    }
+
+    // Update the event
     const { duration } = req.body;
-    const event = await Event.findByPk(req.params.id);
     event.duration = duration;
     await event.save();
+
     res.status(200).json(event);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
-// DELETE event
-router.delete('/api/events/:id', requireAuth, async (req, res) => {
-  try {
-    const event = await Event.findOne({
-      where: { item_id: req.params.id },  
-      include: [{
-        model: Item,
-        where: { user_id: req.session.user.id },
-        required: true
-      }]
-    }); 
-
-    if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    // Find the associated item 
-    const item = await Item.findByPk(event.item_id);
-
-    // Delete both the event and its item
-    await event.destroy();
-    if (item) {
-      await item.destroy();
-    }
-
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 
 module.exports = router; 

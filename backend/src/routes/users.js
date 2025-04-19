@@ -27,7 +27,7 @@ router.post('/api/users/auth0', async (req, res) => {
     const auth0User = userResponse.data;
 
     // Find or create user in your database
-    const [user] = await User.findOrCreate({
+    const [user, created] = await User.findOrCreate({
       where: { auth0_id: auth0User.sub },
       defaults: {
         email: auth0User.email,
@@ -67,7 +67,8 @@ router.post('/api/users/auth0', async (req, res) => {
         username: user.username,
         display_name: user.display_name,
         avatar_url: user.avatar_url
-      }
+      },
+      isNewUser: created
     });
 
   } catch (error) {

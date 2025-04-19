@@ -73,7 +73,7 @@ const ProfilePage = () => {
         <div className="flex flex-col gap-4 p-10">
           {values.map(value => (
             <EditValueCard
-              key={value.item_id}
+              key={value.id}
               value={value}
               onValueEdit={handleValueEdit}
               onHabitDelete={handleHabitDelete}

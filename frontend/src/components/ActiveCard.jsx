@@ -31,7 +31,7 @@ function ActiveCard({ item }) {
   }, [getRemainingTime]);
 
   useEffect(() => {
-  }, [item.item_id]);
+  }, [item.id]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -45,7 +45,7 @@ function ActiveCard({ item }) {
   };
 
   const deleteTodo = (todo) => {
-    const newTodos = todos.filter(t => t.item_id !== todo.item_id);
+    const newTodos = todos.filter(t => t.id !== todo.id);
     setTodos(newTodos);
   };
 
@@ -91,7 +91,7 @@ function ActiveCard({ item }) {
       {todos.length > 0 &&
     todos.map(todo => (
       <Todo 
-        key={todo.item_id} 
+        key={todo.id} 
         todo={todo} 
         onToggle={toggleTodo}
         onDelete={deleteTodo}

@@ -17,7 +17,7 @@ router.post('/api/todos', requireAuth, async (req, res) => {
     const { description, parent_id, parent_type } = req.body;
     
     const todo = await Todo.create({
-      item_id: item.id,
+      id: item.id,
       description,
       parent_id,
       parent_type,
@@ -80,14 +80,14 @@ router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
         },
         {
           model: Value,
-          attributes: ['item_id', 'description', 'color']
+          attributes: ['id', 'description', 'color']
         },
         {
           model: Habit,
-          attributes: ['item_id', 'description'],
+          attributes: ['id', 'description'],
           include: [{
             model: Value,
-            attributes: ['item_id', 'description', 'color']
+            attributes: ['id', 'description', 'color']
           }]
         }
       ],
@@ -103,7 +103,7 @@ router.post('/api/todos/batchprocess', requireAuth, async (req, res) => {
   try {
     const todos = req.body;
     for (const todo of todos) {
-      await Todo.update({ parent_id: todo.parent_id }, { where: { item_id: todo.item_id } });
+      await Todo.update({ parent_id: todo.parent_id }, { where: { id: todo.id } });
     }
     res.status(200).json({ message: 'Todos updated' });
   } catch (error) {
@@ -162,7 +162,7 @@ router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => 
 router.patch('/api/todos/:id', requireAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
-      where: { item_id: req.params.id },
+      where: { id: req.params.id },
       include: [{
         model: Item,
         where: { user_id: req.session.user.id },
@@ -187,7 +187,7 @@ router.patch('/api/todos/:id', requireAuth, async (req, res) => {
 router.delete('/api/todos/:id', requireAuth, async (req, res) => {
   try {
     const todo = await Todo.findOne({
-      where: { item_id: req.params.id },
+      where: { id: req.params.id },
       include: [{
         model: Item,
         where: { user_id: req.session.user.id },
@@ -200,7 +200,7 @@ router.delete('/api/todos/:id', requireAuth, async (req, res) => {
     }
 
     // Find the associated item
-    const item = await Item.findByPk(todo.item_id);
+    const item = await Item.findByPk(todo.id);
     
     // Delete both the todo and its item
     await todo.destroy();

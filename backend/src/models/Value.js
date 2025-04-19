@@ -1,14 +1,17 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Item = require('./Item');
-
+const User = require('./User');
 
 const Value = sequelize.define('Value', {
-  item_id: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
     references: {
-      model: Item,
+      model: User,
       key: 'id'
     }
   },

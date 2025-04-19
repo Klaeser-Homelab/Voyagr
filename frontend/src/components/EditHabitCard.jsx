@@ -16,7 +16,7 @@ const EditHabitCard = ({
   const updateHabit = (description, duration) => {
     try {
       axios.put(api.endpoints.habits, {
-          item_id: habit.item_id,
+          id: habit.id,
           description: description,
           duration: duration
         },

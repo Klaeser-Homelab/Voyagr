@@ -39,16 +39,16 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
     e.preventDefault();
     
     // Validate that we have a value.VID (parent_id) before proceeding
-    if (!value || !value.item_id) {
+    if (!value || !value.id) {
       setError('Cannot create habit: Missing parent value ID');
-      console.error('Missing value.item_id:', value);
+      console.error('Missing value.id:', value);
       return;
     }
     
     try {
       const submitData = {
         description: formData.Name,
-        parent_id: value.item_id,
+        parent_id: value.id,
         ...(formData.isScheduled ? {
           startTime: formData.startTime,
           endTime: formData.endTime,
@@ -65,8 +65,8 @@ const HabitForm = ({ habitToEdit, value, onHabitUpdated }) => {
 
       if (habitToEdit) {
         // Update existing habit
-        console.log('Updating habit with ID:', habitToEdit.item_id);
-        await axios.put(`${api.endpoints.habits}/${habitToEdit.item_id}`, submitData, {
+        console.log('Updating habit with ID:', habitToEdit.id);
+        await axios.put(`${api.endpoints.habits}/${habitToEdit.id}`, submitData, {
           withCredentials: true
         });
         setMessage('Habit updated successfully!');

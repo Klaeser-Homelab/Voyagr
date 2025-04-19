@@ -14,7 +14,7 @@ function TodoForm({ item, onTodoAdded }) {
     try {
       const response = await axios.post(api.endpoints.todos, {
         description,
-        parent_id: activeEvent.item_id,
+        parent_id: activeEvent.id,
       }, { withCredentials: true });
       
       setDescription('');

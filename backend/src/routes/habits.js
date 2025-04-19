@@ -1,28 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const requireAuth = require('../middleware/auth'); // Import the middleware
-const { Item, Value, Habit, Event, Todo } = require('../models/associations');
+const { Value, Habit, Event } = require('../models/associations');
 const { Sequelize } = require('sequelize');
 
 // GET all habits for the current user
 router.get('/api/habits', requireAuth, async (req, res) => {
   try {
+
+    // Find habits associated with the current user
     const habits = await Habit.findAll({
+      where: { user_id: req.session.user.id }, // Directly filter by user_id
       include: [
         {
-          model: Item,
-          where: { user_id: req.session.user.id },
-          required: true
-        },
-        {
           model: Value,
-          attributes: ['item_id', 'description', 'color']
-        },
-        {
-          model: Todo,
-          where: { type: 'habit' },
-          required: false,
-          attributes: ['item_id', 'content', 'completed']
+          attributes: ['description', 'color']
         }
       ],
       order: [['created_at', 'DESC']]
@@ -36,7 +28,10 @@ router.get('/api/habits', requireAuth, async (req, res) => {
 router.get('/api/habits/breaks', requireAuth, async (req, res) => {
   try {
     const breaks = await Habit.findAll({
-      where: { is_break: true },
+      where: { 
+        is_break: true,
+        user_id: req.session.user.id
+      },
       attributes: {
         include: [
           [Sequelize.literal("'habit'"), 'type'], // Hardcode the type as 'habit'
@@ -58,29 +53,14 @@ router.get('/api/habits/breaks', requireAuth, async (req, res) => {
 // POST new habit
 router.post('/api/habits', requireAuth, async (req, res) => {
   try {
-    // First create the base item
-    const item = await Item.create({
-      user_id: req.session.user.id,
-      type: 'habit'
-    });
-
-    // Then create the habit
     const { description, parent_id } = req.body;
     const habit = await Habit.create({
-      item_id: item.id,
       description,
+      user_id: req.session.user.id,
       parent_id
     });
 
-    // Return the habit with its item data
-    const fullHabit = await Habit.findByPk(habit.item_id, {
-      include: [{
-        model: Item,
-        attributes: ['created_at']
-      }]
-    });
-
-    res.status(201).json(fullHabit);
+    res.status(201).json(habit);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -89,14 +69,14 @@ router.post('/api/habits', requireAuth, async (req, res) => {
 // GET single habit by ID (with user verification)
 router.get('/api/habits/:id', requireAuth, async (req, res) => {
   try {
+
+    // Find the habit associated with the current user
     const habit = await Habit.findOne({
-      where: { item_id: req.params.id },
+      where: { 
+        id: req.params.id,
+        user_id: req.session.user.id // Directly filter by user_id
+      },
       include: [
-        {
-          model: Item,
-          where: { user_id: req.session.user.id },
-          required: true
-        },
         {
           model: Value,
           attributes: ['description', 'color']
@@ -116,8 +96,8 @@ router.get('/api/habits/:id', requireAuth, async (req, res) => {
 // UPDATE habit
 router.put('/api/habits', requireAuth, async (req, res) => {
   try {
-    const { item_id, description, duration } = req.body;
-    const habit = await Habit.findByPk(item_id);
+    const { id, description, duration } = req.body;
+    const habit = await Habit.findByPk(id);
     
     if (!habit) {
       return res.status(404).json({ error: 'Habit not found' });
@@ -126,7 +106,7 @@ router.put('/api/habits', requireAuth, async (req, res) => {
     await habit.update({ description, duration });
     
     // Return the updated habit with its item data
-    const fullHabit = await Habit.findByPk(habit.item_id, {
+    const fullHabit = await Habit.findByPk(habit.id, {
       include: [{
         model: Item,
         attributes: ['created_at']
@@ -142,20 +122,23 @@ router.put('/api/habits', requireAuth, async (req, res) => {
 // DELETE habit
 router.delete('/api/habits/:id', requireAuth, async (req, res) => {
   try {
-    const habit = await Habit.findByPk(req.params.id);
+    // Get the user ID from the session
+    const userId = req.session.user.id;
+
+    // Find the habit associated with the current user
+    const habit = await Habit.findOne({
+      where: { 
+        id: req.params.id,
+        user_id: userId // Directly filter by user_id
+      }
+    });
     
     if (!habit) {
-      return res.status(404).json({ error: 'Habit not found' });
+      return res.status(404).json({ error: 'Habit not found or not authorized' });
     }
 
-    // Find the associated item
-    const item = await Item.findByPk(habit.item_id);
-    
-    // Delete both the habit and its item
+    // Delete the habit
     await habit.destroy();
-    if (item) {
-      await item.destroy();
-    }
 
     res.status(204).send();
   } catch (error) {
@@ -166,15 +149,17 @@ router.delete('/api/habits/:id', requireAuth, async (req, res) => {
 // GET events for a single habit (with user verification)
 router.get('/api/habits/:id/events', requireAuth, async (req, res) => {
   try {
+    // Get the user ID from the session
+    const userId = req.session.user.id;
+
+    // Find events associated with the current user's habit
     const events = await Event.findAll({
       include: [{
         model: Habit,
-        where: { item_id: req.params.id },
-        include: [{
-          model: Item,
-          where: { user_id: req.session.user.id },
-          required: true
-        }],
+        where: { 
+          id: req.params.id,
+          user_id: userId // Directly filter by user_id
+        },
         required: true
       }],
       order: [['created_at', 'DESC']]

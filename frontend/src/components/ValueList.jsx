@@ -49,9 +49,9 @@ function ValueList() {
         <div className="container p-14 w-full max-w-md flex flex-col gap-4">
           <h1 className="text-2xl text-center font-bold">What's next?</h1>
           {values.map(value => (
-            <div key={value.item_id}>
+            <div key={value.id}>
               <ValueCard 
-              key={value.item_id}
+              key={value.id}
               value={value} 
               />
             </div>
@@ -80,7 +80,7 @@ function ValueList() {
 
       <div className="min-w-[30vw] flex-1 basis-[40vw]">
         <ActiveCard 
-          key={activeItem.item_id}
+          key={activeItem.id}
           item={activeItem} 
         />
       </div>

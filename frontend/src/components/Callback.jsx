@@ -23,12 +23,12 @@ function Callback() {
     const setupUser = async () => {
       try {
         if (!mounted) return;
-        setStatus('Getting access token...');
+        setStatus('Verifying access token...'); // getting access token
         
         // Get the access token from Auth0
         const accessToken = await getAccessTokenSilently();
 
-        setStatus('Creating user account...');
+        setStatus('Configuring user...');
         
         // Send the access token to backend
         const response = await axios.post(`${api.endpoints.users}/auth0`, 
@@ -41,6 +41,19 @@ function Callback() {
             withCredentials: true
           }
         );
+
+        // Check if the user is new
+        const isNewUser = response.data.isNewUser; // Assuming response contains this info
+
+        console.log('isNewUser', isNewUser);
+
+        if (isNewUser) {
+          setStatus('Setting up defaults...');
+          
+          console.log('Setting up defaults...');
+
+          setStatus('Defaults set up successfully.');
+        }
 
         if (!mounted) return;
         

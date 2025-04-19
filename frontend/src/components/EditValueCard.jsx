@@ -17,7 +17,7 @@ const EditValueCard = ({
   const handleValueEdit = () => {
     try {
       axios.put(api.endpoints.values, {
-        item_id: value.item_id,
+        id: value.id,
         description: valueName,
         color: valueColor
       },
@@ -103,7 +103,7 @@ const EditValueCard = ({
         <div className="p-2 space-y-2">
           {value.Habits.map(habit => (
             <EditHabitCard
-              key={habit.item_id}
+              key={habit.id}
               habit={{ ...habit, color: value.color }}
               onHabitDelete={onHabitDelete}
             />

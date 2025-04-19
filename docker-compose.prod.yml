@@ -23,23 +23,21 @@ services:
     networks:
       - voyagr-network
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      FRONTEND_URL: ${FRONTEND_URL}
-      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: postgres
+      NODE_ENV: PRODUCTION
+      FRONTEND_URL: https://voyagr.me/
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       BACKEND_SESSION_SECRET: ${BACKEND_SESSION_SECRET}
-      REDIS_URL: ${REDIS_URL}
+      REDIS_URL: redis://voyagr-redis:6379
     depends_on:
       - redis      
       - postgres
 
   redis:
     image: redis:latest
-    container_name: manageme-redis
+    container_name: voyagr-redis
     ports:
       - "6379:6379"
     networks:
@@ -49,9 +47,9 @@ services:
     image: postgres:16
     container_name: voyagr-db
     environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: voyagr-db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -59,30 +57,10 @@ services:
     networks:
       - voyagr-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
-    command: >
-      bash -c '
-        echo "Database Environment Variables:"
-        echo "DB_NAME: $${DB_NAME}"
-        echo "DB_USER: $${DB_USER}"
-        echo "DB_PASSWORD: $${DB_PASSWORD}"
-        docker-entrypoint.sh postgres'
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: voyagr-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
-    ports:
-      - "5050:80"
-    networks:
-      - voyagr-network
-    depends_on:
-      - postgres
 
 volumes:
   postgres_data:

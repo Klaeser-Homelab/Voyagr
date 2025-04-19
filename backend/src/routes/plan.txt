@@ -6,19 +6,19 @@ CREATE TABLE items (
 );
 
 CREATE TABLE values (
-    item_id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     description TEXT,
     color TEXT
 );
 
 CREATE TABLE habits (
-    item_id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     description TEXT,
-    parent_id INTEGER REFERENCES values(item_id) ON DELETE CASCADE
+    parent_id INTEGER REFERENCES values(id) ON DELETE CASCADE
 );
 
 CREATE TABLE events (
-    item_id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     description TEXT,
     parent_id INTEGER NOT NULL,
     parent_type TEXT NOT NULL CHECK (parent_type IN ('habit', 'value')),
@@ -28,9 +28,9 @@ CREATE TABLE events (
 );
 
 CREATE TABLE todos (
-    item_id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
+    id INTEGER PRIMARY KEY REFERENCES items(id) ON DELETE CASCADE,
     description TEXT,
-    parent_id INTEGER REFERENCES events(item_id) ON DELETE CASCADE,
+    parent_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL,
     modified_at TIMESTAMP NOT NULL

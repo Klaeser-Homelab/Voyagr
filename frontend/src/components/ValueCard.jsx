@@ -22,7 +22,7 @@ function ValueCard({ value }) {
         <div className="p-2 space-y-2">
           {value.Habits.map(habit => (
             <HabitCard
-              key={habit.item_id}
+              key={habit.id}
               habit={{ ...habit, color: value.color }}
             />
           ))}

@@ -74,8 +74,6 @@ console.log('Session middleware configuration:', {
   }
 });
 
-
-
 // Use the routes
 app.use(habitRoutes);
 app.use(valueRoutes);

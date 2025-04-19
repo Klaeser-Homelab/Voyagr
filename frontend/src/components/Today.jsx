@@ -45,7 +45,7 @@ function Today() {
               <div className="flex-1 w-fit flex flex-col gap-2">
                 {eventsInHour.map(event => (
                   <div 
-                    key={event.item_id} 
+                    key={event.id} 
                     className="card bg-base-200 p-2 flex flex-col gap-2"
                     style={{ 
                       borderLeft: `4px solid ${event.color || '#ddd'}`
@@ -59,7 +59,7 @@ function Today() {
                     {event.todos && event.todos.length > 0 && (
                       <div className="pl-4 text-sm space-y-1">
                         {event.todos.map(todo => (
-                          <div key={todo.item_id} className="flex items-center gap-2">
+                          <div key={todo.id} className="flex items-center gap-2">
                             <span className="text-base-content/70">✓</span>
                             <span>{todo.description}</span>
                           </div>

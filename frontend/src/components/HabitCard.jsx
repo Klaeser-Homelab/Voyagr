@@ -16,7 +16,7 @@ const HabitCard = ({ habit}) => {
 
   return (
     <div 
-      key={habit.item_id} 
+      key={habit.id} 
       className={`rounded-md transition-all duration-200 cursor-pointer`}
     >
       <div className="flex items-center justify-between p-2">

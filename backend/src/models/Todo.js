@@ -1,14 +1,18 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Item = require('./Item');
+const User = require('./User');
 const Event = require('./Event');
 
 const Todo = sequelize.define('Todo', {
-  item_id: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
     references: {
-      model: Item,
+      model: User,
       key: 'id'
     }
   },
@@ -21,7 +25,7 @@ const Todo = sequelize.define('Todo', {
     allowNull: false,
     references: {
       model: Event,
-      key: 'item_id'
+      key: 'id'
     }
   },
   completed: {
