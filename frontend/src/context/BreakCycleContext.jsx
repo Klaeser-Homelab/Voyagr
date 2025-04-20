@@ -13,9 +13,10 @@ export const BreakCycleProvider = ({ children }) => {
   const updateCycleDuration = (duration) => {
     const newDuration = breakDuration + duration;
     console.log('newDuration', newDuration);
-    if (newDuration > 7200){ // 2 hours in seconds
+    const lastBreakInterval = breaks[breaks.length - 1].interval; // Assuming breaks is sorted
+    if (newDuration > lastBreakInterval) { // Compare with the last break's interval
       console.log('resetting');
-      setBreakDuration(newDuration - 7200);
+      setBreakDuration(newDuration - lastBreakInterval);
     }
     else{
       console.log('not resetting');
@@ -25,7 +26,7 @@ export const BreakCycleProvider = ({ children }) => {
 
   const fetchBreaks = useCallback(async () => {
     try {
-      const response = await axios.get(api.endpoints.habits + '/breaks', {
+      const response = await axios.get(api.endpoints.breaks, {
         withCredentials: true
       });
       setBreaks(response.data);
@@ -37,12 +38,15 @@ export const BreakCycleProvider = ({ children }) => {
   const getBreak = (duration) => {
     console.log('getting break', duration);
     updateCycleDuration(duration);
-    if (breakDuration < 500){
-        return breaks[1];
+    // Sort breaks by interval in ascending order
+    const sortedBreaks = [...breaks].sort((a, b) => a.interval - b.interval);
+    // Find the longest break whose interval is less than or equal to the duration
+    for (let i = sortedBreaks.length - 1; i >= 0; i--) {
+      if (duration >= sortedBreaks[i].interval) {
+        return sortedBreaks[i];
+      }
     }
-    else{
-      return breaks[0];
-    }
+    return null; // Return null if no break is found
   }
 
   const value = {

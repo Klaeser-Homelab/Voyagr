@@ -15,11 +15,11 @@ const Event = sequelize.define('Event', {
       key: 'id'
     }
   },
-  parent_habit_id: {
+  habit_id: {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  parent_value_id: {
+  value_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },

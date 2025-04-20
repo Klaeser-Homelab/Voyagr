@@ -107,6 +107,38 @@ router.post('/api/users/logout', requireAuth, async (req, res) => {
   }
 });
 
+// DELETE /api/users/delete   
+// Deletes the user from the database
+router.delete('/api/users/delete', requireAuth, async (req, res) => {
+  try {
+    // Find the user associated with the current session
+    const user = await User.findByPk(req.session.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete the user from the database
+    await user.destroy(); 
+
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ error: 'Logout failed', details: err.message });
+      }
+
+      res.json({ message: 'User deleted successfully' });
+    });
+  } catch (error) {
+    console.error('Error in /api/users/delete:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete user', 
+      details: error.message 
+    });
+  }
+});
+
+
 // GET /api/users/me
 // Gets current user information from the session
 router.get('/api/users/me', requireAuth, async (req, res) => {

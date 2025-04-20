@@ -58,20 +58,20 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
     const eventIds = events.map(event => event.id);
     const todos = await Todo.findAll({
       where: {
-        parent_id: eventIds
+        event_id: eventIds
       }
     });
 
     // Combine events and todos
     const eventsWithTodos = events.map(event => {
       const eventData = event.toJSON();
-      eventData.todos = todos.filter(todo => todo.parent_id === event.id);
+      eventData.todos = todos.filter(todo => todo.event_id == event.id);
 
       eventData.color = event.Value.color;
 
-      if(event.parent_habit_id == null) {
+      if(event.habit_id == null) {
         eventData.description = event.Value.description;
-      } else if (event.parent_type === 'habit') {
+      } else if (event.habit_id !== null) {
         eventData.description = event.Habit?.description;
       }
 
@@ -90,16 +90,16 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
 router.post('/api/events', requireAuth, async (req, res) => {
   try {
 
-    const { parent_value_id, parent_habit_id } = req.body;
+    const { value_id, habit_id } = req.body;
     
-    // parent_id (Value ID) is required
-    if (!parent_value_id) {
-      return res.status(400).json({ error: 'parent_value_id is required' });
+    // value_id is required
+    if (!value_id) {
+      return res.status(400).json({ error: 'value_id is required' });
     }
     const event = await Event.create({
       user_id: req.session.user.id,
-      parent_value_id: parent_value_id,
-      parent_habit_id: parent_habit_id
+      value_id: value_id,
+      habit_id: habit_id
     });
 
     res.status(201).json(event);

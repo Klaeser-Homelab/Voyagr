@@ -63,9 +63,9 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   };
 
   return (
-    <div className="card bg-base-100 shadow-lg">
+    <div className="card bg-gray-800 shadow-lg">
       <div className="card-body">
-        <h2 className="card-title">{valueToEdit ? 'Edit Value' : 'Create New Value'}</h2>
+        <h2 className="card-title">{valueToEdit ? 'Edit Value' : 'Create New Identity'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
             <label className="label">
@@ -77,7 +77,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
               value={formData.Name}
               onChange={handleChange}
               className="input input-bordered w-full"
-              placeholder="Enter value name"
+              placeholder="Identity name e.g. 'Athlete', 'Writer', 'Entrepreneur'"
               required
             />
           </div>
@@ -110,10 +110,6 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
             <button 
               type="submit" 
               className="btn btn-primary"
-              style={{ 
-                backgroundColor: formData.color,
-                borderColor: formData.color 
-              }}
             >
               {valueToEdit ? 'Update Value' : 'Create Value'}
             </button>

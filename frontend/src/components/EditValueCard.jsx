@@ -88,7 +88,7 @@ const EditValueCard = ({
       </div>
       
       {showHabitForm && (
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4">
           <HabitForm 
             value={value}
             onHabitUpdated={() => {

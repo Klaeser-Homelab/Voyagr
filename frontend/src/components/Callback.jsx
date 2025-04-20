@@ -45,13 +45,16 @@ function Callback() {
         // Check if the user is new
         const isNewUser = response.data.isNewUser; // Assuming response contains this info
 
-        console.log('isNewUser', isNewUser);
+        console.log('response', response);
+        console.log('response.data', response.data);
+        console.log('response.data.user', response.data.user);
+        console.log('response.data.user.id', response.data.user.id);
 
         if (isNewUser) {
           setStatus('Setting up defaults...');
-          
-          console.log('Setting up defaults...');
 
+          await axios.post(api.endpoints.breaks + '/init', { id: response.data.user.id});
+          
           setStatus('Defaults set up successfully.');
         }
 

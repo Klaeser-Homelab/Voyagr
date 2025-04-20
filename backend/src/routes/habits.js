@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const requireAuth = require('../middleware/auth'); // Import the middleware
-const { Value, Habit, Event } = require('../models/associations');
+const { Value, Habit, Event, Break } = require('../models/associations');
 const { Sequelize } = require('sequelize');
 
 // GET all habits for the current user
@@ -25,39 +25,14 @@ router.get('/api/habits', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/api/habits/breaks', requireAuth, async (req, res) => {
-  try {
-    const breaks = await Habit.findAll({
-      where: { 
-        is_break: true,
-        user_id: req.session.user.id
-      },
-      attributes: {
-        include: [
-          [Sequelize.literal("'habit'"), 'type'], // Hardcode the type as 'habit'
-          [Sequelize.col('Value.color'), 'color'] // Include the color attribute from the Value model
-        ]
-      },
-      include: [{
-        model: Value,
-        attributes: [] // Do not include any attributes from Value directly
-      }]
-    });
-    console.log('breaks', breaks);
-    res.json(breaks);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // POST new habit
 router.post('/api/habits', requireAuth, async (req, res) => {
   try {
-    const { description, parent_id } = req.body;
+    const { description, value_id } = req.body;
     const habit = await Habit.create({
       description,
       user_id: req.session.user.id,
-      parent_id
+      value_id
     });
 
     res.status(201).json(habit);

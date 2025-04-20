@@ -1,9 +1,10 @@
+// models/Break.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./User');
-const Event = require('./Event');
+const Habit = require('./Habit');
 
-const Todo = sequelize.define('Todo', {
+const Break = sequelize.define('Break', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,32 +12,28 @@ const Todo = sequelize.define('Todo', {
   },
   user_id: {
     type: DataTypes.INTEGER,
+    allowNull: false,
     references: {
       model: User,
       key: 'id'
     }
   },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
-  event_id: {
+  habit_id: {  // Change this from 'id' to 'habit_id'
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Event,
+      model: Habit,
       key: 'id'
     }
   },
-  completed: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+  interval: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
-  tableName: 'todos',
+  tableName: 'breaks',
   timestamps: true,
-  underscored: true
+  underscored: true,
 });
 
-module.exports = Todo; 
+module.exports = Break;

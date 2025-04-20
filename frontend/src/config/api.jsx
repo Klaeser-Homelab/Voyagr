@@ -8,6 +8,7 @@ export const api = {
     values: `${BASE_URL}/api/values`,
     events: `${BASE_URL}/api/events`,
     auth: `${BASE_URL}/auth`,
-    users: `${BASE_URL}/api/users`
+    users: `${BASE_URL}/api/users`,
+    breaks: `${BASE_URL}/api/breaks`
   }
 };

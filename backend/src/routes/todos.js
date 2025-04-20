@@ -14,13 +14,12 @@ router.post('/api/todos', requireAuth, async (req, res) => {
     });
 
     // Parent is an event not a habit or value
-    const { description, parent_id, parent_type } = req.body;
+    const { description, event_id } = req.body;
     
     const todo = await Todo.create({
       id: item.id,
       description,
-      parent_id,
-      parent_type,
+      event_id,
       completed: false
     });
 
@@ -59,7 +58,7 @@ router.get('/api/todos/completed/today/noevent', requireAuth, async (req, res) =
       where: { 
         completed: true, 
         updated_at: { [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)) }, 
-        parent_id: null 
+        event_id : null 
       }
     });
     res.json(todos);
@@ -103,7 +102,7 @@ router.post('/api/todos/batchprocess', requireAuth, async (req, res) => {
   try {
     const todos = req.body;
     for (const todo of todos) {
-      await Todo.update({ parent_id: todo.parent_id }, { where: { id: todo.id } });
+      await Todo.update({ event_id: todo.event_id }, { where: { id: todo.id } });
     }
     res.status(200).json({ message: 'Todos updated' });
   } catch (error) {

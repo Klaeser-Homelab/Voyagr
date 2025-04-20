@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const { user, logout } = useAuth0();
-  const [showModal, setShowModal] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
+  const [accountDeleted, setAccountDeleted] = useState(false); // State for confirmation message
+
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
 
@@ -44,11 +46,12 @@ const Settings = () => {
   };
 
 
-
-  function handleConfirmDelete() { 
-    const navigate = useNavigate();
-    navigate('/');
-    deleteAccount();
+  function handleConfirmDelete() {    
+    deleteAccount();  
+    setAccountDeleted(true);      
+    setTimeout(() => {
+        navigate('/'); // Redirect after showing the message
+      }, 2000); // Adjust the delay as needed
   };
 
   return (
@@ -67,7 +70,7 @@ const Settings = () => {
           </div>
     </div>
     <div className="flex flex-col m-10 justify-between h-full">
-    <ul tabIndex={0} className="menu menu-sm bg-base-200 rounded-box z-1 mt-3 w-52 p-2 shadow"> 
+    <ul tabIndex={0} className="menu menu-sm rounded-box z-1 mt-3 w-52 p-2 shadow"> 
       <li> <Link to="/history"> History </Link> </li> 
       <li> <button onClick={handleLogout} > Logout </button> </li> 
     </ul> 
@@ -78,21 +81,40 @@ const Settings = () => {
       </div>
     </div>
 
-    {showModal && (
-        <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
           <div className="modal-box">
             <h3 className="font-bold text-lg">Deleting Account</h3>
-            <p className="py-4">This action is irreversible.</p>
+            <p className="py-4">You are permanently deleting your account. This action is irreversible.</p>
             <div className="modal-action">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <button className="btn">Close</button>
-                <button className="btn btn-error" onClick={handleConfirmDelete}>Yes I'm sure</button>
+              <form method="dialog" className="flex flex-col w-full gap-2">
+              <input
+              type="text"
+              value={confirmationText}
+              onChange={(e) => setConfirmationText(e.target.value)}
+              className="input input-bordered w-full mt-2"
+              placeholder="Type 'delete' to confirm"
+            />
+            <div className="flex flex-row gap-2">
+            <button className="btn btn-primary mt-4">Close</button>
+            <button
+              className="btn btn-danger mt-4"
+              onClick={handleConfirmDelete}
+              disabled={confirmationText.toLowerCase() !== 'delete'}
+            >
+               Confirm Delete
+               </button>
+                </div>
               </form>
             </div>
           </div>
         </dialog>
-    )}
+
+        {accountDeleted && (
+        <div className="alert alert-success mt-4">
+          <p>Your account has been successfully deleted.</p>
+        </div>
+      )}
+
     </>
   );
 };

@@ -20,7 +20,7 @@ const Habit = sequelize.define('Habit', {
     type: DataTypes.TEXT,
     allowNull: true
   },
-  parent_id: {
+  value_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -32,11 +32,6 @@ const Habit = sequelize.define('Habit', {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 30 * 60 * 1000 // 30 minutes in milliseconds
-  },
-  is_break: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
   }
 }, {
   tableName: 'habits',

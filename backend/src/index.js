@@ -11,7 +11,7 @@ const valueRoutes = require('./routes/values');
 const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
-const router = express.Router();
+const breakRoutes = require('./routes/breaks');
 
 const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
 const redisClient = createClient( {url: redisURL} )
@@ -80,6 +80,7 @@ app.use(valueRoutes);
 app.use(eventRoutes);
 app.use(todoRoutes);
 app.use(userRoutes);
+app.use(breakRoutes);
 // Initialize database and start server
 const startServer = async () => {
   try {

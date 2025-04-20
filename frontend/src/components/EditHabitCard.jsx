@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
+import AddBreak from './AddBreak';
 
 const EditHabitCard = ({
   habit,
@@ -30,7 +31,7 @@ const EditHabitCard = ({
   };
 
   return (
-    <div className="card bg-base-100 shadow-lg">
+    <div className="card">
       <div className="card-body">
         <h2 className="card-title">{habit.description}</h2>
         <div className="form-control">
@@ -61,6 +62,13 @@ const EditHabitCard = ({
         </div>
 
         <div className="card-actions justify-end">
+          <AddBreak habit={habit} />
+          <button
+            onClick={()=>document.getElementById('add_break_modal').showModal()}
+            className="btn btn-warning"
+          >
+            Add as Break
+          </button>
           <button
             onClick={() => updateHabit(localDescription, localDuration)}
             className="btn btn-primary"

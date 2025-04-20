@@ -2,19 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 
+// Contexts
 import { TimerProvider } from './context/TimerContext';
 import { EventProvider } from './context/EventContext';
+import { BreakCycleProvider } from './context/BreakCycleContext';
+import { ProfileProvider } from './context/ProfileContext';
+import { TodayProvider } from './context/TodayContext';
+import { ThemeProvider } from './context/ThemeContext';
+
+// Pages
 import HomePage from './pages/HomePage';
 import Today from './components/Today';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import VoyagePage from './pages/VoyagePage';
-import { TodayProvider } from './context/TodayContext';
-import { ThemeProvider } from './context/ThemeContext';
 import WelcomePage from './pages/WelcomePage';
 import Callback from './components/Callback';
 import HowItsMade from './pages/HowItsMade';
-import { BreakCycleProvider } from './context/BreakCycleContext';
 import Menu from './components/Menu';
 import Settings from './components/Settings';
 
@@ -67,6 +71,7 @@ function App() {
     >
       <ThemeProvider>
         <Router>
+          <ProfileProvider>
           <TimerProvider>
           <TodayProvider>
             <BreakCycleProvider>
@@ -88,6 +93,7 @@ function App() {
               </BreakCycleProvider>
             </TodayProvider>
           </TimerProvider>
+          </ProfileProvider>
         </Router>
       </ThemeProvider>
     </Auth0Provider>

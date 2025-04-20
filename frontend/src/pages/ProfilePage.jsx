@@ -1,89 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
+import { useProfile } from '../context/ProfileContext';
 import ValueForm from '../components/ValueForm';
 import EditValueCard from '../components/EditValueCard';
+import BreakSettingForm from '../components/BreakSettingForm';
+import axios from 'axios';
+import { api } from '../config/api';
 
 const ProfilePage = () => {
-  const [values, setValues] = useState([]);
+  const { values, refreshValues } = useProfile();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchValues = async () => {
-    try {
-      const response = await axios.get(api.endpoints.values, {
-        withCredentials: true
-      });
-      setValues(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching values:', error);
-      setError('Failed to load values');
-      setLoading(false);
-    }
-  };
-
+  // Fetch on mount
   useEffect(() => {
-    fetchValues();
-  }, []);
+    const fetchData = async () => {
+      try {
+        await refreshValues();
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading values:', err);
+        setError('Failed to load values');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [refreshValues]);
 
   const handleValueEdit = async (value, newName, newColor) => {
     try {
       await axios.patch(`${api.endpoints.values}/${value.VID}`, {
         description: newName,
         color: newColor
-      });
-      fetchValues();
+      }, { withCredentials: true });
+
+      await refreshValues();
     } catch (error) {
       console.error('Error updating value:', error);
-    }
-  };
-
-  const handleHabitEdit = async (habit, newName) => {
-    try {
-      await axios.patch(`${api.endpoints.habits}/${habit.IID}`, {
-        description: newName
-      }, {
-        withCredentials: true
-      });
-      fetchValues();
-    } catch (error) {
-      console.error('Error updating habit:', error);
     }
   };
 
   const handleHabitDelete = async (habit) => {
     if (window.confirm('Are you sure you want to delete this habit?')) {
       try {
-        await axios.delete(`${api.endpoints.habits}/${habit.IID}`);
-        fetchValues();
+        await axios.delete(`${api.endpoints.habits}/${habit.IID}`, {
+          withCredentials: true
+        });
+        await refreshValues();
       } catch (error) {
         console.error('Error deleting habit:', error);
       }
     }
   };
 
+  if (loading) {
+    return <div className="text-gray-600">Loading values...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-600">{error}</div>;
+  }
+
   return (
     <div className="flex flex-col gap-4 flex-grow overflow-y-auto">
       <div className="space-y-6">
-        <div className="bg-base-200 dark:bg-base-800 rounded-lg shadow p-6">
-          <ValueForm onValueUpdated={fetchValues} />
+        <div className="bg-base-100 rounded-lg m-10">
+          <ValueForm onValueUpdated={refreshValues} />
         </div>
 
         <div className="flex flex-col gap-4 p-10">
-          {values.map(value => (
+          {values.map((value) => (
             <EditValueCard
               key={value.id}
               value={value}
               onValueEdit={handleValueEdit}
               onHabitDelete={handleHabitDelete}
-              onHabitCreated={fetchValues}
+              onHabitCreated={refreshValues}
             />
           ))}
         </div>
       </div>
+      <BreakSettingForm />
     </div>
   );
 };
 
-export default ProfilePage; 
+export default ProfilePage;

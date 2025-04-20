@@ -49,7 +49,7 @@ export const EventProvider = ({ children }) => {
         .filter(todo => todo.completed)
         .map(todo => ({
           ...todo,
-          parent_id: activeEvent.id   // Add the event ID to each completed todo
+          event_id: activeEvent.id   // Add the event ID to each completed todo
         }));
       
       console.log('Completed todos:', completedTodos);
@@ -91,19 +91,19 @@ export const EventProvider = ({ children }) => {
     }
     setActiveItem(input);
 
-    let parent_value_id = null;
-    let parent_habit_id = null;
+    let value_id = null;
+    let habit_id = null;
     if(input.type === 'habit') {
-      parent_habit_id = input.id;
-      parent_value_id = input.parent_id;
+      habit_id = input.id;
+      value_id = input.value_id;
     } else if(input.type === 'value') {
-      parent_value_id = input.id;
+      value_id = input.id;
     }
 
     try {
       const eventResponse = await axios.post(api.endpoints.events, {
-        parent_value_id: parent_value_id,
-        parent_habit_id: parent_habit_id
+        value_id: value_id,
+        habit_id: habit_id
       }, {
         withCredentials: true
       });
