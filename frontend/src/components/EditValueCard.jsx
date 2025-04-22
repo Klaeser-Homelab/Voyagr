@@ -81,9 +81,10 @@ const EditValueCard = ({
               <h3 className="text-lg font-semibold text-white">{value.description}</h3>
               <button
                   onClick={() => setShowHabitForm(!showHabitForm)}
-                  className="btn bg-green-700 btn-square btn-xs text-white hover:text-gray-200"
+                  className="btn bg-green-700 btn-xs text-white"
                 >
-                  <PlusIcon className="size-6 text-white" />
+                  <PlusIcon className="size-4 text-white" />
+                  Create Habit
                 </button>
             </div>
                 <button
@@ -108,12 +109,18 @@ const EditValueCard = ({
 
       {value.Habits && value.Habits.length > 0 && (
         <div className="p-2 border-l-5" style={{ borderColor: value.color }}>
-          {value.Habits.map(habit => (
-            <EditHabitCard
-              key={habit.id}
-              habit={{ ...habit, color: value.color }}
-            />
-          ))}
+          <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-2">
+            <p className="hidden md:block text-sm px-2 w-45">Habits</p>
+            <p className="hidden md:block text-sm px-2 w-42">Duration</p>
+          </div>
+            {value.Habits.map(habit => (
+              <EditHabitCard
+                key={habit.id}
+                habit={{ ...habit, color: value.color }}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

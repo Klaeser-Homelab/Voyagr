@@ -21,12 +21,10 @@ const ProfilePage = () => {
 
   return (
     <div className="flex flex-col gap-4 flex-grow overflow-y-auto">
-      <div className="space-y-6">
-        <div className="bg-base-100 rounded-lg m-10">
+      <div className="bg-base-100 rounded-lg sm:mx-2 md:mx-10 mt-5">
           <ValueForm />
-        </div>
-
-        <div className="flex flex-col gap-4 p-10">
+      </div>
+        <div className="flex flex-col gap-1 sm:px-2 md:px-10">
           {values.map((value) => (
             <EditValueCard
               key={value.id}
@@ -34,7 +32,8 @@ const ProfilePage = () => {
             />
           ))}
         </div>
-      </div>
+        
+      
       <BreakSettingForm />
       <Archived />
     </div>

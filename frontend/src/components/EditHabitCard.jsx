@@ -3,14 +3,14 @@ import axios from 'axios';
 import { api } from '../config/api';
 import AddBreak from './AddBreak';
 import { useValues } from '../context/ValuesContext';
-import { XCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const EditHabitCard = ({
   habit
 }) => {
   const { updateHabit } = useValues();
   const [localHabit, setLocalHabit] = useState(habit);
-  const [isBreakActive, setIsBreakActive] = useState(false);
+  const [isBreakActive, setIsBreakActive] = useState(habit.is_break);
   const [interval, setInterval] = useState('');
 
   const handleAddBreak = async (e) => {
@@ -24,7 +24,6 @@ const EditHabitCard = ({
       }, { withCredentials: true });
       
       // Optional: Close dialog or reset form
-      document.getElementById('add_break_modal').close();
       setInterval('');
     } catch (error) {
       console.error('Error adding break:', error);
@@ -55,22 +54,23 @@ const EditHabitCard = ({
     updateHabit(localHabit);
   };
 
+  const isHabitModified = () => {
+    return JSON.stringify(localHabit) !== JSON.stringify(habit);
+  };
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <div className="flex flex-col pt-1">
-          <p className="text-sm px-2">Habit</p>
+    <div className="flex flex-col">
+      <div className="flex flex-row pt-1 gap-2 justify-between">
+        <div className="flex flex-wrap gap-1 items-center">
           <input
             type="text"
             value={localHabit.description}
             onChange={(e) => setLocalHabit({ ...localHabit, description: e.target.value })}
-            className="input w-full"
+            className="input w-45"
             placeholder="Enter habit description"
             required
           />
-          </div>
-          <div className="flex flex-col pt-1">
-          <p className="text-sm px-2">Duration</p>
-          <label className="input">
+          <label className="input w-45">
           <input
             type="number"
             className="input text-sm input-bordered w-15"
@@ -80,9 +80,45 @@ const EditHabitCard = ({
           />
             <span className="label">minutes</span>
           </label>
+          <input 
+              type="checkbox"
+              id={`breakToggle-${habit.id}`} // Use the habit's unique ID to create a unique input ID
+              className="sr-only"
+              checked={isBreakActive}
+              onChange={(e) => {
+                const newValue = e.target.checked;
+                console.log("Checkbox changed to:", newValue); // Debug log
+                setIsBreakActive(newValue);
+                if (newValue) {
+                  document.getElementById(`add_break_modal-${habit.id}`).showModal();
+                }
+              }}
+            />
+            <button onClick={() => handleAddBreak()} className="btn btn-xs bg-green-700 text-white">
+              <PlusIcon className="size-4" />
+              Add as Break
+            </button>
 
-          </div>
-          <dialog id={`add_break_modal-${habit.id}`}className="modal modal-bottom sm:modal-middle">
+      </div>
+      <div className="flex flex-row gap-2 items-center">
+          <button
+            onClick={() => updateHabit(localHabit)}
+            className="btn text-xs btn-sm btn-primary"
+            disabled={!isHabitModified()}
+          >
+            Save
+          </button>
+          <button
+            onClick={handleArchive}
+            className="btn btn-square btn-sm btn-ghost"
+          >
+            <TrashIcon className="size-6 " />
+          </button>
+      </div>
+      </div>
+          
+    
+        <dialog id={`add_break_modal-${habit.id}`}className="modal modal-bottom sm:modal-middle">
       <div className="modal-box">
         <h3 className="font-bold text-lg">Creating Break</h3>
         <p className="py-4">
@@ -119,49 +155,6 @@ const EditHabitCard = ({
         </div>
       </div>
     </dialog>
-    <div className="flex flex-row gap-2 items-center">
-      <div className="flex flex-col pt-1">
-      <p className="text-sm px-1">Break</p>
-    <div className="">
-    <input 
-  type="checkbox"
-  id={`breakToggle-${habit.id}`} // Use the habit's unique ID to create a unique input ID
-  className="sr-only"
-  checked={isBreakActive}
-  onChange={(e) => {
-    const newValue = e.target.checked;
-    console.log("Checkbox changed to:", newValue); // Debug log
-    setIsBreakActive(newValue);
-    if (newValue) {
-      document.getElementById(`add_break_modal-${habit.id}`).showModal();
-    }
-  }}
-/>
-<label 
-  htmlFor={`breakToggle-${habit.id}`} // Match the input's unique ID
-  className={`cursor-pointer rounded-md text-2xl h-9.5 flex items-center justify-center ${
-    isBreakActive 
-      ? "bg-yellow-500 text-black" 
-      : "bg-gray-500 opacity-25"
-  }`}
->
-🌴📵
-</label>
-</div>
-</div>
-          <button
-            onClick={() => updateHabit(localHabit)}
-            className="btn btn-primary"
-          >
-            Save
-          </button>
-          <button
-            onClick={handleArchive}
-            className="btn btn-square btn-error btn-sm"
-          >
-            <TrashIcon className="size-6 text-white" />
-          </button>
-        </div>
         </div>
   );
 };

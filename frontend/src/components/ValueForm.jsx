@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useValues } from '../context/ValuesContext';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 const ValueForm = ({ value }) => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const ValueForm = ({ value }) => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const { addValue } = useValues();
+  const [isEditing, setIsEditing] = useState(false);
+
   useEffect(() => {
     if (value) {
       setFormData({
@@ -47,64 +50,86 @@ const ValueForm = ({ value }) => {
     }));
   };
 
+  const handleCreateNewIdentity = () => {
+    setIsEditing(true);
+  };
+
   return (
-    <div className="card bg-gray-800 shadow-lg">
-      <div className="card-body">
-        <h2 className="card-title">{value ? 'Edit Value' : 'Create New Identity'}</h2>
-        <form onSubmit={createValue} className="space-y-4">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Name</span>
-            </label>
-            <input
-              type="text"
-              name="Name"
-              value={formData.Name}
-              onChange={handleChange}
-              className="input input-bordered w-full"
-              placeholder="Identity name e.g. 'Athlete', 'Writer', 'Entrepreneur'"
-              required
-            />
-          </div>
+    
+      <div className="">
+      {isEditing ? (
+        <div className="card bg-gray-800 shadow-lg">
+          <div className="card-body">
+            <h2 className="card-title">{value ? 'Edit Value' : 'Create New Identity'}</h2>
+            <form onSubmit={createValue} className="space-y-4">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Name</span>
+                </label>
+                <input
+                  type="text"
+                  name="Name"
+                  value={formData.Name}
+                  onChange={handleChange}
+                  className="input input-bordered w-full"
+                  placeholder="Identity name e.g. 'Athlete', 'Writer', 'Entrepreneur'"
+                  required
+                />
+              </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Color</span>
-            </label>
-            <div className="flex gap-4 items-center">
-              <input
-                type="color"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                className="w-12 h-12 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                className="input input-bordered flex-1"
-                pattern="^#[0-9A-Fa-f]{6}$"
-                required
-              />
-            </div>
-          </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Color</span>
+                </label>
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="color"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleChange}
+                    className="w-12 h-12 rounded cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleChange}
+                    className="input input-bordered flex-1"
+                    pattern="^#[0-9A-Fa-f]{6}$"
+                    required
+                  />
+                </div>
+              </div>
 
-          <div className="card-actions justify-end">
-            <button 
-              type="submit" 
-              className="btn btn-primary"
-            >
-              {value ? 'Update Value' : 'Create Value'}
-            </button>
-          </div>
-        </form>
+              <div className="card-actions justify-end">
+                <button 
+                  type="submit" 
+                  className="btn btn-primary btn-sm"
+                >
+                  Save
+                </button>
+                <button onClick={() => setIsEditing(false)} className="btn btn-sm btn-ghost">
+                  Close
+                </button>
+              </div>
+            </form>
 
-        {message && <div className="success-message">{message}</div>}
-        {error && <div className="error-message">{error}</div>}
+            {message && <div className="success-message">{message}</div>}
+            {error && <div className="error-message">{error}</div>}
+          </div>
+          </div>
+        ) : (
+          <div className="flex flex-row justify-end">   
+          <button 
+            onClick={handleCreateNewIdentity} 
+            className="btn bg-green-700 text-white"
+          >
+            <PlusIcon className="size-6" />
+            Create Identity
+          </button>
+          </div>
+        )}
       </div>
-    </div>
   );
 };
 

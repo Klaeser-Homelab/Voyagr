@@ -9,10 +9,6 @@ export const ValuesProvider = ({ children }) => {
   const [archivedValues, setArchivedValues] = useState([]);
   const [archivedHabits, setArchivedHabits] = useState([]);
 
-  useEffect(() => {
-    console.log('breaks', breaks);
-  }, [breaks]);
-
   // ----- VALUES -----
   const fetchValues = useCallback(async () => {
     try {
