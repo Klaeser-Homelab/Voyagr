@@ -20,22 +20,22 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 flex-grow overflow-y-auto">
-      <div className="bg-base-100 rounded-lg sm:mx-2 md:mx-10 mt-5">
+    <div className="flex flex-col gap-4 max-w-screen-2xl">
+      <div className="flex flex-col mx-2 md:mx-10 mt-5">
           <ValueForm />
       </div>
-        <div className="flex flex-col gap-1 sm:px-2 md:px-10">
-          {values.map((value) => (
-            <EditValueCard
-              key={value.id}
-              value={value}
-            />
-          ))}
-        </div>
-        
-      
-      <BreakSettingForm />
-      <Archived />
+      <div className="flex flex-col gap-1 mx-2 md:mx-10">
+        {values.map((value) => (
+          <EditValueCard
+            key={value.id}
+            value={value}
+          />
+        ))}
+      </div>
+      <div className="flex flex-col mx-2 md:mx-10">
+        <BreakSettingForm />
+      </div>
+        <Archived />
     </div>
   );
 };

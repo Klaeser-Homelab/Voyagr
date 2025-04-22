@@ -23,7 +23,7 @@ import Settings from './components/Settings';
 
 function AuthenticatedLayout() {
   return (
-    <div className="flex flex-col h-screen lg:flex-row justify-between">
+    <div className="flex flex-col h-screen lg:m-20 max-w-screen-2xl">
       <Menu />
       <Routes>
         <Route path="/home" element={<HomePage />} />

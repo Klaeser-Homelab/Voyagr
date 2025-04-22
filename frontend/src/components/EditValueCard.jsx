@@ -34,6 +34,7 @@ const EditValueCard = ({
         {editingValue ? (
           <div className="flex flex-wrap items-center justify-between">
             <div className="flex gap-2 items-center">
+              <div className="flex flex-row gap-2">
             <input
               type="text"
               value={localValue.description}
@@ -47,18 +48,19 @@ const EditValueCard = ({
               onChange={(e) => setLocalValue({ ...localValue, color: e.target.value })}
               className="w-10 h-10 rounded cursor-pointer"
             />
+            </div>
             <button
                 onClick={() => {
                   updateValue(localValue);
                   setEditingValue(false);
                 }}
-                className="btn btn-primary btn-sm text-base"
+                className="btn btn-primary btn-sm"
               >
                 Save
               </button>
             <button
                 onClick={() => setEditingValue(false)}
-                className="btn btn-outline btn-info btn-sm text-base"
+                className="btn btn-ghost btn-sm"
               >
                 Cancel
               </button>

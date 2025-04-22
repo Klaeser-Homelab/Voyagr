@@ -1,51 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useValues } from '../context/ValuesContext';
 import { useEvent } from '../context/EventContext';
-import { useBreaks } from '../context/BreaksContext';
-import ValueCard from './ValueCard';
-import ActiveCard from './ActiveCard';
+import Identity from './Identity';
+import Event from './Event';
 
 function ValueList() {
-  const { mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
+  const { activeItem, activeEvent } = useEvent();
   const { values } = useValues();
-  const { fetchBreaks } = useBreaks();
   const [error, setError] = useState(null);
 
   if (error) {
     return <div className="text-red-600">{error}</div>;
   }
 
-  if (!activeEvent) {
+
+if(activeEvent) {
+  return (
+        <Event key={activeItem.id} item={activeItem} />
+  );
+}
+
+if(values.length === 1)
+{
+  console.log('values', values);
+}
+
     return (
       <div className="container p-14 w-full max-w-md flex flex-col gap-4">
         <h1 className="text-2xl text-center font-bold">What's next?</h1>
         {values.map((value) => (
           <div key={value.id}>
-            <ValueCard value={value} />
+            <Identity value={value} />
           </div>
         ))}
       </div>
     );
   }
-
-  return (
-    <div className="md:py-14 lg:py-20 xl:py-28">
-      <div className="flex items-center justify-center gap-4 p-4">
-        <button onClick={deleteEvent} className="btn btn-dash btn-error">
-          Abandon Session
-        </button>
-        <button
-          onClick={updateEvent}
-          className={`btn btn-success ${mode === 'timer' ? 'btn-dash' : ''}`}
-        >
-          Submit Session
-        </button>
-      </div>
-      <div className="min-w-[30vw] flex-1 basis-[40vw]">
-        <ActiveCard key={activeItem.id} item={activeItem} />
-      </div>
-    </div>
-  );
-}
 
 export default ValueList;

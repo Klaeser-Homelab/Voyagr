@@ -21,36 +21,37 @@ const HabitForm = ({ value, setShowHabitForm }) => {
   return (
     <div className="card">
         <form onSubmit={handleSubmit}>
+        <h3 className="">Name</h3>
           <div className="form-control">
-            <label className="label">
-              <span className="label-text">Description</span>
-            </label>
             <input
               type="text"
               value={habit.description}
               onChange={(e) => setHabit({ ...habit, description: e.target.value })}
               className="input input-bordered w-full"
-              placeholder="Enter habit description"
+              placeholder="Enter habit name"
               required
             />
           </div>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Duration (minutes)</span>
-            </label>
+            <h3 className="">Default Duration</h3>
+            <p className="text-xs text-gray-500">The starting duration for the habit timer.</p>
+            <label className="input w-full">
             <input
               type="number"
-              className="input input-bordered w-full"
+              className="input input-sm input-bordered w-60"
               value={habit.duration / 60000}
               onChange={(e) => setHabit({ ...habit, duration: e.target.value * 60000 })}
               required
             />
-          </div>
+            <span className="label">minutes</span>
+            </label>
 
-          <div className="card-actions justify-end">
-            <button type="submit" className="btn btn-primary">
+          <div className="card-actions mt-2 justify-end">
+            <button type="submit" className="btn btn-sm btn-primary">
               Save
+            </button>
+            <button type="button" className="btn btn-sm btn-ghost" onClick={() => setShowHabitForm(false)}>
+              Cancel
             </button>
           </div>
         </form>

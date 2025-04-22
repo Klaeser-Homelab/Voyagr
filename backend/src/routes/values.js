@@ -36,24 +36,22 @@ router.get('/api/values', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/api/values/no-default-breaks', requireAuth, async (req, res) => {  
+router.get('/api/values/archived', requireAuth, async (req, res) => {  
   try {
-
-    // Find values associated with the current user, excluding 'Default Break'
+    // Find values associated with the current user
     const values = await Value.findAll({
-      where: {
-        user_id: req.session.user.id, // Directly filter by user_id
-        description: {
-          [Op.ne]: 'Default Break' // Exclude 'Default Break'
-        }
-      },
+      where: { user_id: req.session.user.id, is_active: false }, // Directly filter by user_id
       include: [{    
         model: Habit,
-        attributes: {
-          include: [
-            [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
-          ]
-        }
+          required: false,
+          attributes: {
+            include: [
+              [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+            ]
+          },
+          where: {
+            is_active: false // Assuming 'is_active' is the field indicating active status
+          }
       }],
       order: [['created_at', 'DESC']],
       attributes: {

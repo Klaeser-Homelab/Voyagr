@@ -31,7 +31,8 @@ const BreakSettingsForm = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="flex flex-col bg-gray-800 shadow-md p-4 rounded-lg md:m-10">
+    <div className="bg-gray-800 shadow-lg rounded-lg">
+    <div className="flex flex-col p-4">
       <h2 className="text-xl font-bold">Breaks</h2>
       <div className="flex flex-row gap-2 mt-2 mb-2">
             <p className="hidden md:block text-sm px-2 w-45">Habits</p>
@@ -75,6 +76,7 @@ const BreakSettingsForm = () => {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

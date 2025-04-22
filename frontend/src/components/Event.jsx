@@ -3,11 +3,13 @@ import { useTimer } from '../context/TimerContext';
 import { useEvent } from '../context/EventContext';
 import Todo from './TodoCard';
 import TodoForm from './TodoForm';
-import TimerControls from '../components/TimerControls';
+import TimerControls from './TimerControls';
 import { PlayIcon, PauseIcon} from '@heroicons/react/24/outline';
 
-function ActiveCard({ item }) {
+function Event({ item }) {
   const { todos, setTodos } = useEvent();
+  const { activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
+
 
   useEffect(() => {
     console.log('item', item);
@@ -57,6 +59,19 @@ function ActiveCard({ item }) {
   };
 
   return (
+    <div className="md:py-14 lg:py-20 xl:py-28">
+      <div className="flex items-center justify-center gap-4 p-4">
+        <button onClick={deleteEvent} className="btn btn-dash btn-error">
+          Abandon Session
+        </button>
+        <button
+          onClick={updateEvent}
+          className={`btn btn-success ${mode === 'timer' ? 'btn-dash' : ''}`}
+        >
+          Submit Session
+        </button>
+      </div>
+    <div className="min-w-[30vw] flex-1 basis-[40vw]">
     <div 
       className="container mx-auto max-w-2xl bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg w-full"
     >
@@ -106,7 +121,9 @@ function ActiveCard({ item }) {
         />
       </div>
     </div>
+    </div>
+    </div>
   );
 }
 
-export default ActiveCard; 
+export default Event; 

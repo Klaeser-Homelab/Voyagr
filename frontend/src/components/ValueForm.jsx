@@ -109,7 +109,7 @@ const ValueForm = ({ value }) => {
                   Save
                 </button>
                 <button onClick={() => setIsEditing(false)} className="btn btn-sm btn-ghost">
-                  Close
+                  Cancel
                 </button>
               </div>
             </form>

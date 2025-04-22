@@ -3,7 +3,7 @@ import HabitCard from './HabitCard';
 import { PlayIcon } from '@heroicons/react/24/outline';
 import { useEvent } from '../context/EventContext';
 
-function ValueCard({ value }) {
+function Identity({ value }) {
   const { createEvent } = useEvent();
 
   return (
@@ -32,4 +32,4 @@ function ValueCard({ value }) {
   );
 }
 
-export default ValueCard; 
+export default Identity; 
