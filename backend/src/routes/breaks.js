@@ -60,10 +60,11 @@ router.post('/api/breaks/init', async (req, res) => {
         order: [['interval', 'ASC']], // Sort by interval in ascending order
         include: [{
           model: Habit,
-          attributes: ['description', 'duration'],
+          attributes: ['description', 'duration', 'id', 'value_id', [Sequelize.literal("'habit'"), 'type']],
           include: [{
             model: Value,
-            attributes: ['description', 'color'] // Include Value description and color
+            required: false,    
+            attributes: ['description', 'color', 'id', [Sequelize.literal("'value'"), 'type']] // Include Value description and color
           }]
         }]
       });
@@ -71,6 +72,37 @@ router.post('/api/breaks/init', async (req, res) => {
     } catch (error) {
       console.error('Error fetching breaks with habit and value data:', error);
       res.status(500).json({ error: 'Failed to fetch breaks' });
+    }
+  });
+
+  router.put('/api/breaks', requireAuth, async (req, res) => {
+    try {
+      const { id, interval } = req.body;
+  
+      // Find the break for the current user
+      const breakItem = await Break.findOne({
+        where: {
+          id,
+          user_id: req.session.user.id
+        }
+      });
+  
+      if (!breakItem) {
+        return res.status(404).json({ error: 'Break not found or not authorized' });
+      }
+  
+      // Update the interval if provided
+      if (interval !== undefined) {
+        breakItem.interval = interval;
+      }
+  
+      // Save changes
+      await breakItem.save();
+  
+      res.json(breakItem);
+    } catch (error) {
+      console.error('Error updating break:', error);
+      res.status(400).json({ error: error.message });
     }
   });
 

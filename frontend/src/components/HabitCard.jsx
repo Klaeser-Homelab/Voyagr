@@ -1,10 +1,14 @@
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { useTimer } from "../context/TimerContext";
 import { useEvent } from "../context/EventContext";
-
+import { useEffect } from "react";
 const HabitCard = ({ habit}) => {
   const { startTimer } = useTimer();
   const { createEvent } = useEvent();
+
+  useEffect(() => {
+    console.log('habit', habit);
+  }, [habit]);
 
   const getScheduleText = () => {
     if (!habit.startTime || !habit.endTime || !habit.daysOfWeek) return null;

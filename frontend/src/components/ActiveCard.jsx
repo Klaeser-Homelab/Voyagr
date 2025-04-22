@@ -6,9 +6,12 @@ import TodoForm from './TodoForm';
 import TimerControls from '../components/TimerControls';
 import { PlayIcon, PauseIcon} from '@heroicons/react/24/outline';
 
-
 function ActiveCard({ item }) {
   const { todos, setTodos } = useEvent();
+
+  useEffect(() => {
+    console.log('item', item);
+  }, [item]);
 
   const { 
     startTimer, 

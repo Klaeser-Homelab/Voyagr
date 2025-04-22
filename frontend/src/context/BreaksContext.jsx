@@ -1,18 +1,18 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { api } from '../config/api';
+import { useValues } from './ValuesContext';
+const BreaksContext = createContext();
 
-const BreakCycleContext = createContext();
-
-export const BreakCycleProvider = ({ children }) => {
-  //const [breakCycle, setBreakCycle] = useState(0);
-  const [breaks, setBreaks] = useState([]);
+export const BreaksProvider = ({ children }) => {
+  const { breaks, addBreak, updateBreak, deleteBreak } = useValues();
   const [breakDuration, setBreakDuration] = useState(0);  
-  
+
   // After 2 hours of work, you get a long break
   const updateCycleDuration = (duration) => {
     const newDuration = breakDuration + duration;
     console.log('newDuration', newDuration);
+    console.log('breaks', breaks[breaks.length - 1]);
     const lastBreakInterval = breaks[breaks.length - 1].interval; // Assuming breaks is sorted
     if (newDuration > lastBreakInterval) { // Compare with the last break's interval
       console.log('resetting');
@@ -23,17 +23,6 @@ export const BreakCycleProvider = ({ children }) => {
       setBreakDuration(newDuration);
     }
   }
-
-  const fetchBreaks = useCallback(async () => {
-    try {
-      const response = await axios.get(api.endpoints.breaks, {
-        withCredentials: true
-      });
-      setBreaks(response.data);
-    } catch (error) {
-      console.error('Failed to fetch breaks:', error);
-    }
-  }, []);
 
   const getBreak = (duration) => {
     console.log('getting break', duration);
@@ -50,17 +39,16 @@ export const BreakCycleProvider = ({ children }) => {
   }
 
   const value = {
-    getBreak,
-    fetchBreaks
+    getBreak
   }
 
-  return <BreakCycleContext.Provider value={value}>{children}</BreakCycleContext.Provider>;
+  return <BreaksContext.Provider value={value}>{children}</BreaksContext.Provider>;
 };
 
-export const useBreakCycle = () => {
-  const context = useContext(BreakCycleContext);
+export const useBreaks = () => {
+  const context = useContext(BreaksContext);
   if (!context) {
-    throw new Error('useBreakCycle must be used within a BreakCycleProvider');
+    throw new Error('useBreaks must be used within a BreaksProvider');
   }
   return context;
 };

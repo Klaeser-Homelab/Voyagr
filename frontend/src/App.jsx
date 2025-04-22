@@ -5,11 +5,10 @@ import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
 // Contexts
 import { TimerProvider } from './context/TimerContext';
 import { EventProvider } from './context/EventContext';
-import { BreakCycleProvider } from './context/BreakCycleContext';
-import { ProfileProvider } from './context/ProfileContext';
+import { BreaksProvider } from './context/BreaksContext';
+import {ValuesProvider } from './context/ValuesContext';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
-
 // Pages
 import HomePage from './pages/HomePage';
 import Today from './components/Today';
@@ -71,10 +70,10 @@ function App() {
     >
       <ThemeProvider>
         <Router>
-          <ProfileProvider>
+          <ValuesProvider>
           <TimerProvider>
           <TodayProvider>
-            <BreakCycleProvider>
+            <BreaksProvider>
               <EventProvider>
               <Routes>
                     {/* Public pages (no menu) */}
@@ -90,10 +89,10 @@ function App() {
                     } />
                   </Routes>
               </EventProvider>
-              </BreakCycleProvider>
+              </BreaksProvider>
             </TodayProvider>
           </TimerProvider>
-          </ProfileProvider>
+          </ValuesProvider>
         </Router>
       </ThemeProvider>
     </Auth0Provider>

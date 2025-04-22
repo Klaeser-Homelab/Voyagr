@@ -68,56 +68,34 @@ router.get('/api/habits/:id', requireAuth, async (req, res) => {
   }
 });
 
-// UPDATE habit
+//Update habit
 router.put('/api/habits', requireAuth, async (req, res) => {
   try {
-    const { id, description, duration } = req.body;
-    const habit = await Habit.findByPk(id);
-    
-    if (!habit) {
-      return res.status(404).json({ error: 'Habit not found' });
-    }
-
-    await habit.update({ description, duration });
-    
-    // Return the updated habit with its item data
-    const fullHabit = await Habit.findByPk(habit.id, {
-      include: [{
-        model: Item,
-        attributes: ['created_at']
-      }]
-    });
-
-    res.json(fullHabit);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// DELETE habit
-router.delete('/api/habits/:id', requireAuth, async (req, res) => {
-  try {
-    // Get the user ID from the session
-    const userId = req.session.user.id;
+    const { id, description, duration, is_active } = req.body; // Include all fields you want to update
 
     // Find the habit associated with the current user
     const habit = await Habit.findOne({
-      where: { 
-        id: req.params.id,
-        user_id: userId // Directly filter by user_id
+      where: {
+        id: id,
+        user_id: req.session.user.id // Ensure the habit belongs to the current user
       }
     });
-    
+
     if (!habit) {
       return res.status(404).json({ error: 'Habit not found or not authorized' });
     }
 
-    // Delete the habit
-    await habit.destroy();
+    // Update the habit fields
+    habit.description = description || habit.description;
+    habit.duration = duration || habit.duration;
+    habit.is_active = is_active !== undefined ? is_active : habit.is_active;
 
-    res.status(204).send();
+    // Save the updated habit
+    await habit.save();
+
+    res.json(habit);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 

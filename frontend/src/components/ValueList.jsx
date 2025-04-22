@@ -1,39 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useProfile } from '../context/ProfileContext';
+import { useValues } from '../context/ValuesContext';
 import { useEvent } from '../context/EventContext';
-import { useBreakCycle } from '../context/BreakCycleContext';
+import { useBreaks } from '../context/BreaksContext';
 import ValueCard from './ValueCard';
 import ActiveCard from './ActiveCard';
 
 function ValueList() {
   const { mode, activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
-  const { values, refreshValues } = useProfile();
-  const { fetchBreaks } = useBreakCycle();
-  
-  const [loading, setLoading] = useState(true);
+  const { values } = useValues();
+  const { fetchBreaks } = useBreaks();
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        await Promise.all([
-          refreshValues(),
-          fetchBreaks()
-        ]);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error loading profile data:', err);
-        setError('Failed to load values');
-        setLoading(false);
-      }
-    };
-
-    fetchAll();
-  }, [refreshValues, fetchBreaks]);
-
-  if (loading) {
-    return <div className="text-gray-600">Loading values...</div>;
-  }
 
   if (error) {
     return <div className="text-red-600">{error}</div>;

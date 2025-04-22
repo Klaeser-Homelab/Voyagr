@@ -3,7 +3,7 @@ import axios from 'axios';
 import { api } from '../config/api';
 import { useTimer } from './TimerContext';
 import { useToday } from './TodayContext';
-import { useBreakCycle } from './BreakCycleContext';
+import { useBreaks } from './BreaksContext';
 const EventContext = createContext();
 
 export const EventProvider = ({ children }) => {
@@ -12,7 +12,7 @@ export const EventProvider = ({ children }) => {
   const [activeItem, setActiveItem] = useState(null);
   const {startTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds } = useTimer();
   const { fetchEvents } = useToday();
-  const { getBreak } = useBreakCycle();
+  const { getBreak } = useBreaks();
 
   const transitionToBreak = async (duration) => {
     console.log('transitioning to break', duration);
@@ -20,7 +20,12 @@ export const EventProvider = ({ children }) => {
     console.log('breakItem', breakItem);
     if (breakItem) {
       console.log('creating break event');
-      createEvent({input: breakItem});
+      createEvent({
+        input: {
+          ...breakItem.Habit,
+          color: breakItem.Habit.Value.color // Add the color property
+        }
+      });
     } else {
       setActiveItem(null);
       setActiveEvent(null);
@@ -89,16 +94,21 @@ export const EventProvider = ({ children }) => {
       console.error('Input is null or undefined:', input);
       return;
     }
+
+    console.log('input', input);
     setActiveItem(input);
 
-    let value_id = null;
     let habit_id = null;
-    if(input.type === 'habit') {
+    let value_id = null;
+    if(input.type === 'habit'){
       habit_id = input.id;
       value_id = input.value_id;
-    } else if(input.type === 'value') {
+    } else if(input.type === 'value'){
       value_id = input.id;
     }
+
+    console.log('habit_id', habit_id);
+    console.log('value_id', value_id);
 
     try {
       const eventResponse = await axios.post(api.endpoints.events, {

@@ -32,6 +32,11 @@ const Habit = sequelize.define('Habit', {
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 30 * 60 * 1000 // 30 minutes in milliseconds
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
   }
 }, {
   tableName: 'habits',

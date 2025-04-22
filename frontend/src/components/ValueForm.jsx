@@ -1,55 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
+import { useValues } from '../context/ValuesContext';
 
-const ValueForm = ({ valueToEdit, onValueUpdated }) => {
+const ValueForm = ({ value }) => {
   const [formData, setFormData] = useState({
     Name: '',
     color: '#4A90E2'
   });
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-
+  const { addValue } = useValues();
   useEffect(() => {
-    if (valueToEdit) {
+    if (value) {
       setFormData({
-        Name: valueToEdit.Name,
-        color: valueToEdit.color
+        Name: value.Name,
+        color: value.color
       });
     }
-  }, [valueToEdit]);
+  }, [value]);
 
-  const handleSubmit = async (e) => {
+  const createValue = async (e) => {
     e.preventDefault();
     try {
-      if (valueToEdit) {
-        // Update existing value
-        await axios.put(`${api.endpoints.values}/${valueToEdit.VID}`, {
-          description: formData.Name,
-          color: formData.color
-        }, {
-          withCredentials: true
-        });
-        setMessage('Value updated successfully!');
-      } else {
-        // Create new value
-        await axios.post(api.endpoints.values, {
-          description: formData.Name,
-          color: formData.color
-        }, {
-          withCredentials: true
-        });
-        setMessage('Value created successfully!');
-      }
-      
+      // Call addValue instead of making the post request directly
+      await addValue({
+        description: formData.Name,
+        color: formData.color
+      });
+  
+      setMessage('Identity created successfully!');
       setFormData({
         Name: '',
         color: '#4A90E2'
       }); // Reset form
       setError(null);
-      if (onValueUpdated) onValueUpdated();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save value');
+      setError(err.response?.data?.error || 'Failed to save identity');
       setMessage(null);
     }
   };
@@ -65,8 +50,8 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
   return (
     <div className="card bg-gray-800 shadow-lg">
       <div className="card-body">
-        <h2 className="card-title">{valueToEdit ? 'Edit Value' : 'Create New Identity'}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <h2 className="card-title">{value ? 'Edit Value' : 'Create New Identity'}</h2>
+        <form onSubmit={createValue} className="space-y-4">
           <div className="form-control">
             <label className="label">
               <span className="label-text">Name</span>
@@ -111,7 +96,7 @@ const ValueForm = ({ valueToEdit, onValueUpdated }) => {
               type="submit" 
               className="btn btn-primary"
             >
-              {valueToEdit ? 'Update Value' : 'Create Value'}
+              {value ? 'Update Value' : 'Create Value'}
             </button>
           </div>
         </form>

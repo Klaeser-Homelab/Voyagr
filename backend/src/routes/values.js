@@ -7,17 +7,20 @@ const { Sequelize, Op } = require('sequelize');
 // GET all values
 router.get('/api/values', requireAuth, async (req, res) => {  
   try {
-
     // Find values associated with the current user
     const values = await Value.findAll({
-      where: { user_id: req.session.user.id }, // Directly filter by user_id
+      where: { user_id: req.session.user.id, is_active: true }, // Directly filter by user_id
       include: [{    
         model: Habit,
-        attributes: {
-          include: [
-            [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
-          ]
-        }
+          required: false,
+          attributes: {
+            include: [
+              [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+            ]
+          },
+          where: {
+            is_active: true // Assuming 'is_active' is the field indicating active status
+          }
       }],
       order: [['created_at', 'DESC']],
       attributes: {
@@ -87,7 +90,7 @@ router.post('/api/values', requireAuth, async (req, res) => {
 router.put('/api/values', requireAuth, async (req, res) => {
   console.log("PUT request received");
   try {
-    const { id, description, color } = req.body;
+    const { id, description, color, is_active } = req.body;
     // Find the value associated with the current user
     const value = await Value.findOne({
       where: { 
@@ -100,34 +103,47 @@ router.put('/api/values', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Value not found or not authorized' });
     }
 
+     // Update the value fields
+     value.description = description || value.description;
+     value.color = color || value.color;
+     value.is_active = is_active !== undefined ? is_active : value.is_active;
+ 
+     // Save the updated value
+     await value.save();
+
+     console.log('value', value);
+
     res.json(value);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// DELETE value
-router.delete('/api/values/:id', requireAuth, async (req, res) => {
+router.delete('/api/values', requireAuth, async (req, res) => {
   try {
+    const { id } = req.body;
 
-    // Find the value associated with the current user
-    const value = await Value.findOne({
-      where: { 
-        id: req.params.id,
-        user_id: req.session.user.id // Directly filter by user_id
-      }
+    console.log('id', id);
+
+    await Value.destroy({
+      where: { id, user_id: req.session.user.id }
     });
-    
-    if (!value) {
-      return res.status(404).json({ error: 'Value not found or not authorized' });
+
+    res.json({ message: 'Value deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting value:', error);
+
+    if (
+      error.name === 'SequelizeForeignKeyConstraintError' ||
+      error.message.includes('a foreign key constraint fails')
+    ) {
+      console.log("error", error);
+      return res.status(400).json({
+        error: 'Delete failed. Please delete related habits and breaks before deleting this value.'
+      });
     }
 
-    // Delete the value
-    await value.destroy();
-
-    res.status(204).send();
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: 'Failed to delete value' });
   }
 });
 

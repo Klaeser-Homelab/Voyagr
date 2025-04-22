@@ -22,6 +22,11 @@ const Value = sequelize.define('Value', {
   color: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
   }
 }, {
   tableName: 'values',
