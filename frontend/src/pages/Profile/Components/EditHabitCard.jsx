@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { api } from '../config/api';
+import { api } from '../../../config/api';
 import AddBreak from './AddBreak';
-import { useValues } from '../context/ValuesContext';
+import { useValues } from '../../../context/ValuesContext';
 import { TrashIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 const EditHabitCard = ({

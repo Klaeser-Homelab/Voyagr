@@ -9,17 +9,20 @@ import { BreaksProvider } from './context/BreaksContext';
 import {ValuesProvider } from './context/ValuesContext';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
+
 // Pages
-import HomePage from './pages/HomePage';
-import Today from './components/Today';
+import HomePage from './pages/Home/HomePage';
+import Today from './pages/Home/Components/Today';
 import HistoryPage from './pages/HistoryPage';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/Profile/ProfilePage';
 import VoyagePage from './pages/VoyagePage';
-import WelcomePage from './pages/WelcomePage';
+import WelcomePage from './pages/Welcome/WelcomePage';
 import Callback from './components/Callback';
-import HowItsMade from './pages/HowItsMade';
+import HowItsMade from './pages/Welcome/HowItsMade';
 import Menu from './components/Menu';
 import Settings from './components/Settings';
+import ChapterOne from './pages/Onboarding/ChapterOne';
+import QuickStart from './pages/Onboarding/QuickStart';
 
 function AuthenticatedLayout() {
   return (
@@ -80,6 +83,8 @@ function App() {
                     <Route path="/" element={<WelcomePage />} />
                     <Route path="/callback" element={<Callback />} />
                     <Route path="/how-its-made" element={<HowItsMade />} />
+                    <Route path="/chapter-one" element={<ChapterOne />} />
+                    <Route path="/quick-start" element={<QuickStart />} />
 
                     {/* Authenticated layout (with menu) */}
                     <Route path="/*" element={

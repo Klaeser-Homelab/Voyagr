@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import EditHabitCard from './EditHabitCard';
 import HabitForm from './HabitForm';
-import axios from 'axios';
-import { api } from '../config/api';
-import { useValues } from '../context/ValuesContext';
+import { useValues } from '../../../context/ValuesContext';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 
@@ -28,7 +26,7 @@ const EditValueCard = ({
   return (
     <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg">
       <div 
-        className="px-3 cursor-pointer transition-colors duration-200 border-l-5"
+        className="px-2 cursor-pointer transition-colors duration-200 border-l-5"
         style={{ borderColor: localValue.color }}
       >
         {editingValue ? (
@@ -68,9 +66,9 @@ const EditValueCard = ({
             </div>
               <button
                 onClick={handleArchive}
-                className="btn btn-square btn-sm btn-error"
+                className="btn btn-square btn-sm btn-ghost"
               >
-                <TrashIcon className="size-6 text-white" />
+                <TrashIcon className="size-6" />
               </button>       
             {message && (
               <p className="text-sm text-white">{message}</p>
@@ -91,9 +89,9 @@ const EditValueCard = ({
             </div>
                 <button
                   onClick={() => setEditingValue(true)}
-                  className="text-white hover:text-gray-200"
+                  className=""
                 >
-                  <PencilIcon className="size-5 text-white" />
+                  <PencilIcon className="size-5" />
                 </button>
                 
             </div>

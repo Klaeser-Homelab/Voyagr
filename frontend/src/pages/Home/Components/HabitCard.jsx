@@ -1,6 +1,6 @@
 import { PlayIcon } from "@heroicons/react/24/outline";
-import { useTimer } from "../context/TimerContext";
-import { useEvent } from "../context/EventContext";
+import { useTimer } from "../../../context/TimerContext";
+import { useEvent } from "../../../context/EventContext";
 import { useEffect } from "react";
 const HabitCard = ({ habit}) => {
   const { startTimer } = useTimer();

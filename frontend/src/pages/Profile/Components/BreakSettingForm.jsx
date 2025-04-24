@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useValues } from '../context/ValuesContext';
-import axios from 'axios';
-import { api } from '../config/api';
+import { useValues } from '../../../context/ValuesContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
 // This form relies on a local state that is synced on save.
 const BreakSettingsForm = () => {

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useValues } from '../context/ValuesContext';
-import ValueForm from '../components/ValueForm';
-import EditValueCard from '../components/EditValueCard';
-import BreakSettingForm from '../components/BreakSettingForm';
-import axios from 'axios';
-import { api } from '../config/api';
-import Archived from '../components/Archived';
+import { useValues } from '../../context/ValuesContext';
+import ValueForm from './Components/ValueForm';
+import EditValueCard from './Components/EditValueCard';
+import BreakSettingForm from './Components/BreakSettingForm';
+import Archived from './Components/Archived';
+
 const ProfilePage = () => {
   const { values, breaks } = useValues();
   const [error, setError] = useState(null);
@@ -35,7 +34,9 @@ const ProfilePage = () => {
       <div className="flex flex-col mx-2 md:mx-10">
         <BreakSettingForm />
       </div>
+      <div className="flex flex-col mx-2 md:mx-10">
         <Archived />
+      </div>
     </div>
   );
 };

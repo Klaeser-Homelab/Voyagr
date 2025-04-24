@@ -1,15 +1,12 @@
 import { Link } from 'react-router-dom';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { useTheme } from '../context/ThemeContext';
 import { useAuth0 } from '@auth0/auth0-react';
-import { api } from '../config/api';
-import axios from 'axios';
-import logo from '../assets/star.png';
-const Header = ({className}) => {
-  const { getCurrentTheme } = useTheme();
-  const currentTheme = getCurrentTheme();
-  const { loginWithRedirect, user } = useAuth0();
+import logo from '../../../assets/star.png';
+import { useNavigate } from 'react-router-dom';
+import { PlayCircleIcon } from '@heroicons/react/24/outline';
 
+const Header = ({className}) => {
+  const { loginWithRedirect, user } = useAuth0();
+  const navigate = useNavigate();
   
   return (
     <header className={`navbar shadow-md ${className}`}>
@@ -24,21 +21,25 @@ const Header = ({className}) => {
         </Link>
       </div>
       <div className="flex gap-2">
-            <button
-              onClick={() => loginWithRedirect()}
+            <button 
+              onClick={() => navigate('/chapter-one')}
               className="btn btn-primary"
             >
-              Login
+              <PlayCircleIcon className="w-6 h-6" />
+              New Game
             </button>
-            <button
-              onClick={() => loginWithRedirect({
-                authorizationParams: {
-                  screen_hint: "signup"
-                }
-              })}
+            <button 
+              onClick={() => navigate('/quick-start')}
+              className="btn"
+            >
+              <PlayCircleIcon className="w-6 h-6" />
+              Quick Start
+            </button>
+            <button 
+              onClick={() => loginWithRedirect()}
               className="btn btn-outline btn-primary"
             >
-              Sign Up
+              Load Game
             </button>
       </div>
     </header>

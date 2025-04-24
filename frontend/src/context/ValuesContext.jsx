@@ -32,16 +32,6 @@ export const ValuesProvider = ({ children }) => {
     }
   }, []);
 
-  const fetchArchivedHabits = useCallback(async () => {
-    try {
-      const res = await axios.get(api.endpoints.habits + '/archived', {
-        withCredentials: true
-      }); 
-      setArchivedHabits(res.data);
-    } catch (error) {
-      console.error('Failed to fetch archived habits:', error);
-    }
-  }, []);
 
   const addValue = async (data) => {
     try {
@@ -81,6 +71,17 @@ export const ValuesProvider = ({ children }) => {
   };
 
   // ----- HABITS -----
+  const fetchArchivedHabits = useCallback(async () => {
+    try {
+      const res = await axios.get(api.endpoints.habits + '/archived', {
+        withCredentials: true
+      }); 
+      setArchivedHabits(res.data);
+    } catch (error) {
+      console.error('Failed to fetch archived habits:', error);
+    }
+  }, []);
+
   const addHabit = async (habit) => {
     console.log("habit in addHabit:", habit);
     try{
@@ -97,6 +98,15 @@ export const ValuesProvider = ({ children }) => {
       fetchValues();
     } catch (error) {
       console.error('Failed to update habit:', error);
+    }
+  };
+
+  const archiveHabit = async (habit) => {
+    try {
+      await axios.put(api.endpoints.habits, { id: habit.id, is_active: false }, { withCredentials: true });
+      fetchValues();
+    } catch (error) {
+      console.error('Failed to archive habit:', error); 
     }
   };
 
@@ -146,7 +156,7 @@ export const ValuesProvider = ({ children }) => {
   useEffect(() => {
     fetchValues();
     fetchBreaks();
-    //fetchArchivedValues();
+    fetchArchivedValues();
     //fetchArchivedHabits();
   }, [fetchValues, fetchBreaks]);
 

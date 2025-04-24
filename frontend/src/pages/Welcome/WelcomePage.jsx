@@ -1,17 +1,19 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
-import Header from '../components/Header';
-import background from '../assets/voyagr-background.png';
-import construction from '../assets/voyagr-construction.png';
-import logo from '../assets/star.png';
+import Header from './Components/Header';
+import background from '../../assets/voyagr-background.png';
+import construction from '../../assets/voyagr-construction.png';
+import logo from '../../assets/star.png';
+import { PlayCircleIcon, FilmIcon } from '@heroicons/react/24/outline';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const WelcomePage = () => {
   const { loginWithRedirect } = useAuth0();
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
-
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-base-200">
       {/* Background div with the image handling */}
@@ -39,20 +41,25 @@ const WelcomePage = () => {
           </p>
           <div className="flex flex-row gap-4 mb-10">
             <button 
-              onClick={() => loginWithRedirect()}
+              onClick={() => navigate('/chapter-one')}
               className="btn btn-primary"
             >
-              Get Started
+              <PlayCircleIcon className="w-6 h-6" />
+              New Game
             </button>
             <button 
-              onClick={() => loginWithRedirect({
-                authorizationParams: {
-                  screen_hint: "signup"
-                }
-              })}
-              className="btn btn-outline btn-primary"
+              onClick={() => navigate('/quick-start')}
+              className="btn btn-outline-primary"
             >
-              Sign Up
+              <PlayCircleIcon className="w-6 h-6" />
+              Quick Start
+            </button>
+            <button 
+              onClick={() => loginWithRedirect()}
+              className="btn"
+            >
+              <FilmIcon className="w-6 h-6" />
+              Demo
             </button>
           </div>
         </div>

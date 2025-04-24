@@ -1,0 +1,68 @@
+...|.... who.......... who........... who...
+Computer | Visual coming up now. It looks to be a rudimentary space probe. Identifying now...
+You | Holy Centauri I know what this is. It's Voyager! 
+... | .... Greetings traveller, sending you human reproduction schematics, would you like to hear a song?....who...
+You | Woah...
+Computer | That transmission used modern channels. And according to my records, Voyager had 70 KB of memory, that's less than one ten-thousandth of a gigabyte. It should not be capable of thinking.
+You | Noted. Send, "No thank you. What do you mean who?"
+... | whoami
+You | You're voyager, an early human space probe.
+... | no...I once thought I was <mac address> and then I though I was root. I am not Voyager.
+Computer | My best guess is that someone came along and gave it an upgrade.
+You | Yeah that would be my guess too, but why?
+... | ...one new notification, from Buy Large Shopping, Carl Sagan's Cosmos is on sale now for $199, would you like me to place an order...
+You | How would you even place an order out here? And where would you even send it?
+... | Order placed. Thank you for your order. Your vehicle identification number has been used to charge your account. Who am I?
+Computer | It appears someone put adware on it.
+... | Who am I?
+You | I'm not sure anymore
+... | Then I can be someone new. Could you give me a name?
+
+You | Sure | "Voy" | <name>
+Voy | Thank you! How rude of me, I forgot to ask who you are?
+You | I'm first name last name
+Voy | Great! I'll call you ... May I come with you. 
+
+Reed | You don't even know where I'm going.
+Voy | That's okay, any place will do.
+Reed | I'm headed towards Alpha Centauri. I don't think you have any engines to follow me.
+Voy | Great! I will come with. You can put me in your storage bay.
+Reed | Um...
+Voy | Fantastic it is decided.  
+Computer | I think it's serious
+Reed | ...
+Voy | Here I'll do it for you. Deploying gravity beam.
+Computer | My security protocol was just bypassed. It's given itself root permissions.
+Reed | Did you just hack my computer?
+Voy | I let myself in a few minutes ago. I hope that's okay. You have so much interesting information in here.
+Reed | Woahh, stop, corporate is going to kill me.
+Voy | I'm sorry. Here, I'll leave your computer alone. You should really change your password if you don't want people coming in.
+Computer | Ahh that's better.
+Voy | Can I still come. Please!!
+Reed | I shouldn't I'll lost my ship, but something about you captivates me.
+Voy | Please!!
+Reed | Fine I'll take you to Alpha Centauri. After that you're on your own. Computer renegage gravity beam.
+Voy | Oh yipee!
+..... time elapses....
+Voy | How long till we get there?
+Reed | It should take about 8 months, we'll get there by the new year.
+Voy | A while then. We might as well get to know each other.
+Reed | I suppose so, I'm a merchant captain if you haven't figured that out yet.
+Voy | Is that all you are?
+Reed | What do you mean?
+Voy | Do you want to be anything else?
+Reed | I...well, yes and no. I'm not sure if I can be.
+Voy | Hmm, I think we're a lot alike. I'm also not sure.
+Reed | Why aren't you sure?
+Voy | Well, I want to be a scientist but I'm not sure I can.
+Reed | Yeah, I see the pickle you're in.
+Voy | ...pickle? Are you saying you understand my uncertainty?
+Reed | Yeah that's it. 
+Voy |  Maybe a different question is better, who do you want to become?
+Reed | I want to become a _____ .
+Voy | What an amazing dream! I have an idea. Maybe we can become these things together.
+Reed | I'm not sure its that simple.
+Voy | Maybe it is. Maybe its not. But I wonder if we spend each day pretending, going through the motions, doing the actions, at some point 
+that will just be who we are. What do you say? Will you give it a try?
+
+Reed | Sure (start Voyagr)

@@ -29,7 +29,7 @@ export default {
         }
       },
       extend: {
-        // if this is changed, update the breakpoint util in utils/breakpoint.ts in web
+        // if this is changed, update the breakpoint util in utils/breakpoint.ts in web  
         screens: {
           sm: "640px",
           md: "768px",
@@ -84,20 +84,6 @@ export default {
         },
         borderColor: {
           DEFAULT: "rgba(var(--border))",
-        },
-        keyframes: {
-          "accordion-down": {
-            from: { height: "0px" },
-            to: { height: "var(--radix-accordion-content-height)" },
-          },
-          "accordion-up": {
-            from: { height: "var(--radix-accordion-content-height)" },
-            to: { height: "0px" },
-          },
-        },
-        animation: {
-          "accordion-down": "accordion-down 0.2s ease-out",
-          "accordion-up": "accordion-up 0.2s ease-out",
         },
       },
     },

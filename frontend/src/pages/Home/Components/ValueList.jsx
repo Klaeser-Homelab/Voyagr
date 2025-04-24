@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useValues } from '../context/ValuesContext';
-import { useEvent } from '../context/EventContext';
+import { useValues } from '../../../context/ValuesContext';
+import { useEvent } from '../../../context/EventContext';
 import Identity from './Identity';
 import Event from './Event';
+import Onboarding from '../../Onboarding/ChapterOne';
 
 function ValueList() {
   const { activeItem, activeEvent } = useEvent();
@@ -20,9 +21,13 @@ if(activeEvent) {
   );
 }
 
-if(values.length === 1)
+if(values.length === 1 && values[0].id === 1)
 {
-  console.log('values', values);
+  return (
+    <div className="p-14 w-full flex flex-col gap-4 bg-black">
+        <Onboarding />
+      </div>
+  );
 }
 
     return (

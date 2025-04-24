@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { api } from '../config/api';
+import { api } from '../../../config/api';
 
 const AddBreak = ({ habit }) => {  // Destructure the habit prop
   const [interval, setInterval] = useState('');  // Initialize with empty string instead of null

@@ -1,5 +1,5 @@
-import ValueList from "../components/ValueList";
-import Today from "../components/Today";
+import ValueList from "./Components/ValueList";
+import Today from "./Components/Today";
 
 function HomePage() {
     return (

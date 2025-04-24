@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { api } from '../config/api';
+import { api } from '../../../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useEvent } from '../context/EventContext';
+import { useEvent } from '../../../context/EventContext';
 function TodoForm({ item, onTodoAdded }) {
   const { activeEvent } = useEvent();
   const [description, setDescription] = useState('');

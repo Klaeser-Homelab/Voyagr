@@ -1,7 +1,7 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
-import schema from '../assets/schema.jpg';
-import Header from '../components/Header';
+import { useTheme } from '../../context/ThemeContext';
+import schema from '../../assets/schema.jpg';
+import Header from './Components/Header';
 
 const HowItsMade = () => {
   const { theme, themeData, handleThemeChange } = useTheme();

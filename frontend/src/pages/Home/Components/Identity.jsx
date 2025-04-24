@@ -1,7 +1,7 @@
 import React from 'react';
 import HabitCard from './HabitCard';
 import { PlayIcon } from '@heroicons/react/24/outline';
-import { useEvent } from '../context/EventContext';
+import { useEvent } from '../../../context/EventContext';
 
 function Identity({ value }) {
   const { createEvent } = useEvent();

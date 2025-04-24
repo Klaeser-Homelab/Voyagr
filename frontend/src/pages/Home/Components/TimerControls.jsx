@@ -1,4 +1,4 @@
-import { useTimer } from '../context/TimerContext';
+import { useTimer } from '../../../context/TimerContext';
 
 
 

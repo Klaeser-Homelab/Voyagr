@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useTimer } from '../context/TimerContext';
-import { useEvent } from '../context/EventContext';
+import { useTimer } from '../../../context/TimerContext';
+import { useEvent } from '../../../context/EventContext';
 import Todo from './TodoCard';
 import TodoForm from './TodoForm';
 import TimerControls from './TimerControls';
