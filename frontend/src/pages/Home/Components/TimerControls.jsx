@@ -4,7 +4,6 @@ import { useTimer } from '../../../context/TimerContext';
 
 
 const TimerControls = ({ mode }) => {
-  const { adjustTime, toggleMode } = useTimer();
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-4">
@@ -30,18 +29,7 @@ const TimerControls = ({ mode }) => {
       </button>
     </div>
   )}
-  <div className="">
-    <label className="flex cursor-pointer gap-2">
-        <span className="text-lg"
-        >Timer</span>
-        <input
-  type="checkbox"
-  onChange={toggleMode}
-  className="toggle col-span-2 col-start-1 row-start-1" />
-        <span className="text-lg">Stopwatch</span>
-    </label>
-    
-  </div>
+  
   </div>
   );
 };

@@ -70,7 +70,7 @@ jobs:
 
       - name: Create volume if not exists
         run: |
-          docker --context ${{ env.DOCKER_CONTEXT_NAME }} volume create voyagr-db-data || true
+          docker --context ${{ env.DOCKER_CONTEXT_NAME }} volume create voyagr-data || true
 
       - name: Stop and remove existing containers
         env:

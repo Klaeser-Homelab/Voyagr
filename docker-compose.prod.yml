@@ -47,7 +47,7 @@ services:
     image: postgres:16
     container_name: voyagr-db
     environment:
-      POSTGRES_DB: voyagr-db
+      POSTGRES_DB: voyagr
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
