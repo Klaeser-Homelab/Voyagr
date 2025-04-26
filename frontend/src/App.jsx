@@ -9,7 +9,7 @@ import { BreaksProvider } from './context/BreaksContext';
 import {ValuesProvider } from './context/ValuesContext';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
-
+import { OnboardingProvider } from './context/OnboardingContext';
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
@@ -22,7 +22,16 @@ import HowItsMade from './pages/Welcome/HowItsMade';
 import Menu from './components/Menu';
 import Settings from './components/Settings';
 import ChapterOne from './pages/Onboarding/ChapterOne';
-import QuickStart from './pages/Onboarding/QuickStart';
+import QuickStart from './pages/Profile/QuickStart';
+import Page1 from './pages/Onboarding/Components/Page1';
+import Page2 from './pages/Onboarding/Components/Page2';
+import Page3 from './pages/Onboarding/Components/Page3';
+import Page4 from './pages/Onboarding/Components/Page4';
+import Page5 from './pages/Onboarding/Components/Page5';
+import Page6 from './pages/Onboarding/Components/Page6';
+import QuickStartHabits from './pages/Profile/Components/QuickStartHabits';
+import QuickStartLogin from './pages/Profile/Components/QuickStartLogin';
+import Tracker from './pages/Home/Components/Tracker';
 
 function AuthenticatedLayout() {
   return (
@@ -35,6 +44,7 @@ function AuthenticatedLayout() {
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/voyage" element={<VoyagePage />} />
+        <Route path="/tracker" element={<Tracker />} />
         <Route path="/*" element={<Navigate to="/home" />} />
       </Routes>
     </div>
@@ -73,6 +83,7 @@ function App() {
     >
       <ThemeProvider>
         <Router>
+          <OnboardingProvider>
           <ValuesProvider>
           <TimerProvider>
           <TodayProvider>
@@ -85,7 +96,14 @@ function App() {
                     <Route path="/how-its-made" element={<HowItsMade />} />
                     <Route path="/chapter-one" element={<ChapterOne />} />
                     <Route path="/quick-start" element={<QuickStart />} />
-
+                    <Route path="/quick-start/habits" element={<QuickStartHabits />} />
+                    <Route path="/quick-start/login" element={<QuickStartLogin />} />
+                    <Route path="/chapter-one/page-1" element={<Page1 />} />
+                    <Route path="/chapter-one/page-2" element={<Page2 />} />
+                    <Route path="/chapter-one/page-3" element={<Page3 />} />
+                    <Route path="/chapter-one/page-4" element={<Page4 />} />
+                    <Route path="/chapter-one/page-5" element={<Page5 />} />
+                    <Route path="/chapter-one/page-6" element={<Page6 />} />
                     {/* Authenticated layout (with menu) */}
                     <Route path="/*" element={
                       <ProtectedRoute>
@@ -98,6 +116,7 @@ function App() {
             </TodayProvider>
           </TimerProvider>
           </ValuesProvider>
+          </OnboardingProvider>
         </Router>
       </ThemeProvider>
     </Auth0Provider>

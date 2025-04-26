@@ -35,8 +35,9 @@ export const ValuesProvider = ({ children }) => {
 
   const addValue = async (data) => {
     try {
-      await axios.post(api.endpoints.values, data, { withCredentials: true });
+      const value = await axios.post(api.endpoints.values, data, { withCredentials: true });
       fetchValues();
+      return value;
     } catch (error) {
       console.error('Failed to add value:', error);
     }

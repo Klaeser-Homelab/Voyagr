@@ -21,8 +21,8 @@ You | I'm not sure anymore
 You | Sure | "Voy" | <name>
 Voy | Thank you! How rude of me, I forgot to ask who you are?
 You | I'm first name last name
-Voy | Great! I'll call you ... May I come with you. 
 
+Voy | Great! I'll call you ... May I come with you. 
 Reed | You don't even know where I'm going.
 Voy | That's okay, any place will do.
 Reed | I'm headed towards Alpha Centauri. I don't think you have any engines to follow me.

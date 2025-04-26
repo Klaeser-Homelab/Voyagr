@@ -44,6 +44,21 @@ code {
   animation: blink 1.5s infinite;
 }
 
+@keyframes press-blink {
+  0%, 100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+  50% {
+    background-color: #9ca3af; /* Tailwind gray-400 */
+    box-shadow: 0 0 10px rgba(156, 163, 175, 0.6);
+  }
+}
+
+.animate-press-blink {
+  animation: press-blink 2s ease-in-out infinite;
+}
+
 .radial-signal {
   position: absolute;
   top: 0;

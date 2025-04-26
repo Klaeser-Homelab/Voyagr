@@ -39,7 +39,7 @@ const Header = ({className}) => {
               onClick={() => loginWithRedirect()}
               className="btn btn-outline btn-primary"
             >
-              Load Game
+              Load Game / Log In
             </button>
       </div>
     </header>

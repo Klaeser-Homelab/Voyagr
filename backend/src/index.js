@@ -3,8 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const {RedisStore} = require("connect-redis")
-const {createClient} = require('redis');
-//const { authMiddleware, handleAuth0User, authRoutes } = require('./middleware/auth');
 const sequelize = require('./config/database');
 const habitRoutes = require('./routes/habits');
 const valueRoutes = require('./routes/values');
@@ -12,11 +10,7 @@ const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const breakRoutes = require('./routes/breaks');
-
-const redisURL = process.env.REDIS_URL || 'redis://localhost:6379'
-const redisClient = createClient( {url: redisURL} )
-
-redisClient.connect().catch(console.error)
+const redis = require('./config/redis');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -49,7 +43,7 @@ if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET
 }
 
 app.use(session({
-  store: new RedisStore({ client: redisClient }),
+  store: new RedisStore({ client: redis }),
   secret: process.env.BACKEND_SESSION_SECRET, // replace with your own secret
   resave: false,
   saveUninitialized: false,

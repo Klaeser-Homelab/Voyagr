@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Settings from './Settings'; // Use named import
-
-
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 
 const useIsLarge = () => {
@@ -55,6 +54,12 @@ const useIsLarge = () => {
     </Link>
   );
 
+  export const Tracker = () => (
+    <Link to="/tracker">
+      <ChartBarIcon className="size-6" />
+    </Link>
+  );
+
   export const SettingsButton = () => (
         <Link to="/settings">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -87,6 +92,7 @@ const Menu = ({className}) => {
     <div className="flex flex-col gap-5">
             <Home />
             <Today />
+            <Tracker />
             <Profile />
         </div>
         <div className="">    
@@ -100,6 +106,7 @@ if(!isLarge) {
       <div className="fixed bottom-0 left-0 right-0 flex flex-row gap-5 justify-between items-center p-5 border-t-2 border-gray-600 rounded-t-lg bg-base-100">
             <Home />
             <Today />
+            <Tracker />
             <Profile />
             <SettingsButton />
         </div>

@@ -8,10 +8,7 @@ import { Typewriter } from 'react-simple-typewriter'
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { useState, useEffect } from 'react';
 import Page0 from './Components/Page0';
-import Page1 from './Components/Page1';
-import Page2 from './Components/Page2';
-import Page3 from './Components/Page3';
-import Page4 from './Components/Page4';
+import { useOnboarding } from '../../context/OnboardingContext';
 
 const Page5 = () => {
   return (
@@ -30,30 +27,11 @@ const Page6 = () => {
 };
 
 const ChapterOne = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const pages = [
-    { component: Page0, quickStartButtonText: "Lame, take me to the Quick Start." },
-    { component: Page1, quickStartButtonText: "Lame, take me to the Quick Start." },
-    { component: Page2, quickStartButtonText: "I'm speed running, take me to the Quick Start." },
-    { component: Page3, quickStartButtonText: "Let's not, take me to the Quick Start." },
-    { component: Page4, quickStartButtonText: "Lame, take me to the Quick Start." },
-  ];
-  const CurrentPage = pages[currentPage].component;
-  
-  const goToPrevPage = () => {
-    setCurrentPage(prev => Math.max(0, prev - 1));
-  };
-  
-  const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(pages.length - 1, prev + 1));
-  };
-  
   return (
     <div className="bg-black p-10">
       <div className="blue-radial-signal"></div>
     <div className="flex flex-col justify-between h-full">
-  <CurrentPage goToPrevPage={goToPrevPage} goToNextPage={goToNextPage} currentPage={currentPage} pages={pages} /> 
+    <Page0 /> 
 </div>
 </div>
   );

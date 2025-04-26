@@ -33,5 +33,6 @@ module.exports = {
   Habit,
   Event,
   Todo,
+  User,
   Break
 };

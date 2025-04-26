@@ -30,6 +30,49 @@ router.get('/api/events', requireAuth, async (req, res) => {
   }
 });
 
+router.get('/api/events/month/:monthString', requireAuth, async (req, res) => {
+  try {
+    const monthString = req.params.monthString; // Format: "YYYY-MM"
+    const [year, month] = monthString.split('-').map(Number);
+    
+    // Validate year and month
+    if (!year || !month || month < 1 || month > 12) {
+      return res.status(400).json({ error: 'Invalid month format. Use YYYY-MM' });
+    }
+    
+    // Calculate start and end dates for the month
+    const startDate = new Date(year, month - 1, 1); // Month is 0-indexed in JS Date
+    const endDate = new Date(year, month, 0); // Last day of the month
+    
+    // Format dates for SQL query
+    const formattedStartDate = startDate.toISOString().split('T')[0];
+    const formattedEndDate = endDate.toISOString().split('T')[0];
+    
+    const events = await Event.findAll({
+      where: {
+        user_id: req.session.user.id,
+        date: {
+          [Op.between]: [formattedStartDate, formattedEndDate]
+        }
+      },
+      include: [
+        {
+          model: Habit,
+          attributes: ['id', 'name', 'duration', 'value_id']
+        }
+      ],
+      order: [
+        ['date', 'ASC']
+      ]
+    });
+    
+    res.json(events);
+  } catch (error) {
+    console.error('Error fetching month events:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/api/events/today', requireAuth, async (req, res) => {
   try {
     // Find today's events associated with the current user

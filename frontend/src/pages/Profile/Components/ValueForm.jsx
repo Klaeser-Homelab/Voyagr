@@ -125,7 +125,7 @@ const ValueForm = ({ value }) => {
             className="btn bg-green-700 text-white"
           >
             <PlusIcon className="size-6" />
-            Create Identity
+            Create New Identity
           </button>
           </div>
         )}

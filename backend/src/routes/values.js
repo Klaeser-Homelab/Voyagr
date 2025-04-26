@@ -36,6 +36,44 @@ router.get('/api/values', requireAuth, async (req, res) => {
   }
 });
 
+router.post('/api/values/init', async (req, res) => {  
+  try {
+    const { user_id, name, color, habit_name, habit_duration, habit_frequency } = req.body;
+
+    console.log('Request body:', req.body);
+    console.log('user_id type:', typeof user_id, 'value:', user_id);
+    console.log('name type:', typeof name, 'value:', name);
+
+    // Try creating the value and log the result
+    const value = await Value.create({
+      user_id: user_id,
+      description: name,
+      color: color
+    });
+    
+    console.log('Created value:', value.toJSON ? value.toJSON() : value);
+
+    // Create the habit
+    const habit = await Habit.create({
+      user_id: user_id,
+      description: habit_name,
+      duration: habit_duration * 60000,
+      value_id: value.id
+    });
+    
+    console.log('Created habit:', habit.toJSON ? habit.toJSON() : habit);
+
+    res.json({ value, habit });
+  } catch (error) {
+    console.log('Error in /api/values/init:', error);
+    // Log more details about the error
+    if (error.errors) {
+      console.log('Validation errors:', error.errors);
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/api/values/archived', requireAuth, async (req, res) => {  
   try {
     // Find values associated with the current user

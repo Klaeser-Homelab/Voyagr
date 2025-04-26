@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 const axios = require('axios');
 const requireAuth = require('../middleware/auth');
-
+const sequelize = require('../config/database');
+const { Todo, Break, Event, Habit, Value, User } = require('../models/associations');
+const redis = require('../config/redis');
 // POST /api/users/auth0
 // Creates or updates a user based on Auth0 data
 router.post('/api/users/auth0', async (req, res) => {
@@ -117,8 +118,25 @@ router.delete('/api/users/delete', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Delete the user from the database
-    await user.destroy(); 
+    console.log('Deleting user', user);
+
+    const transaction = await sequelize.transaction();
+  
+    // Delete in reverse hierarchical order
+    await Todo.destroy({ where: { user_id: user.id }, transaction });
+    await Break.destroy({ where: { user_id: user.id }, transaction });
+    await Event.destroy({ where: { user_id: user.id }, transaction });
+    await Habit.destroy({ where: { user_id: user.id }, transaction });
+    await Value.destroy({ where: { user_id: user.id }, transaction });
+    
+    // Finally delete the user
+    await User.destroy({ where: { id: user.id }, transaction });
+    
+    // Commit transaction
+    await transaction.commit();
+
+    console.log('User deleted successfully');
+
 
     // Destroy the session
     req.session.destroy((err) => {
@@ -136,6 +154,21 @@ router.delete('/api/users/delete', requireAuth, async (req, res) => {
       details: error.message 
     });
   }
+});
+
+router.post('/api/users/store-onboarding', async (req, res) => {
+  const { stateKey, identity, habit } = req.body;
+  console.log('stateKey', stateKey);
+  console.log('identity', identity);
+  console.log('habit', habit);
+  await redis.set(stateKey, JSON.stringify({ identity, habit }));
+  res.json({ message: 'Onboarding data stored successfully' });
+});
+
+router.get('/api/users/get-onboarding', async (req, res) => {
+  const { stateKey } = req.query;
+  const onboardingData = await redis.get(stateKey);
+  res.json(JSON.parse(onboardingData));
 });
 
 

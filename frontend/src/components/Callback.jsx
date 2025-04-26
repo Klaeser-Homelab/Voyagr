@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { api } from '../config/api';
-
+import { useOnboarding } from '../context/OnboardingContext';
+import { Base64 } from 'js-base64';
 function Callback() {
 
   console.log('Callback');
@@ -12,10 +13,36 @@ function Callback() {
     isAuthenticated, 
     user, 
     isLoading: auth0Loading,
-    getAccessTokenSilently 
+    getAccessTokenSilently, handleRedirectCallback 
   } = useAuth0();  
   const navigate = useNavigate();
   const [status, setStatus] = useState('Authenticating...');
+  const [appState, setAppState] = useState(null);
+  const [onboardingStateChecked, setOnboardingStateChecked] = useState(false);
+
+
+  useEffect(() => {
+    async function getOnboardingState() {
+      try {
+        // This will return your original state object
+        const result = await handleRedirectCallback();
+        console.log('Original state:', result.appState);
+
+          setAppState(result.appState);
+          setStatus('Onboarding state received.');
+          setOnboardingStateChecked(true);
+
+        
+        
+        // Your state key should be in result.appState
+      } catch (error) {
+        console.error('Error handling callback:', error);
+      }
+    }
+    
+    getOnboardingState();
+  }, []);
+
   
   useEffect(() => {
     let mounted = true;
@@ -45,18 +72,28 @@ function Callback() {
         // Check if the user is new
         const isNewUser = response.data.isNewUser; // Assuming response contains this info
 
-        console.log('response', response);
-        console.log('response.data', response.data);
-        console.log('response.data.user', response.data.user);
-        console.log('response.data.user.id', response.data.user.id);
-
         if (isNewUser) {
           setStatus('Setting up defaults...');
 
           await axios.post(api.endpoints.breaks + '/init', { id: response.data.user.id});
           
           setStatus('Defaults set up successfully.');
+
+          console.log('appState', appState);
+
+          if(appState) {
+            await axios.post(api.endpoints.values + '/init', 
+              { 
+                user_id: response.data.user.id,
+                name: appState.identity.name,
+                color: appState.identity.color,
+                habit_name: appState.habit.name,
+                habit_duration: appState.habit.duration
+          });
+          }
         }
+
+        
 
         if (!mounted) return;
         
@@ -70,14 +107,14 @@ function Callback() {
     };
 
     // Only run setup if we're authenticated
-    if (isAuthenticated && !auth0Loading) {
+    if (isAuthenticated && !auth0Loading && onboardingStateChecked) {
       setupUser();
     }
 
     return () => {
       mounted = false;
     };
-  }, [isAuthenticated, auth0Loading, getAccessTokenSilently, navigate]);
+  }, [isAuthenticated, auth0Loading, appState]);
 
   if (auth0Loading) {
     return (

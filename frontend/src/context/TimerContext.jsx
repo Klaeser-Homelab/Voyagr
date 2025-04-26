@@ -20,6 +20,11 @@ export const TimerProvider = ({ children }) => {
     setIsActiveEvent(false);
   };
 
+  const pauseTimer = () => {
+    console.log("pausing timer: ", elapsedTime);
+    setIsActiveEvent(false);
+  };
+
   const resumeTimer = () => {
     console.log("resuming timer: ", elapsedTime);
     setIsActiveEvent(true);
@@ -71,6 +76,7 @@ export const TimerProvider = ({ children }) => {
       isActiveEvent,
       startTimer,
       stopTimer,
+      pauseTimer,
       resetTimer,
       mode,
       toggleMode,
