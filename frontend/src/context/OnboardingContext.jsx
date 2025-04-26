@@ -8,7 +8,7 @@ export const OnboardingProvider = ({ children }) => {
     const [habit, addHabit] = useState('');
     const [stateValue, setStateValue] = useState('');
 
-    const premadeIdentities = [
+    const suggestedIdentities = [
         {
             id: 1,
             name: "Runner",
@@ -73,7 +73,7 @@ export const OnboardingProvider = ({ children }) => {
             setStateValue,
             habit,
             addHabit,
-            premadeIdentities,
+            suggestedIdentities,
             }}>
             {children}
         </OnboardingContext.Provider>   

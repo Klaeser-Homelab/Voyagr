@@ -3,7 +3,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../../../context/OnboardingContext';
 
-const PreMadeIdentityCard = ({ identity }) => {
+const SuggestedIdentityCard = ({ identity }) => {
   const { setIdentity } = useOnboarding();
   const navigate = useNavigate();
   const AddIdentity = async () => {
@@ -36,4 +36,4 @@ const PreMadeIdentityCard = ({ identity }) => {
   );
 };
 
-export default PreMadeIdentityCard;
+  export default SuggestedIdentityCard;
