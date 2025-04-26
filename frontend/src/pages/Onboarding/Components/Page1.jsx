@@ -6,8 +6,8 @@ import { useOnboarding } from '../../../context/OnboardingContext';
 import { useNavigate } from 'react-router-dom';
 const Page1 = () => {
     const navigate = useNavigate();
-    const sentence1 = 'In the 1970\'s Voyager 1 and 2 took advantage of a once every 175 year alignment of the planets.';
-    const sentence2 = 'Each planet they passed gave the satellites a "gravity assist" on their way out of the solar system.';
+    const sentence1 = 'In the 1970\'s, Voyager 1 and 2 used the gravity of the planets to propel themselves out of the solar system.';
+    const sentence2 = 'Timing was everything. The planetary alignment they took advantage of happens once every 175 years.';
     const [showSecondSentence, setShowSecondSentence] = useState(false);
 
     useEffect(() => {

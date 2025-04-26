@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Page2 = () => {
     const navigate = useNavigate();
-    const sentence1 = 'It took 41 years from 1977 to 2018 for Voyager 2 to escape the solar system. To accomplish this, its trajectory was meticulously planned.';
-    const sentence2 = 'No more. Today it flies at over 50 thousand miles per hour going no where in particular.';
+    const sentence1 = 'It took 41 years from 1977 to 2018 for Voyager 2 to journey through our solar system.';
+    const sentence2 = 'With the bulk of its mission complete, Voyager now flies at over 50 thousand miles per hour going no where in particular.';
     const sentence3 = 'Where is it headed? What will it become next?';
 
     const [showSecondSentence, setShowSecondSentence] = useState(false);

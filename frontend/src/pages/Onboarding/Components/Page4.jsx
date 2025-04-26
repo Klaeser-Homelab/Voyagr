@@ -27,12 +27,12 @@ const Page4 = () => {
           },
           {
             speaker: "Computer",
-            line: "The visual signature and that information it recited matches two probes from the 1970s. The Voyager probes carried a golden record with information about the human species. However, a probe from that time wouldn't be able to carry on a conversation like this.",
+            line: "Match found. Two probes from the 1970s named Voyager carried a golden record with information about planet Earth, including whale songs. However, a probe from that time wouldn't be able to carry on a conversation like this.",
             color: "text-blue-500"
           },
         {
           speaker: "You",
-          line: "Strange. Tell it we're from earth too and ask whether it's a Voyager satellite.",
+          line: "Strange. Tell it we're from earth too and ask whether it's one of the Voyager.",
           color: "text-green-500"
         },
         {
@@ -98,7 +98,7 @@ const Page4 = () => {
         },
         {
           speaker: "You",
-          line: "It's been only a few seconds.",
+          line: "It's only been a few seconds.",
           color: "text-green-500"
         },
         {
