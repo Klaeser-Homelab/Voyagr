@@ -6,10 +6,6 @@ const HabitCard = ({ habit}) => {
   const { startTimer } = useTimer();
   const { createEvent } = useEvent();
 
-  useEffect(() => {
-    console.log('habit', habit);
-  }, [habit]);
-
   const getScheduleText = () => {
     if (!habit.startTime || !habit.endTime || !habit.daysOfWeek) return null;
     

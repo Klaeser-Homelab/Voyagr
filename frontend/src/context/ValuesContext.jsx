@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { api } from "../config/api";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useSession } from "./SessionContext";
+
 const ValuesContext = createContext();
 
 export const ValuesProvider = ({ children }) => {
@@ -8,10 +11,13 @@ export const ValuesProvider = ({ children }) => {
   const [breaks, setBreaks] = useState([]);
   const [archivedValues, setArchivedValues] = useState([]);
   const [archivedHabits, setArchivedHabits] = useState([]);
+  const { isAuthenticated, isLoading } = useAuth0();
+  const { sessionReady } = useSession();
 
   // ----- VALUES -----
   const fetchValues = useCallback(async () => {
     try {
+      console.log("ValuesContext: fetching values");
       const res = await axios.get(api.endpoints.values, {
         withCredentials: true
       });
@@ -113,6 +119,7 @@ export const ValuesProvider = ({ children }) => {
 
   // ----- BREAKS -----
   const fetchBreaks = useCallback(async () => {
+    console.log("ValuesContext: fetching breaks");
     try {
       const response = await axios.get(api.endpoints.breaks, {
         withCredentials: true
@@ -155,11 +162,13 @@ export const ValuesProvider = ({ children }) => {
 
   // Fetch all on mount
   useEffect(() => {
-    fetchValues();
-    fetchBreaks();
-    fetchArchivedValues();
-    //fetchArchivedHabits();
-  }, [fetchValues, fetchBreaks]);
+    if (isAuthenticated && !isLoading && sessionReady) {
+      console.log("ValuesContext: authenticated and session ready");
+      fetchValues();
+      fetchBreaks();
+      fetchArchivedValues();
+    }
+  }, [isAuthenticated, isLoading, sessionReady]);
 
   return (
     <ValuesContext.Provider

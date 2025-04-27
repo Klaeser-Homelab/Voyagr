@@ -10,6 +10,7 @@ import {ValuesProvider } from './context/ValuesContext';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { SessionProvider } from './context/SessionContext';
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
@@ -51,15 +52,66 @@ function AuthenticatedLayout() {
   );
 }
 
-// Route guard component
 function ProtectedRoute({ children }) {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
+  const [tokenReady, setTokenReady] = useState(false);
+  const [isCheckingToken, setIsCheckingToken] = useState(true);
 
+  useEffect(() => {
+    // Only attempt to get the token if we're authenticated
+    if (isAuthenticated && !isLoading) {
+      setIsCheckingToken(true);
+      
+      // Pre-fetch token to ensure it's available before rendering protected content
+      getAccessTokenSilently()
+        .then(() => {
+          console.log("Token successfully retrieved");
+          setTokenReady(true);
+        })
+        .catch(error => {
+          console.error("Failed to retrieve token:", error);
+          // You could add retry logic here
+        })
+        .finally(() => {
+          setIsCheckingToken(false);
+        });
+    } else if (!isLoading) {
+      // If we're not authenticated and not loading, no need to check for token
+      setIsCheckingToken(false);
+    }
+  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
+
+  // Show loading state while auth is loading or while we're verifying token
+  if (isLoading || (isAuthenticated && isCheckingToken)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg"></div>
+          <p className="mt-4">Preparing your experience...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not authenticated, show welcome page
   if (!isAuthenticated) {
     console.log("Not authenticated");
     return <WelcomePage />;
   }
   
+  // Not ready with token yet, show loading
+  if (!tokenReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg"></div>
+          <p className="mt-4">Setting up your account...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // We're authenticated and have a token, render children
   return children;
 }
 
@@ -84,6 +136,7 @@ function App() {
       <ThemeProvider>
         <Router>
           <OnboardingProvider>
+            <SessionProvider>
           <ValuesProvider>
           <TimerProvider>
           <TodayProvider>
@@ -116,6 +169,7 @@ function App() {
             </TodayProvider>
           </TimerProvider>
           </ValuesProvider>
+          </SessionProvider>
           </OnboardingProvider>
         </Router>
       </ThemeProvider>

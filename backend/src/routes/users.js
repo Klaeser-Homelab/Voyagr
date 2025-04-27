@@ -81,6 +81,14 @@ router.post('/api/users/auth0', async (req, res) => {
   }
 });
 
+router.get('/api/users/session-check', async (req, res) => {
+  if (req.session && req.session.user) {
+    res.json({ valid: true });  // Use "valid" instead of "authenticated"
+  } else {
+    res.status(401).json({ valid: false });  // Send 401 status code
+  }
+});
+
 // POST /api/users/logout
 // Destroys the session and logs the user out
 router.post('/api/users/logout', requireAuth, async (req, res) => {

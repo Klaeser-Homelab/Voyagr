@@ -8,11 +8,6 @@ import Archived from './Components/Archived';
 const ProfilePage = () => {
   const { values, breaks } = useValues();
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    console.log('values', values);
-    console.log('breaks', breaks);
-  }, [values]);
   
   if (error) {
     return <div className="text-red-600">{error}</div>;
