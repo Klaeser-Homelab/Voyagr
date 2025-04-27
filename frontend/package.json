@@ -4,7 +4,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "electron:dev": "electron electron/main.js",
-    "electron:build": "vite build && electron-builder"
+    "electron:build": "vite build && electron-builder build --mac"
   },
   "build": {
     "appId": "com.klaeser.voyagr",
@@ -16,6 +16,11 @@
     "directories": {
       "buildResources": "assets",
       "output": "release"
+    },
+    "mac": {
+    "category": "public.app-category.developer-tools",
+    "target": "dmg",
+      "icon": "assets/voyagr-icon.png"
     }
   },
   "devDependencies": {

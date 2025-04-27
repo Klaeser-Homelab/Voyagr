@@ -19,7 +19,7 @@ router.post('/api/users/auth0', async (req, res) => {
     const accessToken = authHeader.split(' ')[1];
 
     // Get user info from Auth0 using the access token
-    const userResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+    const userResponse = await axios.get(`https://dev-m0q23jbgtbwidn00.us.auth0.com/userinfo`, {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }

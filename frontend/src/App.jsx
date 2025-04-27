@@ -123,11 +123,11 @@ function TestCallback() {
 function App() {
   return (
     <Auth0Provider
-      domain={import.meta.env.VITE_AUTH0_DOMAIN}
+      domain="dev-m0q23jbgtbwidn00.us.auth0.com"
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
       authorizationParams={{
         redirect_uri: `${window.location.origin}/callback`,
-        audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/`,
+        audience: `https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/`,
         scope: "openid profile email"
       }}
       cacheLocation="localstorage"
