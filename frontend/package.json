@@ -1,10 +1,10 @@
 {
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "preview": "vite preview",
     "electron:dev": "electron electron/main.js",
-    "electron:build": "vite build && electron-builder build --mac"
+    "electron:build": "vite build --mode production && electron-builder build --mac"
   },
   "build": {
     "appId": "com.klaeser.voyagr",
@@ -18,13 +18,14 @@
       "output": "release"
     },
     "mac": {
-    "category": "public.app-category.developer-tools",
-    "target": "dmg",
-      "icon": "assets/voyagr-icon.png"
+      "category": "public.app-category.developer-tools",
+      "target": "dmg",
+      "icon": "assets/app.png"
     }
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@tailwindcss/vite": "^4.1.4",
+    "@vitejs/plugin-react": "^4.4.1",
     "concurrently": "^9.1.2",
     "daisyui": "^5.0.9",
     "electron": "^35.1.5",
@@ -34,7 +35,6 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
     "@heroicons/react": "^2.2.0",
-    "@tailwindcss/vite": "^4.0.17",
     "axios": "^1.8.4",
     "js-base64": "^3.7.7",
     "react": "^19.0.0",
@@ -43,5 +43,10 @@
     "react-simple-typewriter": "^5.0.1",
     "styled-components": "^6.1.17",
     "tailwindcss": "^4.0.17"
-  }
+  },
+  "name": "voyagr",
+  "version": "1.0.0",
+  "description": "Voyagr is a habit builder application.",
+  "author": "Klaeser",
+  "main": "electron/main.js"
 }

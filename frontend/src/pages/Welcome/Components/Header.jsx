@@ -7,6 +7,10 @@ import { PlayCircleIcon } from '@heroicons/react/24/outline';
 const Header = ({className}) => {
   const { loginWithRedirect, user } = useAuth0();
   const navigate = useNavigate();
+
+  function isElectron() {
+    return typeof window !== 'undefined' && !!window.electronAPI;
+  }
   
   return (
     <header className={`navbar shadow-md ${className}`}>
@@ -36,10 +40,16 @@ const Header = ({className}) => {
               Quick Start
             </button>
             <button 
-              onClick={() => loginWithRedirect()}
-              className="btn btn-outline btn-primary"
-            >
-              Load Game / Log In
+                onClick={async () => {
+                  if (isElectron()) {
+                    await window.electronAPI.login();
+                  } else {
+                    await loginWithRedirect();
+                  }
+                }}
+                className="btn btn-outline btn-primary"
+              >
+                Load Game / Log In
             </button>
       </div>
     </header>
