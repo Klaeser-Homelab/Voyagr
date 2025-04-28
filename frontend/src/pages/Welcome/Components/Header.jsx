@@ -40,16 +40,23 @@ const Header = ({className}) => {
               Quick Start
             </button>
             <button 
-                onClick={async () => {
-                  if (isElectron()) {
-                    await window.electronAPI.login();
-                  } else {
-                    await loginWithRedirect();
+              onClick={async () => {
+                if (isElectron() && window.electronAPI) {
+                  try {
+                    console.log('Opening Gmail...');
+                    const result = await window.electronAPI.auth0Login();
+                    console.log('Auth0 Login window opened:', result);
+                  } catch (error) {
+                    console.error('Error opening Auth0 Login:', error);
                   }
-                }}
-                className="btn btn-outline btn-primary"
-              >
-                Load Game / Log In
+                } else {
+                  // Regular web fallback
+                  window.open('https://mail.google.com', '_blank');
+                }
+              }}
+              className="btn btn-outline btn-primary"
+            >
+              Open Gmail
             </button>
       </div>
     </header>

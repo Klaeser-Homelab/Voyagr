@@ -6,7 +6,7 @@ import {
 } from '@capacitor-community/electron';
 import chokidar from 'chokidar';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, BrowserWindow, Menu, MenuItem, nativeImage, Tray, session } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, nativeImage, Tray, session, BrowserView } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import electronServe from 'electron-serve';
 import windowStateKeeper from 'electron-window-state';
@@ -40,6 +40,112 @@ export function setupReloadWatcher(electronCapacitorApp: ElectronCapacitorApp): 
         }, 1500);
       }
     });
+}
+
+/**
+ * Creates a new window with a BrowserView showing the specified URL
+ * @param url The URL to load in the BrowserView
+ * @param width The width of the window
+ * @param height The height of the window
+ * @returns The created BrowserWindow instance
+ */
+export function createBrowserViewWindow(url: string, width = 800, height = 600): BrowserWindow {
+  // Create window state keeper for this window
+  const browserViewWindowState = windowStateKeeper({
+    defaultWidth: width,
+    defaultHeight: height,
+    file: 'browser-view-window-state.json',
+  });
+
+  // Create a new BrowserWindow
+  const win = new BrowserWindow({ 
+    icon: nativeImage.createFromPath(
+      join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'appIcon.ico' : 'appIcon.png')
+    ),
+    title: 'Web Browser View',
+    show: false,
+    x: browserViewWindowState.x,
+    y: browserViewWindowState.y,
+    width: browserViewWindowState.width,
+    height: browserViewWindowState.height,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+    }
+  });
+  
+  // Manage window state
+  browserViewWindowState.manage(win);
+  
+  // Create a BrowserView to fill the whole window
+  const view = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      // We don't need to use the Capacitor preload script for this view
+      // as it's just displaying an external website
+    }
+  });
+  
+  // Set a targeted CSP for the Electron.js website
+  view.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          "default-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.auth0.com; " +
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com; " +
+          "style-src 'self' 'unsafe-inline' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com; " +
+          "img-src 'self' data: https://*.google.com https://accounts.google.com https://mail.google.com https://*.gstatic.com https://*.googleusercontent.com https://*.auth0.com; " +
+          "font-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.gstatic.com https://*.auth0.com; " +
+          "connect-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com;"
+        ],
+      }
+    });
+  });
+  
+  // Add the view to the window
+  win.setBrowserView(view);
+  
+  // Set the bounds to fill the entire window
+  const bounds = win.getBounds();
+  view.setBounds({ 
+    x: 0, 
+    y: 0, 
+    width: bounds.width, 
+    height: bounds.height 
+  });
+  
+  // Load the specified URL
+  view.webContents.loadURL(url);
+  
+  // Open DevTools for debugging CSP issues if needed
+  // view.webContents.openDevTools();
+  
+  // Show the window when content has finished loading
+  view.webContents.on('did-finish-load', () => {
+    win.show();
+  });
+  
+  // Update the view size when the window is resized
+  win.on('resize', () => {
+    const bounds = win.getBounds();
+    view.setBounds({ 
+      x: 0, 
+      y: 0, 
+      width: bounds.width, 
+      height: bounds.height 
+    });
+  });
+
+  // Add security restriction for opening links
+  view.webContents.setWindowOpenHandler((details) => {
+    // Open links in the default browser
+    require('electron').shell.openExternal(details.url);
+    return { action: 'deny' };
+  });
+  
+  return win;
 }
 
 // Define our class to manage our app.
@@ -97,6 +203,10 @@ export class ElectronCapacitorApp {
     return this.customScheme;
   }
 
+  openBrowserView(url: string): BrowserWindow {
+    return createBrowserViewWindow(url);
+  }
+
   async init(): Promise<void> {
     const icon = nativeImage.createFromPath(
       join(app.getAppPath(), 'assets', process.platform === 'win32' ? 'appIcon.ico' : 'appIcon.png')
@@ -106,7 +216,6 @@ export class ElectronCapacitorApp {
       defaultHeight: 800,
     });
     // Setup preload script path and construct our main window.
-    const preloadPath = join(app.getAppPath(), 'build', 'src', 'preload.js');
     this.MainWindow = new BrowserWindow({
       icon,
       show: false,
@@ -119,7 +228,7 @@ export class ElectronCapacitorApp {
         contextIsolation: true,
         // Use preload to inject the electron varriant overrides for capacitor plugins.
         // preload: join(app.getAppPath(), "node_modules", "@capacitor-community", "electron", "dist", "runtime", "electron-rt.js"),
-        preload: preloadPath,
+        preload: join(app.getAppPath(), 'build', 'src', 'preload.js')
       },
     });
     this.mainWindowState.manage(this.MainWindow);

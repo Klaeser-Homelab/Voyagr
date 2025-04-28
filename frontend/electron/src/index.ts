@@ -1,10 +1,20 @@
 import type { CapacitorElectronConfig } from '@capacitor-community/electron';
 import { getCapacitorElectronConfig, setupElectronDeepLinking } from '@capacitor-community/electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, MenuItem } from 'electron';
+import { app, MenuItem, ipcMain } from 'electron'; // Add ipcMain here
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
+
+const auth0Config = {
+  clientId: 'lpTd0GzL3Qmr2ACZ6CcT1rMN3nkqh1gu',
+  domain: 'dev-m0q23jbgtbwidn00.us.auth0.com',
+  redirectUri: 'capacitor-electron://-/callback', // Usually something like 'your-app-scheme://callback'
+  audience: 'https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/',
+  scope: 'openid profile email' // Standard OAuth scopes
+};
+
+// Import your createBrowserViewWindow function
 
 import { ElectronCapacitorApp, setupContentSecurityPolicy, setupReloadWatcher } from './setup';
 
@@ -43,10 +53,47 @@ if (electronIsDev) {
   await app.whenReady();
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
+  
+  // Set up IPC handlers - add them here after app is ready
+  ipcMain.handle('open-gmail', async () => {
+    try {
+      // Create a browser view window with Gmail
+      myCapacitorApp.openBrowserView('https://mail.google.com');
+      
+      // Return success message
+      return { success: true, message: 'Gmail window opened successfully' };
+    } catch (error) {
+      console.error('Error opening Gmail:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+    // Set up IPC handlers - add them here after app is ready
+    ipcMain.handle('auth0-login', async () => {
+      try {
+
+        const authUrl = `https://${auth0Config.domain}/authorize?` +
+      `client_id=${auth0Config.clientId}&` +
+      `redirect_uri=${encodeURIComponent(auth0Config.redirectUri)}&` +
+      `response_type=code&` +
+      `scope=${encodeURIComponent(auth0Config.scope)}`;
+        // Create a browser view window with Gmail
+        myCapacitorApp.openBrowserView(authUrl);
+        
+        // Return success message
+        return { success: true, message: 'Auth0 Login window opened successfully' };
+      } catch (error) {
+        console.error('Error opening Auth0 Login:', error);
+        return { success: false, error: error.message };
+      }
+    });
+  
   // Initialize our app, build windows, and load content.
   await myCapacitorApp.init();
   // Check for updates if we are in a packaged app.
   autoUpdater.checkForUpdatesAndNotify();
+
+  //myCapacitorApp.openBrowserView('https://mail.google.com');
 })();
 
 // Handle when all of our windows are close (platforms have their own expectations).
