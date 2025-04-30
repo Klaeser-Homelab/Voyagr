@@ -5,14 +5,7 @@ import { app, MenuItem, ipcMain } from 'electron'; // Add ipcMain here
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
-
-const auth0Config = {
-  clientId: 'lpTd0GzL3Qmr2ACZ6CcT1rMN3nkqh1gu',
-  domain: 'dev-m0q23jbgtbwidn00.us.auth0.com',
-  redirectUri: 'capacitor-electron://-/callback', // Usually something like 'your-app-scheme://callback'
-  audience: 'https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/',
-  scope: 'openid profile email' // Standard OAuth scopes
-};
+import { getAuthenticationURL } from './services/auth';
 
 // Import your createBrowserViewWindow function
 
@@ -53,6 +46,11 @@ if (electronIsDev) {
   await app.whenReady();
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
+
+  ipcMain.on('auth0-callback', (event, url) => {
+    console.log('Auth0 callback data received:', url);
+    myCapacitorApp.getMainWindow().loadURL(url);
+  });
   
   // Set up IPC handlers - add them here after app is ready
   ipcMain.handle('open-gmail', async () => {
@@ -72,13 +70,15 @@ if (electronIsDev) {
     ipcMain.handle('auth0-login', async () => {
       try {
 
-        const authUrl = `https://${auth0Config.domain}/authorize?` +
-      `client_id=${auth0Config.clientId}&` +
-      `redirect_uri=${encodeURIComponent(auth0Config.redirectUri)}&` +
-      `response_type=code&` +
-      `scope=${encodeURIComponent(auth0Config.scope)}`;
+        const session = require('electron').session;
+        await session.defaultSession.clearStorageData({
+          storages: ['cookies', 'localStorage', 'sessionStorage', 'cachestorage']
+        });
+        
+        console.log('Cleared session data and cookies');
+
         // Create a browser view window with Gmail
-        myCapacitorApp.openBrowserView(authUrl);
+        myCapacitorApp.openBrowserView(getAuthenticationURL());
         
         // Return success message
         return { success: true, message: 'Auth0 Login window opened successfully' };

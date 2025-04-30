@@ -16,43 +16,43 @@ export function SessionProvider({ children }) {
   const [checkingSession, setCheckingSession] = useState(false);
   const [autoCheck, setAutoCheck] = useState(false);
   const { isAuthenticated, isLoading } = useAuth0();
+
+  const checkInitialSession = async () => {
+    try {
+      setCheckingSession(true);
+      
+      console.log('Performing initial session check');
+      const response = await axios.get(`${api.endpoints.users}/session-check`, {
+        withCredentials: true
+      });
+      
+      const isValid = response.data.valid === true || response.data.authenticated === true;
+      
+      if (isValid) {
+        console.log('Initial session check: session is valid');
+        setSessionReady(true);
+        setAutoCheck(true);
+        // Update localStorage for consistency
+        localStorage.setItem('sessionEstablished', 'true');
+      } else if (!isValid && sessionReady) {
+        console.log('Initial session check: session is invalid');
+        setSessionReady(false);
+        localStorage.removeItem('sessionEstablished');
+      }
+    } catch (error) {
+      console.error('Initial session check failed:', error);
+      if (sessionReady) {
+        setSessionReady(false);
+        localStorage.removeItem('sessionEstablished');
+      }
+    } finally {
+      setCheckingSession(false);
+    }
+  };
   
   // Check session status immediately on mount if authenticated
   useEffect(() => {
     if (isAuthenticated && !isLoading && !checkingSession) {
-      const checkInitialSession = async () => {
-        try {
-          setCheckingSession(true);
-          
-          console.log('Performing initial session check');
-          const response = await axios.get(`${api.endpoints.users}/session-check`, {
-            withCredentials: true
-          });
-          
-          const isValid = response.data.valid === true || response.data.authenticated === true;
-          
-          if (isValid) {
-            console.log('Initial session check: session is valid');
-            setSessionReady(true);
-            setAutoCheck(true);
-            // Update localStorage for consistency
-            localStorage.setItem('sessionEstablished', 'true');
-          } else if (!isValid && sessionReady) {
-            console.log('Initial session check: session is invalid');
-            setSessionReady(false);
-            localStorage.removeItem('sessionEstablished');
-          }
-        } catch (error) {
-          console.error('Initial session check failed:', error);
-          if (sessionReady) {
-            setSessionReady(false);
-            localStorage.removeItem('sessionEstablished');
-          }
-        } finally {
-          setCheckingSession(false);
-        }
-      };
-      
       checkInitialSession();
     }
   }, [isAuthenticated, isLoading]);
@@ -169,7 +169,8 @@ useEffect(() => {
     checkingSession,
     verifySessionNow,
     setSessionEstablished,
-    setAutoCheck
+    setAutoCheck,
+    checkInitialSession
   };
   
   return (

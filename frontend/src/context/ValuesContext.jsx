@@ -160,13 +160,17 @@ export const ValuesProvider = ({ children }) => {
     }
   };
 
+  const fetchAll = useCallback(async () => {
+    await fetchValues();
+    await fetchBreaks();
+    await fetchArchivedValues();
+  }, []);
+
   // Fetch all on mount
   useEffect(() => {
     if (isAuthenticated && !isLoading && sessionReady) {
       console.log("ValuesContext: authenticated and session ready");
-      fetchValues();
-      fetchBreaks();
-      fetchArchivedValues();
+      fetchAll();
     }
   }, [isAuthenticated, isLoading, sessionReady]);
 
@@ -178,7 +182,7 @@ export const ValuesProvider = ({ children }) => {
         updateValue,
         archiveValue,
         refreshValues: fetchValues,
-
+        fetchAll,
         addHabit,
         updateHabit,
 

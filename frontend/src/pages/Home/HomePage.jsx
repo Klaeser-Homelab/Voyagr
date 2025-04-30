@@ -1,7 +1,14 @@
 import ValueList from "./Components/ValueList";
 import Today from "./Components/Today";
+import { useContext, useEffect } from "react";
+import { useValues } from "../../context/ValuesContext";
+
 
 function HomePage() {
+    const { fetchAll } = useValues();
+    useEffect(() => {
+        fetchAll();
+    }, []);
     return (
       <div className="flex flex-col flex-grow overflow-y-auto h-full lg:flex-row justify-between gap-20">
         <div className="radial-glow"></div>

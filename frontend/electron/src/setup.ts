@@ -11,7 +11,8 @@ import electronIsDev from 'electron-is-dev';
 import electronServe from 'electron-serve';
 import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
-
+import { ipcMain } from 'electron';
+import { createLoginWindow } from './loginWindow';
 // Define components for a watcher to detect when the webapp is changed so we can reload in Dev mode.
 const reloadWatcher = {
   debouncer: null,
@@ -42,6 +43,14 @@ export function setupReloadWatcher(electronCapacitorApp: ElectronCapacitorApp): 
     });
 }
 
+export const auth0Config = {
+  clientId: 'lpTd0GzL3Qmr2ACZ6CcT1rMN3nkqh1gu',
+  domain: 'dev-m0q23jbgtbwidn00.us.auth0.com',
+  redirectUri: 'capacitor-electron://-/callback',
+  audience: 'https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/',
+  scope: 'openid profile email'
+};
+
 /**
  * Creates a new window with a BrowserView showing the specified URL
  * @param url The URL to load in the BrowserView
@@ -70,8 +79,7 @@ export function createBrowserViewWindow(url: string, width = 800, height = 600):
     height: browserViewWindowState.height,
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true,
-    }
+      contextIsolation: true    }
   });
   
   // Manage window state
@@ -120,13 +128,25 @@ export function createBrowserViewWindow(url: string, width = 800, height = 600):
   view.webContents.loadURL(url);
   
   // Open DevTools for debugging CSP issues if needed
-  // view.webContents.openDevTools();
+  view.webContents.openDevTools();
   
   // Show the window when content has finished loading
   view.webContents.on('did-finish-load', () => {
     win.show();
   });
-  
+
+  // Listen for URL changes to detect the callback
+  view.webContents.on('did-navigate', (event, url) => {
+    if (url.includes(auth0Config.redirectUri)) {
+      console.log('Auth0 callback detected:', url);
+      
+      // Inject script to send the callback
+      ipcMain.emit('auth0-callback', {}, url);
+      
+      // Close window after a small delay
+      setTimeout(() => win.close(), 500);
+    }
+  });
   // Update the view size when the window is resized
   win.on('resize', () => {
     const bounds = win.getBounds();

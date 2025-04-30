@@ -9,17 +9,7 @@ import { Base64 } from 'js-base64';
 import { useSession } from '../context/SessionContext';
 
 // Helper function to check session
-async function checkServerSession() {
-  try {
-    const response = await axios.get(`${api.endpoints.users}/session-check`, {
-      withCredentials: true
-    });
-    return response.data.valid === true || response.data.authenticated === true;
-  } catch (error) {
-    console.error('Session check failed:', error);
-    return false;
-  }
-}
+
 
 function Callback() {
   console.log('Callback');
@@ -35,17 +25,43 @@ function Callback() {
   const [onboardingStateChecked, setOnboardingStateChecked] = useState(false);
   const { setSessionEstablished } = useSession();
 
+  useEffect(() => {
+    console.log('isAuthenticated', isAuthenticated);
+    console.log('auth0Loading', auth0Loading);
+  }, [isAuthenticated, auth0Loading]);
+
 
   useEffect(() => {
     async function getOnboardingState() {
       try {
-        // This will return your original state object
-        const result = await handleRedirectCallback();
-        console.log('Original state:', result.appState);
-  
-        setAppState(result.appState);
-        setStatus('Onboarding state received.');
-        setOnboardingStateChecked(true);
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const codeParam = urlParams.get('code');
+
+          // Check if this is a callback with code but potentially no state
+          if (codeParam && !urlParams.get('state')) {
+            console.log('Auth code present but no state, skipping handleRedirectCallback');
+            console.log('isAuthenticated', isAuthenticated);
+            console.log('auth0Loading', auth0Loading);
+            // Skip handleRedirectCallback and proceed with empty state
+            setStatus('Authentication code received, continuing...');
+            setOnboardingStateChecked(true);
+            return;
+          }
+          else if (codeParam && urlParams.get('state')) {
+            // This will return your original state object
+            const result = await handleRedirectCallback();
+            console.log('Original state:', result.appState);
+            setAppState(result.appState);
+            setStatus('Onboarding state received.');
+            setOnboardingStateChecked(true);
+            return; 
+          }
+          else {
+            setStatus('No code or state found in callback');
+            setOnboardingStateChecked(true);
+            return;
+          }
         
         // Your state key should be in result.appState
       } catch (error) {
@@ -58,6 +74,7 @@ function Callback() {
 
   
   useEffect(() => {
+
     let mounted = true;
 
     const setupUser = async () => {
@@ -87,70 +104,22 @@ function Callback() {
           }
         );
 
-        // Step 2 & 3: Check server session with retries
-        setStatus('Verifying session...');
-        let sessionValid = false;
-        let attempts = 0;
         
-        while (!sessionValid && attempts < 3) {
-          try {
-            attempts++;
-            console.log(`Session check attempt ${attempts}/3`);
-            
-            // Wait a bit between retries
-            if (attempts > 1) {
-              await new Promise(r => setTimeout(r, 1000));
-            }
-            
-            // Check if session is valid
-            sessionValid = await checkServerSession();
-            
-            if (sessionValid) {
-              console.log('Session successfully established');
-              break;
-            }
-          } catch (error) {
-            console.error(`Session check attempt ${attempts} failed:`, error);
-          }
-        }
-        
-        if (!sessionValid) {
-          throw new Error('Failed to establish session after 3 attempts');
-        }
-        
-
-        // Check if the user is new
-        const isNewUser = response.data.isNewUser; // Assuming response contains this info
-
-        if (isNewUser) {
-          setStatus('Setting up defaults...');
-
-          await axios.post(api.endpoints.breaks + '/init', { id: response.data.user.id});
-          
-          setStatus('Defaults set up successfully.');
-
-          console.log('appState', appState);
-
-          if(appState) {
-            await axios.post(api.endpoints.values + '/init', 
-              { 
-                user_id: response.data.user.id,
-                name: appState.identity.name,
-                color: appState.identity.color,
-                habit_name: appState.habit.name,
-                habit_duration: appState.habit.duration
-            });
-          }
-        }
-
         if (!mounted) return;
 
-        // Use the SessionContext instead of localStorage
-        setSessionEstablished(true);
-        console.log('Session marked as established in context');
-        
         setStatus('Redirecting to home...');
-        navigate('/home');
+        console.log('callback appState', appState);
+        console.log('callback response', response.data);
+        console.log('callback response.data.isNewUser', response.data.isNewUser);
+        const params = new URLSearchParams({
+          value_name: appState.identity.name,
+          value_color: appState.identity.color,
+          habit_name: appState.habit.name,
+          habit_duration: appState.habit.duration.toString(),
+          isNewUser: response.data.isNewUser.toString(),
+          user_id: response.data.user.id.toString(),
+        });
+        navigate(`/init?${params.toString()}`);
       } catch (error) {
         if (!mounted) return;
         console.error('Error setting up user:', error);
@@ -162,13 +131,14 @@ function Callback() {
 
     // Only run setup if we're authenticated
     if (isAuthenticated && !auth0Loading && onboardingStateChecked) {
+      console.log('Setting up user...');
       setupUser();
     }
 
     return () => {
       mounted = false;
     };
-  }, [isAuthenticated, auth0Loading, onboardingStateChecked, getAccessTokenSilently, appState, navigate]);
+  }, [isAuthenticated, auth0Loading, onboardingStateChecked]);
 
   if (auth0Loading) {
     return (

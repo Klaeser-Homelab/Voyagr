@@ -19,6 +19,7 @@ import ProfilePage from './pages/Profile/ProfilePage';
 import VoyagePage from './pages/VoyagePage';
 import WelcomePage from './pages/Welcome/WelcomePage';
 import Callback from './components/Callback';
+import Init from './components/Init';
 import HowItsMade from './pages/Welcome/HowItsMade';
 import Menu from './components/Menu';
 import Settings from './components/Settings';
@@ -146,6 +147,7 @@ function App() {
                     {/* Public pages (no menu) */}
                     <Route path="/" element={<WelcomePage />} />
                     <Route path="/callback" element={<Callback />} />
+                    <Route path="/init" element={<Init />} />
                     <Route path="/how-its-made" element={<HowItsMade />} />
                     <Route path="/chapter-one" element={<ChapterOne />} />
                     <Route path="/quick-start" element={<QuickStart />} />
