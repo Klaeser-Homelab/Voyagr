@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "vite",
-    "build": "vite build --mode production",
+    "build": "vite build",
     "preview": "vite preview",
     "electron:dev": "electron electron/main.js",
     "electron:build": "vite build --mode production && electron-builder build --mac"
