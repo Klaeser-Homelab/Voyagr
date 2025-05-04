@@ -20,12 +20,12 @@ export function SessionProvider({ children }) {
   const checkInitialSession = async () => {
     try {
       setCheckingSession(true);
-      
+      /*
       console.log('Performing initial session check');
       const response = await axios.get(`${api.endpoints.users}/session-check`, {
         withCredentials: true
       });
-      
+      console.log('alive');
       const isValid = response.data.valid === true || response.data.authenticated === true;
       
       if (isValid) {
@@ -39,6 +39,7 @@ export function SessionProvider({ children }) {
         setSessionReady(false);
         localStorage.removeItem('sessionEstablished');
       }
+        */
     } catch (error) {
       console.error('Initial session check failed:', error);
       if (sessionReady) {
@@ -48,21 +49,25 @@ export function SessionProvider({ children }) {
     } finally {
       setCheckingSession(false);
     }
+      
   };
   
   // Check session status immediately on mount if authenticated
   useEffect(() => {
+    /*
     if (isAuthenticated && !isLoading && !checkingSession) {
       console.log('isAuthenticated', isAuthenticated);
       console.log('isLoading', isLoading);
       console.log('checkingSession', checkingSession);
       checkInitialSession();
     }
+    */
   }, [isAuthenticated, isLoading]);
   
   // Check session status periodically when authenticated AND autoCheck is true
  // Inside SessionProvider
 useEffect(() => {
+     /*
     let intervalId = null;
     
     const verifySession = async () => {
@@ -101,7 +106,8 @@ useEffect(() => {
       } finally {
         setCheckingSession(false);
       }
-    };
+        
+};
     
     // Only set up polling if needed
     if (isAuthenticated && !isLoading && autoCheck && !sessionReady) {
@@ -122,13 +128,16 @@ useEffect(() => {
         clearInterval(intervalId);
       }
     };
+    */
   }, [isAuthenticated, isLoading, autoCheck, sessionReady, checkingSession]);
   
   // Public method to force session verification
   const verifySessionNow = async () => {
+    /*
     if (checkingSession) return false;
     
     try {
+      
       setCheckingSession(true);
       const response = await axios.get(`${api.endpoints.users}/session-check`, {
         withCredentials: true
@@ -152,10 +161,12 @@ useEffect(() => {
     } finally {
       setCheckingSession(false);
     }
+      */
   };
   
   // Inform the context when session is established in Callback
   const setSessionEstablished = (value) => {
+    /*
     console.log('Setting session established:', value);
     setSessionReady(value);
     
@@ -165,6 +176,7 @@ useEffect(() => {
     } else {
       localStorage.removeItem('sessionEstablished');
     }
+      */
   };
   
   const value = {

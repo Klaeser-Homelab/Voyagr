@@ -41,6 +41,8 @@ const Header = ({className}) => {
             </button>
             <button 
               onClick={async () => {
+                console.log('isElectron()', isElectron());
+                console.log('window.electronAPI', window.electronAPI);
                 if (isElectron() && window.electronAPI) {
                   try {
                     const result = await window.electronAPI.auth0Login();

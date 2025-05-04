@@ -46,7 +46,7 @@ router.post('/api/users/auth0', async (req, res) => {
       email: user.email
     };
 
-    console.log('Session:', req.session);
+    console.log('Session:', req.sessionID);
 
     // Force session save and wait for completion
     await new Promise((resolve, reject) => {
@@ -59,6 +59,8 @@ router.post('/api/users/auth0', async (req, res) => {
         resolve();
       });
     });
+
+    console.log('Session2:', req.sessionID);
 
     res.json({
       message: 'Authentication successful',

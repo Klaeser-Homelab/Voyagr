@@ -35,6 +35,7 @@ app.use(express.json());
 // Make sure this is BEFORE the session middleware
 app.set('trust proxy', 1);
 
+
 // Session middleware
 if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET) {
   console.log('Node ENV:', process.env.NODE_ENV);

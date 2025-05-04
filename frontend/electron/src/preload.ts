@@ -1,4 +1,4 @@
-require('./rt/electron-rt');
+//require('./rt/electron-rt');
 //////////////////////////////
 // User Defined Preload scripts below
 console.log('User Preload!');
@@ -14,5 +14,11 @@ contextBridge.exposeInMainWorld('versions', {
 
 contextBridge.exposeInMainWorld('electronAPI', {
     openGmail: () => ipcRenderer.invoke('open-gmail'),
-    auth0Login: () => ipcRenderer.invoke('auth0-login')
+    auth0Login: () => ipcRenderer.invoke('auth0-login'),
+    storeSessionCookie: (cookieString) => {
+      ipcRenderer.send('store-session-cookie', cookieString);
+    },
+    getSessionCookie: () => {
+      return ipcRenderer.invoke('get-session-cookie');
+    }
   });

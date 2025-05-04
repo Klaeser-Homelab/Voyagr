@@ -8,7 +8,6 @@ import { useOnboarding } from '../context/OnboardingContext';
 import { Base64 } from 'js-base64';
 import { useSession } from '../context/SessionContext';
 
-// Helper function to check session
 
 
 function Callback() {
@@ -25,12 +24,10 @@ function Callback() {
   const [onboardingStateChecked, setOnboardingStateChecked] = useState(false);
   const { setSessionEstablished } = useSession();
 
-  useEffect(() => {
-    console.log('isAuthenticated', isAuthenticated);
-    console.log('auth0Loading', auth0Loading);
-    console.log('onboardingStateChecked', onboardingStateChecked);
-  }, [isAuthenticated, auth0Loading, onboardingStateChecked]);
-
+  // Helper function to check session
+function isElectron() {
+  return typeof window !== 'undefined' && !!window.electronAPI;
+}
 
   useEffect(() => {
     async function getOnboardingState() {
@@ -105,12 +102,26 @@ function Callback() {
           }
         );
 
+        // Get the Set-Cookie header
+        console.log('about to store session cookie');
+        if (isElectron() && window.electronAPI) {
+          console.log('Response', response);
+            const setCookieHeader = response.headers['set-cookie'];
+            console.log('setCookieHeader', setCookieHeader);
+            if (setCookieHeader && setCookieHeader.length > 0) {
+              // Find the connect.sid cookie
+              const sessionCookie = setCookieHeader.find(cookie => cookie.startsWith('connect.sid='));
+              console.log('sessionCookie', sessionCookie);
+              if (sessionCookie) {
+                // Store the full cookie string
+                await window.electronAPI.storeSessionCookie(sessionCookie);
+              }
+            }
+        }
+
         if (!mounted) return;
 
         setStatus('Redirecting to home...');
-        console.log('callback appState', appState);
-        console.log('callback response', response.data);
-        console.log('callback response.data.isNewUser', response.data.isNewUser);
         if(appState && appState.isNewUser) {
           const params = new URLSearchParams({
             value_name: appState.identity.name,

@@ -37,7 +37,9 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
     height: browserViewWindowState.height,
     webPreferences: {
       nodeIntegration: false,
-      contextIsolation: true    }
+      contextIsolation: true,
+      //preload: join(app.getAppPath(), 'build', 'src', 'preload.js')
+    }
   });
   
   // Manage window state
@@ -49,6 +51,8 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
       nodeIntegration: false,
       contextIsolation: true,
       // We don't need to use the Capacitor preload script for this view
+      preload: join(app.getAppPath(), 'build', 'src', 'preload.js')
+
       // as it's just displaying an external website
     }
   });
@@ -109,7 +113,7 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
   // Listen for URL changes to detect the callback
   
   view.webContents.on('did-navigate-in-page', (event, url) => {
-    if (url.includes('/home')) {
+    if (url.includes('/opsadufin')) {
       
       // Inject script to send the callback
       ipcMain.emit('auth-complete', {}, url);
