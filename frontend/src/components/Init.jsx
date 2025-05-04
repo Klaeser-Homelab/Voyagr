@@ -11,29 +11,19 @@ function useQuery() {
   async function init(appState) {
     
     // Check if the user is new
-    const response = await axios.get('/api/user'); // Example API call
-    const isNewUser = response.data.isNewUser;
-    console.log('user_id', appState.user_id);
-    if (appState.isNewUser) {
+    await axios.post(api.endpoints.breaks + '/init', { id: appState.user_id });
 
-      await axios.post(api.endpoints.breaks + '/init', { id: appState.user_id });
+    console.log('init appState', appState);
 
-      console.log('init appState', appState);
-
-      if (appState.value_name && appState.value_color && appState.habit_name && appState.habit_duration) {
-        console.log('here');
-        await axios.post(api.endpoints.values + '/init', {
-          user_id: appState.user_id,
-          name: appState.value_name,
-          color: appState.value_color,
-          habit_name: appState.habit_name,
-          habit_duration: appState.habit_duration,
-        });
-      }
-        
+    if (appState.value_name && appState.value_color && appState.habit_name && appState.habit_duration) {
+      await axios.post(api.endpoints.values + '/init', {
+        user_id: appState.user_id,
+        name: appState.value_name,
+        color: appState.value_color,
+        habit_name: appState.habit_name,
+        habit_duration: appState.habit_duration,
+      });
     }
-
-
   }
 
 const Init = () => {
@@ -53,7 +43,6 @@ const Init = () => {
         value_color: query.get('value_color'),
         habit_name: query.get('habit_name'),
         habit_duration: query.get('habit_duration'),
-        isNewUser: query.get('isNewUser') === 'true',
         user_id: query.get('user_id'),
       };
       console.log(appState);

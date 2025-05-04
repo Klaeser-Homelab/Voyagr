@@ -104,22 +104,24 @@ function Callback() {
           }
         );
 
-        
         if (!mounted) return;
 
         setStatus('Redirecting to home...');
         console.log('callback appState', appState);
         console.log('callback response', response.data);
         console.log('callback response.data.isNewUser', response.data.isNewUser);
-        const params = new URLSearchParams({
-          value_name: appState.identity.name,
-          value_color: appState.identity.color,
+        if(appState && appState.isNewUser) {
+          const params = new URLSearchParams({
+            value_name: appState.identity.name,
+            value_color: appState.identity.color,
           habit_name: appState.habit.name,
           habit_duration: appState.habit.duration.toString(),
-          isNewUser: response.data.isNewUser.toString(),
           user_id: response.data.user.id.toString(),
-        });
-        navigate(`/init?${params.toString()}`);
+          });
+          navigate(`/init?${params.toString()}`);
+        } else {
+          navigate('/home');
+        }
       } catch (error) {
         if (!mounted) return;
         console.error('Error setting up user:', error);

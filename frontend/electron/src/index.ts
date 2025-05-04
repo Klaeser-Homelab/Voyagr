@@ -5,7 +5,7 @@ import { app, MenuItem, ipcMain } from 'electron'; // Add ipcMain here
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
-import { getAuthenticationURL } from './services/auth';
+import authService from './services/authService';
 
 // Import your createBrowserViewWindow function
 
@@ -78,7 +78,7 @@ if (electronIsDev) {
         console.log('Cleared session data and cookies');
 
         // Create a browser view window with Gmail
-        myCapacitorApp.openBrowserView(getAuthenticationURL());
+        myCapacitorApp.openBrowserView('capacitor-electron://-/electronlogin');
         
         // Return success message
         return { success: true, message: 'Auth0 Login window opened successfully' };

@@ -34,7 +34,7 @@ import Page6 from './pages/Onboarding/Components/Page6';
 import QuickStartHabits from './pages/Profile/Components/QuickStartHabits';
 import QuickStartLogin from './pages/Profile/Components/QuickStartLogin';
 import Tracker from './pages/Home/Components/Tracker';
-
+import ElectronLogin from './components/ElectronLogin';
 function AuthenticatedLayout() {
   return (
     <div className="flex flex-col h-screen lg:m-20 max-w-screen-2xl">
@@ -159,6 +159,7 @@ function App() {
                     <Route path="/chapter-one/page-4" element={<Page4 />} />
                     <Route path="/chapter-one/page-5" element={<Page5 />} />
                     <Route path="/chapter-one/page-6" element={<Page6 />} />
+                    <Route path="/electronlogin" element={<ElectronLogin />} />
                     {/* Authenticated layout (with menu) */}
                     <Route path="/*" element={
                       <ProtectedRoute>
