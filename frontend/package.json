@@ -4,7 +4,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "electron:dev": "electron electron/main.js",
-    "electron:build": "vite build --mode production && electron-builder build --mac"
+    "electron:build": "vite build --mode production --outDir electron/app && electron-builder build --mac"
   },
   "build": {
     "appId": "com.klaeser.voyagr",
