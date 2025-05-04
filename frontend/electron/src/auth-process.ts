@@ -64,7 +64,7 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
           "style-src 'self' 'unsafe-inline' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com; " +
           "img-src 'self' data: https://*.google.com https://accounts.google.com https://mail.google.com https://*.gstatic.com https://*.googleusercontent.com https://*.auth0.com; " +
           "font-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.gstatic.com https://*.auth0.com; " +
-          "connect-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com;"
+          "connect-src 'self' https://*.google.com https://accounts.google.com https://mail.google.com https://*.googleapis.com https://*.auth0.com https://voyagr.me;"
         ],
       }
     });
@@ -108,12 +108,11 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
  */
   // Listen for URL changes to detect the callback
   
-  view.webContents.on('did-navigate', (event, url) => {
-    if (url.includes(authService.auth0Config.redirectUri)) {
-      console.log('Auth0 callback detected:', url);
+  view.webContents.on('did-navigate-in-page', (event, url) => {
+    if (url.includes('/home')) {
       
       // Inject script to send the callback
-      ipcMain.emit('auth0-callback', {}, url);
+      ipcMain.emit('auth-complete', {}, url);
       
       // Close window after a small delay
       setTimeout(() => win.close(), 500);

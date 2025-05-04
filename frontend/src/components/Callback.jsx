@@ -28,13 +28,13 @@ function Callback() {
   useEffect(() => {
     console.log('isAuthenticated', isAuthenticated);
     console.log('auth0Loading', auth0Loading);
-  }, [isAuthenticated, auth0Loading]);
+    console.log('onboardingStateChecked', onboardingStateChecked);
+  }, [isAuthenticated, auth0Loading, onboardingStateChecked]);
 
 
   useEffect(() => {
     async function getOnboardingState() {
       try {
-
           const urlParams = new URLSearchParams(window.location.search);
           const codeParam = urlParams.get('code');
 
@@ -50,6 +50,7 @@ function Callback() {
           }
           else if (codeParam && urlParams.get('state')) {
             // This will return your original state object
+            console.log('code and state found in callback');
             const result = await handleRedirectCallback();
             console.log('Original state:', result.appState);
             setAppState(result.appState);
@@ -58,11 +59,11 @@ function Callback() {
             return; 
           }
           else {
+            console.log('no code or state found in callback');
             setStatus('No code or state found in callback');
             setOnboardingStateChecked(true);
             return;
           }
-        
         // Your state key should be in result.appState
       } catch (error) {
         console.error('Error handling callback:', error);

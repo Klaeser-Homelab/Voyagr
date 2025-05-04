@@ -53,6 +53,9 @@ export function SessionProvider({ children }) {
   // Check session status immediately on mount if authenticated
   useEffect(() => {
     if (isAuthenticated && !isLoading && !checkingSession) {
+      console.log('isAuthenticated', isAuthenticated);
+      console.log('isLoading', isLoading);
+      console.log('checkingSession', checkingSession);
       checkInitialSession();
     }
   }, [isAuthenticated, isLoading]);

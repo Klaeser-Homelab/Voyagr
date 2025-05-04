@@ -47,7 +47,7 @@ if (electronIsDev) {
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
 
-  ipcMain.on('auth0-callback', (event, url) => {
+  ipcMain.on('auth-complete', (event, url) => {
     console.log('Auth0 callback data received:', url);
     myCapacitorApp.getMainWindow().loadURL(url);
   });
@@ -95,6 +95,33 @@ if (electronIsDev) {
 
   //myCapacitorApp.openBrowserView('https://mail.google.com');
 })();
+
+// During app initialization
+app.whenReady().then(() => {
+  // ... your existing setup
+  
+  // Get the main window
+  const mainWindow = myCapacitorApp.getMainWindow();
+  
+  // Set up the close handler early
+  mainWindow.on('close', (event) => {
+    // This should run before the window is destroyed
+    event.preventDefault();
+    console.log('clearing storage data - from window close event');
+    
+    try {
+      mainWindow.webContents.session.clearStorageData({
+        storages: ['localstorage', 'cachestorage', 'cookies']
+      });
+      console.log('Storage cleared successfully');
+    } catch (err) {
+      console.error('Failed to clear storage:', err);
+    }
+    
+    // Allow a moment for the operation to complete
+    setTimeout(() => mainWindow.destroy(), 100);
+  });
+});
 
 // Handle when all of our windows are close (platforms have their own expectations).
 app.on('window-all-closed', function () {
