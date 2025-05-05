@@ -100,20 +100,10 @@ export function createLoginWindow(url: string, width = 800, height = 600): Brows
 
   const {session: {webRequest}} = win.webContents
 
-
-/*
-  webRequest.onBeforeRequest(filter, async ({url}) => {
-    if (url.includes(authService.auth0Config.redirectUri)) {
-      await authService.loadTokens(url);
-      ipcMain.emit('auth0-callback', {}, authService.auth0Config.homeUrl);
-      return destroyAuthWin();
-    }
-  });
- */
   // Listen for URL changes to detect the callback
   
   view.webContents.on('did-navigate-in-page', (event, url) => {
-    if (url.includes('/opsadufin')) {
+    if (url.includes('/home')) {
       
       // Inject script to send the callback
       ipcMain.emit('auth-complete', {}, url);

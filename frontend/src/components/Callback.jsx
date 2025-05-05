@@ -108,23 +108,6 @@ function isElectron() {
           }
         );
 
-        // Get the Set-Cookie header
-        console.log('about to store session cookie');
-        if (isElectron() && window.electronAPI) {
-          console.log('Response', response);
-            const setCookieHeader = response.headers['set-cookie'];
-            console.log('setCookieHeader', setCookieHeader);
-            if (setCookieHeader && setCookieHeader.length > 0) {
-              // Find the connect.sid cookie
-              const sessionCookie = setCookieHeader.find(cookie => cookie.startsWith('connect.sid='));
-              console.log('sessionCookie', sessionCookie);
-              if (sessionCookie) {
-                // Store the full cookie string
-                await window.electronAPI.storeSessionCookie(sessionCookie);
-              }
-            }
-        }
-
         if (!mounted) return;
 
         setStatus('Redirecting to home...');

@@ -13,7 +13,6 @@ contextBridge.exposeInMainWorld('versions', {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    openGmail: () => ipcRenderer.invoke('open-gmail'),
     auth0Login: () => ipcRenderer.invoke('auth0-login'),
     // Add new token management methods
     getAuthToken: () => ipcRenderer.invoke('get-auth-token'),

@@ -49,61 +49,15 @@ if (electronIsDev) {
   setupContentSecurityPolicy(myCapacitorApp.getCustomURLScheme());
 
   ipcMain.on('auth-complete', (event, url) => {
-    console.log('Auth0 callback data received:', url);
     myCapacitorApp.getMainWindow().loadURL(url);
   });
-
-  // IPC handler to store the session cookie
-  ipcMain.on('store-session-cookie', (event, cookieString) => {
-    console.log('Storing session cookie:', cookieString);
-    let domain = 'https://voyagr.me';
-    let name = 'connect.sid';
-    let value = cookieString;
-
-    const secure = domain.startsWith('https://');
-
-    // Look for expiration info in the cookie string
-    let expirationDate;
-    const expiresMatch = cookieString.match(/Expires=([^;]+)/i);
-    if (expiresMatch && expiresMatch[1]) {
-      expirationDate = Math.floor(new Date(expiresMatch[1]).getTime() / 1000);
-    } else {
-      // Default to 14 days if no expiration found
-      expirationDate = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 14;
-    }
-
-
-    myCapacitorApp.getMainWindow().webContents.session.cookies.set({
-      url: domain,
-      name: name,
-      value: value,
-      httpOnly: true,
-      secure: secure,
-      expirationDate: expirationDate
-    });
-  });
   
-
-  
-  // Set up IPC handlers - add them here after app is ready
-  ipcMain.handle('open-gmail', async () => {
-    try {
-      // Create a browser view window with Gmail
-      myCapacitorApp.openBrowserView('https://mail.google.com');
-      
-      // Return success message
-      return { success: true, message: 'Gmail window opened successfully' };
-    } catch (error) {
-      console.error('Error opening Gmail:', error);
-      return { success: false, error: error.message };
-    }
-  });
-
   ipcMain.handle('get-auth-token', async () => {
     return await authService.getToken('ACCESS_TOKEN_KEY');
   });
 
   ipcMain.handle('set-auth-token', async (event, token) => {
+    console.log('setting auth token');
     return await authService.setToken('ACCESS_TOKEN_KEY', token);
   });
   
