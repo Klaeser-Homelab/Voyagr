@@ -2,7 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import {api } from '../config/api';
+import api from '../config/api';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ const Settings = () => {
 
     try {
       // First, log out from our backend to destroy the session
-      await axios.post(`${api.endpoints.users}/logout`, {}, { withCredentials: true });
+      await api.post('/api/users/logout');
       
       // Then, log out from Auth0
       logout({ 
@@ -39,7 +39,7 @@ const Settings = () => {
   const deleteAccount = async () => {
     
     try {
-      await axios.delete(`${api.endpoints.users}/delete`, { withCredentials: true });
+      await api.delete('/api/users/delete');
     } catch (error) {
       console.error('Delete account error:', error);
     }

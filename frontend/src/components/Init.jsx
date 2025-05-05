@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { api } from '../config/api';
+import api from '../config/api';
 import { useSession } from '../context/SessionContext';
 
 function useQuery() {
@@ -11,12 +11,12 @@ function useQuery() {
   async function init(appState) {
     
     // Check if the user is new
-    await axios.post(api.endpoints.breaks + '/init', { id: appState.user_id });
+    await api.post('/api/breaks/init', { id: appState.user_id });
 
     console.log('init appState', appState);
 
     if (appState.value_name && appState.value_color && appState.habit_name && appState.habit_duration) {
-      await axios.post(api.endpoints.values + '/init', {
+      await api.post('/api/values/init', {
         user_id: appState.user_id,
         name: appState.value_name,
         color: appState.value_color,

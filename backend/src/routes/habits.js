@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const requireAuth = require('../middleware/auth'); // Import the middleware
+const { getToken } = require('../middleware/auth'); // Import the middleware
 const { Value, Habit, Event, Break } = require('../models/associations');
 const { Sequelize } = require('sequelize');
+const redis = require('../config/redis');
 
 // GET all habits for the current user
-router.get('/api/habits', requireAuth, async (req, res) => {
+router.get('/api/habits', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find habits associated with the current user
     const habits = await Habit.findAll({
-      where: { user_id: req.session.user.id }, // Directly filter by user_id
+      where: { user_id: user_id }, // Directly filter by user_id
       include: [
         {
           model: Value,
@@ -26,7 +28,7 @@ router.get('/api/habits', requireAuth, async (req, res) => {
 });
 
 // POST new habit
-router.post('/api/habits', requireAuth, async (req, res) => {
+router.post('/api/habits', async (req, res) => {
   try {
     const { description, value_id } = req.body;
     const habit = await Habit.create({
@@ -42,14 +44,15 @@ router.post('/api/habits', requireAuth, async (req, res) => {
 });
 
 // GET single habit by ID (with user verification)
-router.get('/api/habits/:id', requireAuth, async (req, res) => {
+router.get('/api/habits/:id', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken); 
     // Find the habit associated with the current user
     const habit = await Habit.findOne({
       where: { 
         id: req.params.id,
-        user_id: req.session.user.id // Directly filter by user_id
+        user_id: user_id // Directly filter by user_id
       },
       include: [
         {
@@ -69,15 +72,17 @@ router.get('/api/habits/:id', requireAuth, async (req, res) => {
 });
 
 //Update habit
-router.put('/api/habits', requireAuth, async (req, res) => {
+router.put('/api/habits', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { id, description, duration, is_active } = req.body; // Include all fields you want to update
 
     // Find the habit associated with the current user
     const habit = await Habit.findOne({
       where: {
         id: id,
-        user_id: req.session.user.id // Ensure the habit belongs to the current user
+        user_id: user_id // Ensure the habit belongs to the current user
       }
     });
 
@@ -100,10 +105,12 @@ router.put('/api/habits', requireAuth, async (req, res) => {
 });
 
 // GET events for a single habit (with user verification)
-router.get('/api/habits/:id/events', requireAuth, async (req, res) => {
+router.get('/api/habits/:id/events', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Get the user ID from the session
-    const userId = req.session.user.id;
+    const userId = user_id;
 
     // Find events associated with the current user's habit
     const events = await Event.findAll({
@@ -111,7 +118,7 @@ router.get('/api/habits/:id/events', requireAuth, async (req, res) => {
         model: Habit,
         where: { 
           id: req.params.id,
-          user_id: userId // Directly filter by user_id
+          user_id: user_id // Directly filter by user_id
         },
         required: true
       }],

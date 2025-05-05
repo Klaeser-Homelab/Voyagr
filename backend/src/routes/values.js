@@ -1,15 +1,17 @@
 const express = require('express');
-const requireAuth = require('../middleware/auth'); // Import the middleware
+const { getToken } = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
 const { Value, Habit } = require('../models/associations');
 const { Sequelize, Op } = require('sequelize');
-
+const redis = require('../config/redis');
 // GET all values
-router.get('/api/values', requireAuth, async (req, res) => {  
+router.get('/api/values', async (req, res) => {  
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find values associated with the current user
     const values = await Value.findAll({
-      where: { user_id: req.session.user.id, is_active: true }, // Directly filter by user_id
+      where: { user_id: user_id, is_active: true }, // Directly filter by user_id
       include: [{    
         model: Habit,
           required: false,
@@ -74,11 +76,13 @@ router.post('/api/values/init', async (req, res) => {
   }
 });
 
-router.get('/api/values/archived', requireAuth, async (req, res) => {  
+router.get('/api/values/archived', async (req, res) => {  
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find values associated with the current user
     const values = await Value.findAll({
-      where: { user_id: req.session.user.id, is_active: false }, // Directly filter by user_id
+      where: { user_id: user_id, is_active: false }, // Directly filter by user_id
       include: [{    
         model: Habit,
           required: false,
@@ -106,12 +110,13 @@ router.get('/api/values/archived', requireAuth, async (req, res) => {
 });
 
 // POST new value
-router.post('/api/values', requireAuth, async (req, res) => {
+router.post('/api/values', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { description, color } = req.body;
     const value = await Value.create({
-      user_id: req.session.user.id,
+      user_id: user_id,
       description,
       color
     });
@@ -123,15 +128,17 @@ router.post('/api/values', requireAuth, async (req, res) => {
 });
 
 // PUT update value
-router.put('/api/values', requireAuth, async (req, res) => {
+router.put('/api/values', async (req, res) => {
   console.log("PUT request received");
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { id, description, color, is_active } = req.body;
     // Find the value associated with the current user
     const value = await Value.findOne({
       where: { 
         id: id,
-        user_id: req.session.user.id // Directly filter by user_id
+        user_id: user_id // Directly filter by user_id
       }
     });
     
@@ -155,14 +162,16 @@ router.put('/api/values', requireAuth, async (req, res) => {
   }
 });
 
-router.delete('/api/values', requireAuth, async (req, res) => {
+router.delete('/api/values', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { id } = req.body;
 
     console.log('id', id);
 
     await Value.destroy({
-      where: { id, user_id: req.session.user.id }
+      where: { id, user_id: user_id }
     });
 
     res.json({ message: 'Value deleted successfully' });

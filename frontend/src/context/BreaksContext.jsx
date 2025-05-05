@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
 import { useValues } from './ValuesContext';
 const BreaksContext = createContext();
 

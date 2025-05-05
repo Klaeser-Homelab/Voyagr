@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const requireAuth = require('../middleware/auth'); // Import the middleware
+const { getToken } = require('../middleware/auth'); // Import the middleware
 const { Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize');
-
+const redis = require('../config/redis');
 // GET all events for the current user
-router.get('/api/events', requireAuth, async (req, res) => {
+router.get('/api/events', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);  
+    const user_id = await redis.get(accessToken);
     // Find events associated with the current user
     const events = await Event.findAll({
-      where: { user_id: req.session.user.id }, // Directly filter by user_id
+      where: { user_id: user_id }, // Directly filter by user_id
       include: [
         {
           model: Habit,
@@ -30,8 +31,10 @@ router.get('/api/events', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/api/events/month/:monthString', requireAuth, async (req, res) => {
+router.get('/api/events/month/:monthString', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const monthString = req.params.monthString; // Format: "YYYY-MM"
     const [year, month] = monthString.split('-').map(Number);
     
@@ -50,7 +53,7 @@ router.get('/api/events/month/:monthString', requireAuth, async (req, res) => {
     
     const events = await Event.findAll({
       where: {
-        user_id: req.session.user.id,
+        user_id: user_id,
         date: {
           [Op.between]: [formattedStartDate, formattedEndDate]
         }
@@ -73,12 +76,14 @@ router.get('/api/events/month/:monthString', requireAuth, async (req, res) => {
   }
 });
 
-router.get('/api/events/today', requireAuth, async (req, res) => {
+router.get('/api/events/today', async (req, res) => {
   try {
     // Find today's events associated with the current user
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const events = await Event.findAll({
       where: {
-        user_id: req.session.user.id, // Directly filter by user_id
+        user_id: user_id, // Directly filter by user_id
         created_at: {
           [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0))
         }
@@ -130,9 +135,10 @@ router.get('/api/events/today', requireAuth, async (req, res) => {
 });
 
 // POST new event
-router.post('/api/events', requireAuth, async (req, res) => {
+router.post('/api/events', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { value_id, habit_id } = req.body;
     
     // value_id is required
@@ -140,7 +146,7 @@ router.post('/api/events', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'value_id is required' });
     }
     const event = await Event.create({
-      user_id: req.session.user.id,
+      user_id: user_id,
       value_id: value_id,
       habit_id: habit_id
     });
@@ -152,14 +158,15 @@ router.post('/api/events', requireAuth, async (req, res) => {
 });
 
 // DELETE event
-router.delete('/api/events/:id', requireAuth, async (req, res) => {
+router.delete('/api/events/:id', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find the event associated with the current user
     const event = await Event.findOne({
       where: { 
         id: req.params.id,
-        user_id: req.session.user.id // Directly filter by user_id
+        user_id: user_id // Directly filter by user_id
       }
     });
 
@@ -177,14 +184,15 @@ router.delete('/api/events/:id', requireAuth, async (req, res) => {
 });
 
 // UPDATE event
-router.put('/api/events/:id', requireAuth, async (req, res) => {
+router.put('/api/events/:id', async (req, res) => {
   try {
-
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find the event associated with the current user
     const event = await Event.findOne({
       where: { 
         id: req.params.id,
-        user_id: req.session.user.id // Directly filter by user_id
+        user_id: user_id // Directly filter by user_id
       }
     });
 

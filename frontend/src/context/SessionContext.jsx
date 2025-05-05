@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
-import { api } from '../config/api';
+import api  from '../config/api';
 
 const SessionContext = createContext();
 

@@ -19,9 +19,7 @@ export const TrackerProvider = ({ children }) => {
       // Format date for API request (YYYY-MM)
       const monthString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
       
-      const response = await axios.get(`${api.endpoints.events}/month/${monthString}`, {
-        withCredentials: true
-      });
+      const response = await api.get(`/api/events/month/${monthString}`);
       
       // Organize data by day and habit
       const organizedData = {};

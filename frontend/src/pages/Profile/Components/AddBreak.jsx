@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { api } from '../../../config/api';
+import api from '../../../config/api';
 
 const AddBreak = ({ habit }) => {  // Destructure the habit prop
   const [interval, setInterval] = useState('');  // Initialize with empty string instead of null
@@ -9,10 +8,10 @@ const AddBreak = ({ habit }) => {  // Destructure the habit prop
     e.preventDefault();  // Prevent form submission
     
     try {
-      await axios.post(api.endpoints.breaks, {
+      await api.post('/api/breaks', {
         habit_id: habit.id,
         interval: parseInt(interval, 10) * 60000  // Convert string to number and then to milliseconds
-      }, { withCredentials: true });
+      });
       
       // Optional: Close dialog or reset form
       document.getElementById('add_break_modal').close();

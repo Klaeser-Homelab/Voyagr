@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { api } from "../../../config/api";
-import axios from "axios";
 
 const TodoCard = ({todo, onToggle, onDelete}) => {
   const [completed, setCompleted] = useState(todo.completed); // Local state for checkbox

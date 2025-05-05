@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const requireAuth = require('../middleware/auth');
+const { getToken } = require('../middleware/auth');
 const sequelize = require('../config/database');
 const { Todo, Break, Event, Habit, Value, User } = require('../models/associations');
 const redis = require('../config/redis');
@@ -10,13 +10,9 @@ const redis = require('../config/redis');
 router.post('/api/users/auth0', async (req, res) => {
   try {
     // Get the access token from the Authorization header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('No access token provided');
-      return res.status(401).json({ error: 'No access token provided' });
-    }
+    const accessToken = getToken(req);
 
-    const accessToken = authHeader.split(' ')[1];
+    console.log('accessToken', accessToken);
 
     // Get user info from Auth0 using the access token
     const userResponse = await axios.get(`https://dev-m0q23jbgtbwidn00.us.auth0.com/userinfo`, {
@@ -40,27 +36,7 @@ router.post('/api/users/auth0', async (req, res) => {
     });
 
     // Update session
-    req.session.user = {
-      id: user.id,
-      auth0Id: auth0User.sub,
-      email: user.email
-    };
-
-    console.log('Session:', req.sessionID);
-
-    // Force session save and wait for completion
-    await new Promise((resolve, reject) => {
-      req.session.save((err) => {
-        if (err) {
-          console.error('Session save error:', err);
-          reject(err);
-          return;
-        }
-        resolve();
-      });
-    });
-
-    console.log('Session2:', req.sessionID);
+    redis.set(accessToken, user.id);
 
     res.json({
       message: 'Authentication successful',
@@ -83,32 +59,13 @@ router.post('/api/users/auth0', async (req, res) => {
   }
 });
 
-router.get('/api/users/session-check', async (req, res) => {
-  if (req.session && req.session.user) {
-    res.json({ valid: true });  // Use "valid" instead of "authenticated"
-  } else {
-    res.status(401).json({ valid: false });  // Send 401 status code
-  }
-});
-
 // POST /api/users/logout
 // Destroys the session and logs the user out
-router.post('/api/users/logout', requireAuth, async (req, res) => {
+router.post('/api/users/logout', async (req, res) => {
   try {
     console.log('Logging out user:', req.session.user);
+    redis.del(accessToken);
     
-    // Destroy the session
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Session destruction error:', err);
-        return res.status(500).json({ error: 'Logout failed', details: err.message });
-      }
-      
-      // Clear the session cookie
-      res.clearCookie('connect.sid');
-      
-      res.json({ message: 'Logout successful' });
-    });
   } catch (error) {
     console.error('Error in /api/users/logout:', error);
     res.status(500).json({ 
@@ -120,10 +77,12 @@ router.post('/api/users/logout', requireAuth, async (req, res) => {
 
 // DELETE /api/users/delete   
 // Deletes the user from the database
-router.delete('/api/users/delete', requireAuth, async (req, res) => {
+router.delete('/api/users/delete', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     // Find the user associated with the current session
-    const user = await User.findByPk(req.session.user.id);
+    const user = await User.findByPk(user_id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -184,15 +143,13 @@ router.get('/api/users/get-onboarding', async (req, res) => {
 
 // GET /api/users/me
 // Gets current user information from the session
-router.get('/api/users/me', requireAuth, async (req, res) => {
+router.get('/api/users/me', async (req, res) => {
   try {
-    // If requireAuth middleware passed, we have a valid session
-    if (!req.session.user) {
-      return res.status(401).json({ error: 'No active session' });
-    }
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     
     // Get user data
-    const user = await User.findByPk(req.session.user.id);
+    const user = await User.findByPk(user_id);
     
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

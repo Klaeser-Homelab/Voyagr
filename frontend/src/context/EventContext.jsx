@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { api } from '../config/api';
+import api from '../config/api';
 import { useTimer } from './TimerContext';
 import { useToday } from './TodayContext';
 import { useBreaks } from './BreaksContext';
@@ -37,13 +37,10 @@ export const EventProvider = ({ children }) => {
     stopTimer();
     try {
       // Update duration of event
-      const eventResponse = await axios.put(
-        `${api.endpoints.events}/${activeEvent.id}`,
+      const eventResponse = await api.put(
+        `/api/events/${activeEvent.id}`,
         {
           duration: duration,
-        },
-        {
-          withCredentials: true
         }
       );
 
@@ -59,9 +56,7 @@ export const EventProvider = ({ children }) => {
       
       console.log('Completed todos:', completedTodos);
       if (completedTodos.length > 0) {
-        await axios.post(`${api.endpoints.todos}/batchprocess`, completedTodos, {
-          withCredentials: true,
-        });
+        await api.post(`/api/todos/batchprocess`, completedTodos);
         console.log('Completed todos processed:', completedTodos);
       }
 
@@ -84,9 +79,7 @@ export const EventProvider = ({ children }) => {
   const deleteEvent = async() => {
     resetTimer();
     setActiveEvent(null);
-    await axios.delete(`${api.endpoints.events}/${activeEvent.id}`, {
-      withCredentials: true,
-    });
+    await api.delete(`/api/events/${activeEvent.id}`);
   };
 
   const createEvent = async ({input}) => {
@@ -111,11 +104,9 @@ export const EventProvider = ({ children }) => {
     console.log('value_id', value_id);
 
     try {
-      const eventResponse = await axios.post(api.endpoints.events, {
+      const eventResponse = await api.post('/api/events', {
         value_id: value_id,
         habit_id: habit_id
-      }, {
-        withCredentials: true
       });
 
       console.log('input', input);

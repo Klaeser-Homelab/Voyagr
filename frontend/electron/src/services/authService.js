@@ -1,6 +1,15 @@
 import axios from 'axios';
+const keytar = require('keytar');
 
-let accessToken = null;
+
+// Constants for keytar
+const SERVICE = 'voyagr';
+const ACCOUNT = 'auth0-tokens';
+
+// Token keys
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const ID_TOKEN_KEY = 'id_token';
 
 const auth0Config = {
     clientId: 'lpTd0GzL3Qmr2ACZ6CcT1rMN3nkqh1gu',
@@ -28,57 +37,52 @@ function getAuthenticationURL() {
     );
   }
 
-  async function loadTokens(callbackURL) {
-    const urlParts = url.parse(callbackURL, true);
-    const query = urlParts.query;
-  
-    const exchangeOptions = {
-      'grant_type': 'authorization_code',
-      'client_id': clientId,
-      'code': query.code,
-      'redirect_uri': redirectUri,
-    };
-  
-    const options = {
-      method: 'POST',
-      url: `https://${auth0Config.domain}/oauth/token`,
-      headers: {
-        'content-type': 'application/json'
-      },
-      data: JSON.stringify(exchangeOptions),
-    };
-  
-    try {
-      const response = await axios(options);
-      accessToken = response.data.access_token;
-    } catch (error) {
-      await logout();
-  
-      throw error;
-    }
-
-    if (accessToken) {
-      try {
-        const response = await axios.post('https://voyagr.me/auth0', 
-          {}, // No need to send code anymore
-        {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true
-        }
-      );
-      } catch (error) {
-        throw error;
-      }
-    }
+ /**
+ * Sets a token in the secure storage
+ * @param {string} key - The token key
+ * @param {string} value - The token value
+ */
+async function setToken(key, value) {
+  if (value) {
+    await keytar.setPassword(SERVICE, `${ACCOUNT}_${key}`, value);
+  } else {
+    await deleteToken(key);
   }
+}
+
+/**
+ * Gets a token from secure storage
+ * @param {string} key - The token key
+ * @returns {Promise<string>} The stored token or null
+ */
+async function getToken(key) {
+  try {
+    return await keytar.getPassword(SERVICE, `${ACCOUNT}_${key}`);
+  } catch (error) {
+    console.error(`Error retrieving ${key}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Deletes a token from secure storage
+ * @param {string} key - The token key
+ */
+async function deleteToken(key) {
+  try {
+    await keytar.deletePassword(SERVICE, `${ACCOUNT}_${key}`);
+  } catch (error) {
+    console.error(`Error deleting ${key}:`, error);
+  }
+}
+  
 
   const authService = {
     auth0Config,
     getAuthenticationURL,
-    loadTokens
+    setToken,
+    getToken,
+    deleteToken
   };
   
   export default authService;

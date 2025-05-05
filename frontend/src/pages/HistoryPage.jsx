@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
+import api from '../config/api';
 
 const History = () => {
   const [todos, setTodos] = useState([]);
@@ -10,7 +9,7 @@ const History = () => {
   useEffect(() => {
     const fetchCompletedTodos = async () => {
       try {
-        const response = await axios.get(`${api.endpoints.todos}/completed`);
+        const response = await api.get('/api/todos/completed');
         setTodos(response.data);
         setLoading(false);
       } catch (error) {

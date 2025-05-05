@@ -11,9 +11,14 @@ const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const breakRoutes = require('./routes/breaks');
 const redis = require('./config/redis');
+const { auth } = require('express-oauth2-jwt-bearer');
+
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+
+
 
 // Middleware
 app.use(cors({
@@ -34,6 +39,13 @@ app.use(express.json());
 
 // Make sure this is BEFORE the session middleware
 app.set('trust proxy', 1);
+const jwtCheck = auth({
+  audience: 'https://voyagr.me/auth',
+  issuerBaseURL: 'https://dev-m0q23jbgtbwidn00.us.auth0.com/',
+  tokenSigningAlg: 'RS256'
+});
+
+app.use(jwtCheck);
 
 
 // Session middleware

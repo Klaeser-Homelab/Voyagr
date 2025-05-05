@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { api } from "../config/api";
+import api  from "../config/api";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useSession } from "./SessionContext";
 
@@ -18,9 +18,7 @@ export const ValuesProvider = ({ children }) => {
   const fetchValues = useCallback(async () => {
     try {
       console.log("ValuesContext: fetching values");
-      const res = await axios.get(api.endpoints.values, {
-        withCredentials: true
-      });
+      const res = await api.get('/api/values');
       setValues(res.data);
     } catch (error) {
       console.error('Failed to fetch values:', error);
@@ -29,9 +27,7 @@ export const ValuesProvider = ({ children }) => {
 
   const fetchArchivedValues = useCallback(async () => {
     try {
-      const res = await axios.get(api.endpoints.values + '/archived', {
-        withCredentials: true   
-      });
+      const res = await api.get('/api/values/archived');
       setArchivedValues(res.data);
     } catch (error) {
       console.error('Failed to fetch archived values:', error);
@@ -41,7 +37,7 @@ export const ValuesProvider = ({ children }) => {
 
   const addValue = async (data) => {
     try {
-      const value = await axios.post(api.endpoints.values, data, { withCredentials: true });
+      const value = await api.post('/api/values', data);
       fetchValues();
       return value;
     } catch (error) {
@@ -51,13 +47,11 @@ export const ValuesProvider = ({ children }) => {
 
   const updateValue = async (value) => {
     try {
-      await axios.put(api.endpoints.values, {
+      await api.put('/api/values', {
         id: value.id,
         is_active: value.is_active,
         description: value.description,
         color: value.color
-      }, {
-        withCredentials: true
       });
     } catch (error) {
       console.error('Failed to unarchive value:', error);
@@ -80,9 +74,7 @@ export const ValuesProvider = ({ children }) => {
   // ----- HABITS -----
   const fetchArchivedHabits = useCallback(async () => {
     try {
-      const res = await axios.get(api.endpoints.habits + '/archived', {
-        withCredentials: true
-      }); 
+      const res = await api.get('/api/habits/archived');
       setArchivedHabits(res.data);
     } catch (error) {
       console.error('Failed to fetch archived habits:', error);
@@ -92,7 +84,7 @@ export const ValuesProvider = ({ children }) => {
   const addHabit = async (habit) => {
     console.log("habit in addHabit:", habit);
     try{
-      await axios.post(api.endpoints.habits, habit, { withCredentials: true });
+      await api.post('/api/habits', habit);
       fetchValues();
     } catch (error) {
       console.error('Failed to add habit:', error);
@@ -101,7 +93,7 @@ export const ValuesProvider = ({ children }) => {
 
   const updateHabit = async (habit) => {
     try {
-      await axios.put(api.endpoints.habits, habit, { withCredentials: true });
+      await api.put('/api/habits', habit);
       fetchValues();
     } catch (error) {
       console.error('Failed to update habit:', error);
@@ -110,7 +102,7 @@ export const ValuesProvider = ({ children }) => {
 
   const archiveHabit = async (habit) => {
     try {
-      await axios.put(api.endpoints.habits, { id: habit.id, is_active: false }, { withCredentials: true });
+      await api.put('/api/habits', { id: habit.id, is_active: false });
       fetchValues();
     } catch (error) {
       console.error('Failed to archive habit:', error); 
@@ -121,9 +113,7 @@ export const ValuesProvider = ({ children }) => {
   const fetchBreaks = useCallback(async () => {
     console.log("ValuesContext: fetching breaks");
     try {
-      const response = await axios.get(api.endpoints.breaks, {
-        withCredentials: true
-      });
+      const response = await api.get('/api/breaks');
       setBreaks(response.data);
     } catch (error) {
       console.error('Failed to fetch breaks:', error);
@@ -132,7 +122,7 @@ export const ValuesProvider = ({ children }) => {
 
   const addBreak = async (data) => {
     try{
-      await axios.post(api.endpoints.breaks, data, { withCredentials: true });
+      await api.post('/api/breaks', data);
       fetchBreaks();
     } catch (error) {
       console.error('Failed to add break:', error);
@@ -141,7 +131,7 @@ export const ValuesProvider = ({ children }) => {
 
   const updateBreak = async (breakItem) => {
     try {
-      await axios.put(api.endpoints.breaks, breakItem, { withCredentials: true });
+      await api.put('/api/breaks', breakItem);
       fetchBreaks();
     } catch (error) {
       console.error('Failed to update break:', error);
@@ -150,9 +140,8 @@ export const ValuesProvider = ({ children }) => {
 
   const deleteBreak = async (id) => {
     try{
-      await axios.delete(api.endpoints.breaks, {
+      await api.delete('/api/breaks', {
         data: { id },
-        withCredentials: true,
       });
       fetchBreaks();
     } catch (error) {

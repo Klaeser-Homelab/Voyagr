@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { api } from '../../../config/api';
+import api from '../../../config/api';
 import AddBreak from './AddBreak';
 import { useValues } from '../../../context/ValuesContext';
 import { TrashIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -18,10 +17,10 @@ const EditHabitCard = ({
     e.preventDefault();  // Prevent form submission
     
     try {
-      await axios.post(api.endpoints.breaks, {
+      await api.post('/api/breaks', {
         habit_id: habit.id,
         interval: parseInt(interval, 10) * 60000  // Convert string to number and then to milliseconds
-      }, { withCredentials: true });
+      });
       
       // Optional: Close dialog or reset form
       setInterval('');

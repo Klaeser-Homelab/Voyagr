@@ -99,6 +99,15 @@ if (electronIsDev) {
     }
   });
 
+  ipcMain.handle('get-auth-token', async () => {
+    return await authService.getToken('ACCESS_TOKEN_KEY');
+  });
+
+  ipcMain.handle('set-auth-token', async (event, token) => {
+    return await authService.setToken('ACCESS_TOKEN_KEY', token);
+  });
+  
+
     // Set up IPC handlers - add them here after app is ready
     ipcMain.handle('auth0-login', async () => {
       try {

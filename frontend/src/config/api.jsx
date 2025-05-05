@@ -1,14 +1,34 @@
+import axios from 'axios';
+import { getAuthService } from '../services/auth';
+
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://voyagr.me' : 'http://localhost:3001';
 
-export const api = {
-  baseUrl: BASE_URL,
-  endpoints: {
-    todos: `${BASE_URL}/api/todos`,
-    habits: `${BASE_URL}/api/habits`,
-    values: `${BASE_URL}/api/values`,
-    events: `${BASE_URL}/api/events`,
-    auth: `${BASE_URL}/auth`,
-    users: `${BASE_URL}/api/users`,
-    breaks: `${BASE_URL}/api/breaks`
+const api = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
   }
-};
+  // Remove withCredentials: true as it's for cookie-based auth
+});
+
+// Add a request interceptor to automatically add the token to every request
+api.interceptors.request.use(
+  async (config) => {
+    // Get the token from wherever you're storing it
+    const authService = getAuthService();
+
+    const token = await authService.getToken();
+    
+    if (token) {
+      // Add the token to the Authorization header
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default api;

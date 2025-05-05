@@ -15,10 +15,8 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('electronAPI', {
     openGmail: () => ipcRenderer.invoke('open-gmail'),
     auth0Login: () => ipcRenderer.invoke('auth0-login'),
-    storeSessionCookie: (cookieString) => {
-      ipcRenderer.send('store-session-cookie', cookieString);
-    },
-    getSessionCookie: () => {
-      return ipcRenderer.invoke('get-session-cookie');
-    }
+    // Add new token management methods
+    getAuthToken: () => ipcRenderer.invoke('get-auth-token'),
+    setAuthToken: (token) => ipcRenderer.invoke('set-auth-token', token),
+    removeAuthToken: () => ipcRenderer.invoke('remove-auth-token')
   });

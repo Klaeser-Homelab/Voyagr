@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import axios from 'axios';
-import { api } from '../config/api';
+import api from '../config/api';
 
 const TodayContext = createContext(null);
 
@@ -12,9 +11,7 @@ export const TodayProvider = ({ children }) => {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${api.endpoints.events}/today`, {
-        withCredentials: true
-      });
+      const response = await api.get('/api/events/today');
       setEvents(response.data);
       setError(null);
     } catch (error) {

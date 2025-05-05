@@ -2,8 +2,6 @@ import { useOnboarding } from "../../../context/OnboardingContext";
 import OnboardingHabitForm from './OnboardingHabitForm';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { api } from '../../../config/api';
 
 const QuickStartHabits = () => {
     const { identity, addHabit } = useOnboarding();

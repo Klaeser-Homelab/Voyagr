@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const requireAuth = require('../middleware/auth'); // Import the middleware
+const { getToken } = require('../middleware/auth'); // Import the middleware
 const { Value, Habit, Event, Break } = require('../models/associations');
 const { Sequelize } = require('sequelize');
-
+const redis = require('../config/redis');
 router.post('/api/breaks/init', async (req, res) => {
     try {
       console.log('req.body.id', req.body.id);
@@ -52,11 +52,13 @@ router.post('/api/breaks/init', async (req, res) => {
     }
   });
 
-  router.get('/api/breaks', requireAuth, async (req, res) => {
-    console.log('api/breaks');
+  router.get('/api/breaks', async (req, res) => {
+    console.log('api/breaks');  
     try {       
+      const accessToken = getToken(req);
+      const user_id = await redis.get(accessToken);
       const breaks = await Break.findAll({
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         order: [['interval', 'ASC']], // Sort by interval in ascending order
         include: [{
           model: Habit,
@@ -75,15 +77,16 @@ router.post('/api/breaks/init', async (req, res) => {
     }
   });
 
-  router.put('/api/breaks', requireAuth, async (req, res) => {
+  router.put('/api/breaks', async (req, res) => {
     try {
       const { id, interval } = req.body;
-  
+      const accessToken = getToken(req);
+      const user_id = await redis.get(accessToken);
       // Find the break for the current user
       const breakItem = await Break.findOne({
         where: {
           id,
-          user_id: req.session.user.id
+          user_id: user_id
         }
       });
   
@@ -106,14 +109,16 @@ router.post('/api/breaks/init', async (req, res) => {
     }
   });
 
-  router.post('/api/breaks', requireAuth, async (req, res) => {
+  router.post('/api/breaks', async (req, res) => {
     try {
+      const accessToken = getToken(req);
+      const user_id = await redis.get(accessToken);
       const { habit_id, interval } = req.body;
 
       const newBreak = await Break.create({
         habit_id,   
         interval,
-        user_id: req.session.user.id
+        user_id: user_id
       });
 
       res.json(newBreak);
@@ -123,13 +128,15 @@ router.post('/api/breaks/init', async (req, res) => {
     }
   });
 
-  router.delete('/api/breaks', requireAuth, async (req, res) => {
+  router.delete('/api/breaks', async (req, res) => {
     try {
+      const accessToken = getToken(req);
+      const user_id = await redis.get(accessToken);
       const { id } = req.body;
 
       console.log('id', id);
 
-      await Break.destroy({ where: { id, user_id: req.session.user.id } });   
+      await Break.destroy({ where: { id, user_id: user_id } });   
       res.json({ message: 'Break deleted successfully' });
     } catch (error) {
       console.error('Error deleting break:', error);

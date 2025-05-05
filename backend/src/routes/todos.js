@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const requireAuth = require('../middleware/auth'); // Import the middleware
+const { getToken } = require('../middleware/auth'); // Import the middleware
 const { Item, Value, Habit, Event, Todo } = require('../models/associations');
 const { Op } = require('sequelize');
 
 // POST new todo
-router.post('/api/todos', requireAuth, async (req, res) => {
+router.post('/api/todos', async (req, res) => {
   try {
+    const accessToken = getToken(req);  
+    const user_id = await redis.get(accessToken);
     // First create the base item
     const item = await Item.create({
-      user_id: req.session.user.id,
+      user_id: user_id,
       type: 'todo'
     });
 
@@ -30,12 +32,14 @@ router.post('/api/todos', requireAuth, async (req, res) => {
 });
 
 // GET completed todos for the current user
-router.get('/api/todos/completed', requireAuth, async (req, res) => {
+router.get('/api/todos/completed', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }],
       where: { completed: true }
@@ -47,12 +51,14 @@ router.get('/api/todos/completed', requireAuth, async (req, res) => {
 });
 
 // GET completed todos for today without events for the current user
-router.get('/api/todos/completed/today/noevent', requireAuth, async (req, res) => {
+router.get('/api/todos/completed/today/noevent', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }],
       where: { 
@@ -68,13 +74,15 @@ router.get('/api/todos/completed/today/noevent', requireAuth, async (req, res) =
 });
 
 // GET incomplete todos for the current user
-router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
+router.get('/api/todos/incomplete', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todos = await Todo.findAll({
       include: [
         {
           model: Item,
-          where: { user_id: req.session.user.id },
+          where: { user_id: user_id },
           required: true
         },
         {
@@ -98,8 +106,10 @@ router.get('/api/todos/incomplete', requireAuth, async (req, res) => {
   }
 });
 
-router.post('/api/todos/batchprocess', requireAuth, async (req, res) => {
+router.post('/api/todos/batchprocess', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todos = req.body;
     for (const todo of todos) {
       await Todo.update({ event_id: todo.event_id }, { where: { id: todo.id } });
@@ -110,8 +120,10 @@ router.post('/api/todos/batchprocess', requireAuth, async (req, res) => {
   }
 });
 // GET incomplete todos for a specific habit for the current user
-router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
+router.get('/api/todos/incomplete/habit/:id', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const habitId = parseInt(req.params.id);
     if (isNaN(habitId)) {
       return res.status(400).json({ error: 'Must provide a number for habit ID' });
@@ -120,7 +132,7 @@ router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }],
       where: { 
@@ -134,8 +146,10 @@ router.get('/api/todos/incomplete/habit/:id', requireAuth, async (req, res) => {
 });
 
 // GET incomplete todos for a specific value for the current user
-router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => {
+router.get('/api/todos/incomplete/value/:id', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const valueId = parseInt(req.params.id);
     if (isNaN(valueId)) {
       return res.status(400).json({ error: 'Must provide a number for value ID' });
@@ -144,7 +158,7 @@ router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => 
     const todos = await Todo.findAll({
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }],
       where: { 
@@ -158,13 +172,15 @@ router.get('/api/todos/incomplete/value/:id' , requireAuth, async (req, res) => 
 });
 
 // UPDATE todo completion status
-router.patch('/api/todos/:id', requireAuth, async (req, res) => {
+router.patch('/api/todos/:id', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todo = await Todo.findOne({
       where: { id: req.params.id },
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }]
     });
@@ -183,13 +199,15 @@ router.patch('/api/todos/:id', requireAuth, async (req, res) => {
 });
 
 // DELETE todo
-router.delete('/api/todos/:id', requireAuth, async (req, res) => {
+router.delete('/api/todos/:id', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const todo = await Todo.findOne({
       where: { id: req.params.id },
       include: [{
         model: Item,
-        where: { user_id: req.session.user.id },
+        where: { user_id: user_id },
         required: true
       }]
     });

@@ -128,7 +128,7 @@ function App() {
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
       authorizationParams={{
         redirect_uri: `${window.location.origin}/callback`,
-        audience: `https://dev-m0q23jbgtbwidn00.us.auth0.com/api/v2/`,
+        audience: `https://voyagr.me/auth`,
         scope: "openid profile email"
       }}
       cacheLocation="localstorage"

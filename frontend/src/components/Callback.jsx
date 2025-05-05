@@ -2,11 +2,12 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-import { api } from '../config/api';
+import api from '../config/api';
 import { useOnboarding } from '../context/OnboardingContext';
 import { Base64 } from 'js-base64';
 import { useSession } from '../context/SessionContext';
+import { getAuthService } from '../services/auth';
+
 
 
 
@@ -88,17 +89,22 @@ function isElectron() {
         // Get the access token from Auth0
         const accessToken = await getAccessTokenSilently();
 
+        const authService = getAuthService();
+        const sessionCookie = await authService.setToken(accessToken);
+        const gotToken = await authService.getToken();
+        console.log('gotToken', gotToken);
+
         setStatus('Configuring user...');
+
         
         // Step 1: Send the access token to backend to establish session
-        const response = await axios.post(`${api.endpoints.users}/auth0`, 
+        const response = await api.post('/api/users/auth0', 
           {}, // No need to send code anymore
           {
             headers: {
               'Authorization': `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
-            },
-            withCredentials: true
+            }
           }
         );
 
@@ -134,6 +140,8 @@ function isElectron() {
         } else {
           navigate('/home');
         }
+
+        
       } catch (error) {
         if (!mounted) return;
         console.error('Error setting up user:', error);

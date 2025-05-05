@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { api } from '../../../config/api';
+import api from '../../../config/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { useEvent } from '../../../context/EventContext';
 function TodoForm({ item, onTodoAdded }) {
@@ -12,10 +12,10 @@ function TodoForm({ item, onTodoAdded }) {
     console.log('submitting todo');
     
     try {
-      const response = await axios.post(api.endpoints.todos, {
+      const response = await api.post('/api/todos', {
         description,
         event_id: activeEvent.id,
-      }, { withCredentials: true });
+      });
       
       setDescription('');
       
