@@ -2,8 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import axios from "axios";
 import api  from "../config/api";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useSession } from "./SessionContext";
-
+import { getAuthService } from "../services/auth";
 const ValuesContext = createContext();
 
 export const ValuesProvider = ({ children }) => {
@@ -12,12 +11,10 @@ export const ValuesProvider = ({ children }) => {
   const [archivedValues, setArchivedValues] = useState([]);
   const [archivedHabits, setArchivedHabits] = useState([]);
   const { isAuthenticated, isLoading } = useAuth0();
-  const { sessionReady } = useSession();
 
   // ----- VALUES -----
   const fetchValues = useCallback(async () => {
     try {
-      console.log("ValuesContext: fetching values");
       const res = await api.get('/api/values');
       setValues(res.data);
     } catch (error) {
@@ -82,7 +79,6 @@ export const ValuesProvider = ({ children }) => {
   }, []);
 
   const addHabit = async (habit) => {
-    console.log("habit in addHabit:", habit);
     try{
       await api.post('/api/habits', habit);
       fetchValues();
@@ -111,7 +107,6 @@ export const ValuesProvider = ({ children }) => {
 
   // ----- BREAKS -----
   const fetchBreaks = useCallback(async () => {
-    console.log("ValuesContext: fetching breaks");
     try {
       const response = await api.get('/api/breaks');
       setBreaks(response.data);
@@ -155,13 +150,17 @@ export const ValuesProvider = ({ children }) => {
     await fetchArchivedValues();
   }, []);
 
-  // Fetch all on mount
+  // Fetch all once auth token is set
   useEffect(() => {
-    if (isAuthenticated && !isLoading && sessionReady) {
-      console.log("ValuesContext: authenticated and session ready");
-      fetchAll();
-    }
-  }, [isAuthenticated, isLoading, sessionReady]);
+    const fetchAll = async () => {
+      const authService = getAuthService();
+      const token = await authService.getToken();
+      if (isAuthenticated && !isLoading && token) {
+        fetchAll();
+      }
+    };
+    fetchAll();
+  }, [isAuthenticated, isLoading]);
 
   return (
     <ValuesContext.Provider

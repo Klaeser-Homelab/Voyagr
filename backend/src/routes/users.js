@@ -12,8 +12,6 @@ router.post('/api/users/auth0', async (req, res) => {
     // Get the access token from the Authorization header
     const accessToken = getToken(req);
 
-    console.log('accessToken', accessToken);
-
     // Get user info from Auth0 using the access token
     const userResponse = await axios.get(`https://dev-m0q23jbgtbwidn00.us.auth0.com/userinfo`, {
       headers: {
@@ -63,14 +61,25 @@ router.post('/api/users/auth0', async (req, res) => {
 // Destroys the session and logs the user out
 router.post('/api/users/logout', async (req, res) => {
   try {
-    console.log('Logging out user:', req.session.user);
-    redis.del(accessToken);
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
+    console.log('Logging out user:', user_id);
     
+    await redis.del(accessToken);
+    
+    // Check if the token was deleted
+    const checkToken = await redis.get(accessToken);
+    if (!checkToken) {
+      console.log('User session destroyed');
+    }
+    
+    console.log('User logged out successfully');
+    res.json({ message: 'User logged out successfully' });
   } catch (error) {
     console.error('Error in /api/users/logout:', error);
-    res.status(500).json({ 
-      error: 'Logout failed', 
-      details: error.message 
+    res.status(500).json({
+      error: 'Logout failed',
+      details: error.message
     });
   }
 });

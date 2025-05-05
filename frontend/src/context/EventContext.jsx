@@ -10,9 +10,20 @@ export const EventProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
   const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
-  const {startTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds } = useTimer();
+  const {initTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds, timerComplete } = useTimer();
   const { fetchEvents } = useToday();
   const { getBreak } = useBreaks();
+
+  useEffect(() => {
+    if (timerComplete) {
+      console.log('timerComplete on event context', timerComplete);
+      updateEvent();
+    }
+  }, [timerComplete]);
+
+  useEffect(() => {
+    console.log('activeItem', activeItem);
+  }, [activeItem]);
 
   const transitionToBreak = async (duration) => {
     console.log('transitioning to break', duration);
@@ -23,7 +34,8 @@ export const EventProvider = ({ children }) => {
       createEvent({
         input: {
           ...breakItem.Habit,
-          color: breakItem.Habit.Value.color // Add the color property
+          color: breakItem.Habit.Value.color, // Add the color property
+          is_break: true
         }
       });
     } else {
@@ -60,12 +72,15 @@ export const EventProvider = ({ children }) => {
         console.log('Completed todos processed:', completedTodos);
       }
 
+      console.log('activeItem', activeItem);
+
       // Reset timer and start break
       if (!activeItem.is_break) {
         console.log('calling transitioning to break', duration);
         transitionToBreak(duration);
       }
       else{
+        console.log('back home');
         setActiveItem(null);
         setActiveEvent(null);
       }
@@ -90,6 +105,7 @@ export const EventProvider = ({ children }) => {
 
     console.log('input', input);
     setActiveItem(input);
+    initTimer(input);
 
     let habit_id = null;
     let value_id = null;
@@ -109,17 +125,12 @@ export const EventProvider = ({ children }) => {
         habit_id: habit_id
       });
 
+      
       console.log('input', input);
       console.log('eventResponse', eventResponse.data);
 
       setActiveEvent(eventResponse.data);
-      if (input.duration) {
-        console.log('starting timer', input.duration);
-        startTimer(input.duration); // habit
-      } else {
-        console.log('starting timer', 1800000);
-        startTimer(1800000); // value
-      }
+
     } catch (error) {
       console.error('Error creating event:', error);
     }

@@ -5,6 +5,7 @@ import axios from 'axios';
 import api from '../config/api';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAuthService } from '../services/auth';
 
 const Settings = () => {
   const { user, logout } = useAuth0();
@@ -18,6 +19,9 @@ const Settings = () => {
     try {
       // First, log out from our backend to destroy the session
       await api.post('/api/users/logout');
+
+      const authService = getAuthService();
+      await authService.removeToken();
       
       // Then, log out from Auth0
       logout({ 

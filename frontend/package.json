@@ -37,6 +37,7 @@
     "@capacitor-community/electron": "^5.0.1",
     "@heroicons/react": "^2.2.0",
     "axios": "^1.8.4",
+    "debug": "^4.4.0",
     "js-base64": "^3.7.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

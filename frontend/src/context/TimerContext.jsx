@@ -7,17 +7,25 @@ export const TimerProvider = ({ children }) => {
   const [isActiveEvent, setIsActiveEvent] = useState(false);
   const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
   const [duration, setDuration] = useState(0);
+  const [timerComplete, setTimerComplete] = useState(false);
 
-  const startTimer = (duration) => {
-    console.log("starting timer in TimerProvider", duration);
-    setIsActiveEvent(true);
-    setDuration(duration);
+  const initTimer = (activeItem) => {
+      setIsActiveEvent(true);
+      setTimerComplete(false);
+      if (activeItem.duration) {
+        setDuration(activeItem.duration);
+      }
+      else {
+        setDuration(1800000);
+      }
   };
 
   const stopTimer = () => {
     console.log("stopping timer: ", elapsedTime);
     setElapsedTime(0);
+    setDuration(0);
     setIsActiveEvent(false);
+    setTimerComplete(false);
   };
 
   const pauseTimer = () => {
@@ -41,15 +49,19 @@ export const TimerProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    //console.log("duration", duration);
+    console.log("timer", timerComplete, elapsedTime, duration);
+    if (duration !== 0 && elapsedTime >= duration) {
+      setTimerComplete(true);
+      console.log("complete", timerComplete, elapsedTime, duration);
+
+    }
   }, [elapsedTime]);
 
   useEffect(() => {
     let interval = null;
-
     if (isActiveEvent) {
       interval = setInterval(() => {
-        setElapsedTime(prev => prev + 1000);
+        setElapsedTime(prev => prev + 1000); 
       }, 1000);
     }
 
@@ -74,11 +86,13 @@ export const TimerProvider = ({ children }) => {
   return (
     <TimerContext.Provider value={{
       isActiveEvent,
-      startTimer,
+      initTimer,
       stopTimer,
       pauseTimer,
       resetTimer,
+      duration,
       mode,
+      timerComplete,
       toggleMode,
       resumeTimer,
       elapsedTime,

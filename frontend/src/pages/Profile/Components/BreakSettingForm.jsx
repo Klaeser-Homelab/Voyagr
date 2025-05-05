@@ -8,20 +8,29 @@ const BreakSettingsForm = () => {
   const [localBreaks, setLocalBreaks] = useState(breaks);
 
   useEffect(() => {
+    console.log('setting local breaks');
     if (breaks.length) setLocalBreaks(breaks);
+    console.log('local breaks', localBreaks);
   }, [breaks]);
 
   const handleLocalBreakChange = (id, value) => {
-    setLocalBreaks(prevBreaks => ({
-      ...prevBreaks,
-      [id]: value
-    }));
+    setLocalBreaks(prevBreaks => 
+      prevBreaks.map(breakItem => 
+        breakItem.id === id 
+          ? { ...breakItem, interval: value * 60000 } 
+          : breakItem
+      )
+    );
   };
   
   const handleLocalBreakSave = (id) => {
-    updateBreak(id, { interval: localBreaks[id] });
+    const breakToUpdate = localBreaks.find(b => b.id === id);
+    if (breakToUpdate) {
+      updateBreak(id, { interval: breakToUpdate.interval });
+    }
   };
 
+  // The remote breaks does not get updated after updating the db so even after a save, the form still shows save button
   const isBreakModified = () => {
     return JSON.stringify(localBreaks) !== JSON.stringify(breaks);
   };

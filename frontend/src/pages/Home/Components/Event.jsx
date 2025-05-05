@@ -6,6 +6,7 @@ import TodoForm from './TodoForm';
 import TimerControls from './TimerControls';
 import { PlayIcon, PauseIcon, PlusIcon, MinusIcon} from '@heroicons/react/24/outline';
 
+
 function Event({ item }) {
   const { todos, setTodos } = useEvent();
   const { activeItem, activeEvent, updateEvent, deleteEvent } = useEvent();
@@ -36,7 +37,7 @@ function Event({ item }) {
   };
 
   const { 
-    startTimer, 
+    duration, 
     pauseTimer,
     isActiveEvent, 
     mode,
@@ -67,39 +68,51 @@ function Event({ item }) {
   };
 
   // Function to generate time increment squares
-  const generateTimeIncrements = () => {
-    // Get total minutes (for timer mode) or elapsed minutes (for stopwatch mode)
-    let totalMinutes = 0;
-    let elapsedMinutes = 0;
+  const [timeIncrements, setTimeIncrements] = useState([]);
+
+  // Effect to regenerate squares when duration or elapsed time changes
+  useEffect(() => {
+    // Convert duration from milliseconds to minutes
+    const durationMinutes = duration ? Math.ceil(duration / (60 * 1000)) : 30;
     
+    // Calculate elapsed minutes
+    let elapsedMinutes = 0;
     if (mode === 'timer') {
-      totalMinutes = displayTime.minutes + (displayTime.seconds > 0 ? 1 : 0);
-      elapsedMinutes = Math.max(0, item.duration - totalMinutes);
-    } else {
-      elapsedMinutes = Math.floor(getElapsedMilliseconds() / (1000 * 60));
-      totalMinutes = Math.max(elapsedMinutes, 1); // Ensure at least 1 for stopwatch
+      elapsedMinutes = Math.floor(getElapsedMilliseconds() / (60 * 1000));
+    } else { // stopwatch
+      elapsedMinutes = Math.floor(getElapsedMilliseconds() / (60 * 1000));
     }
     
-    // Calculate number of 5-minute increments (with a reasonable limit)
-    const duration = item.duration || 30; // Default to 30 if duration is missing
-    const incrementCount = Math.min(20, Math.max(1, Math.ceil(duration / 5))); // Limit to reasonable range
-    
-    // Create array of increment squares
-    return Array(incrementCount).fill().map((_, index) => {
-      const isElapsed = (index + 1) * 5 <= elapsedMinutes;
-      const style = isElapsed 
-        ? { backgroundColor: item.color || '#4caf50' } 
-        : { backgroundColor: 'rgba(255, 255, 255, 0.2)' };
+    // Create exactly durationMinutes squares (one per minute)
+    const newIncrements = Array(durationMinutes).fill().map((_, index) => {
+      const currentMinute = index + 1;
+      // Square is colored if we've elapsed that many minutes
+      const isElapsed = elapsedMinutes >= currentMinute;
       
-      return (
-        <div 
-          key={`time-increment-${index}`}
-          className="w-8 h-8 rounded-sm border border-white/10"
-          style={style}
-          title={`${(index + 1) * 5} minutes`}
-        />
-      );
+      return {
+        id: `time-increment-${index}`,
+        minute: currentMinute,
+        isElapsed: isElapsed
+      };
     });
+    
+    setTimeIncrements(newIncrements);
+  }, [duration, getElapsedMilliseconds(), mode]);
+  
+  // Render function
+  const renderTimeIncrements = () => {
+    return timeIncrements.map(increment => (
+      <div 
+        key={increment.id}
+        className="w-2 h-8 rounded-sm border border-white/10"
+        style={{ 
+          backgroundColor: increment.isElapsed 
+            ? (item.color || '#4caf50') 
+            : 'rgba(255, 255, 255, 0.2)'
+        }}
+        title={`${increment.minute} minute${increment.minute !== 1 ? 's' : ''}`}
+      />
+    ));
   };
 
   const toggleTodo = (todo) => {
@@ -121,7 +134,7 @@ function Event({ item }) {
       <RadialGlow color={item.color} />
       {/* Time increment squares */}
       <div className="flex flex-wrap justify-center gap-1 mb-4 max-w-2xl">
-        {generateTimeIncrements()}
+        {renderTimeIncrements()}
       </div>
       
       <h1 className="text-6xl text-center font-bold">{item.description}</h1>
@@ -132,7 +145,7 @@ function Event({ item }) {
         className="btn btn-sm btn-ghost text-lg hover:bg-white/20"
         onClick={(e) => {
           e.stopPropagation();
-          adjustTime(-5);
+          adjustTime(-1);
         }}
       >
                 <MinusIcon className="size-6 text-white" />
@@ -168,7 +181,7 @@ function Event({ item }) {
             className="btn btn-sm text-lg btn-ghost hover:bg-white/20"
             onClick={(e) => {
               e.stopPropagation();
-              adjustTime(5);
+              adjustTime(1);
             }}
           >
             <PlusIcon className="size-6 text-white" />

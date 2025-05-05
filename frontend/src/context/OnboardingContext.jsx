@@ -42,7 +42,7 @@ export const OnboardingProvider = ({ children }) => {
             habits: [
                 {
                     id: 301,
-                    name: "Go on a walk and really listen", 
+                    name: "Walk together and listen", 
                     duration: 10, 
                     frequency: 1
                 },
