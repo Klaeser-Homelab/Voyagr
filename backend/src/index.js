@@ -29,7 +29,6 @@ app.use(cors({
 
 console.log('CORS middleware configuration:', {
   origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'capacitor-electron://-'],
-  credentials: 'true',
   sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production'
 });

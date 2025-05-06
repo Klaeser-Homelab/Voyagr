@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useTheme } from '../../context/ThemeContext';
 import { Link } from 'react-router-dom';
@@ -8,12 +8,26 @@ import construction from '../../assets/voyagr-construction.png';
 import logo from '../../assets/star.png';
 import { PlayCircleIcon, FilmIcon } from '@heroicons/react/24/outline';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getAuthService } from '../../services/auth';
 
 const WelcomePage = () => {
   const { loginWithRedirect } = useAuth0();
   const { getCurrentTheme } = useTheme();
   const currentTheme = getCurrentTheme();
   const navigate = useNavigate();
+
+  
+  useEffect(() => {
+    const checkTokenForFastPass = async () => {
+      const authService = getAuthService();
+      const token = await authService.getToken();
+      if (token) {
+        navigate('/home');
+      }
+    };
+    checkTokenForFastPass();
+  }, []);
+
   return (
     <div className="min-h-screen bg-base-200">
       {/* Background div with the image handling */}
