@@ -30,10 +30,12 @@ router.get('/api/habits', async (req, res) => {
 // POST new habit
 router.post('/api/habits', async (req, res) => {
   try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
     const { description, value_id } = req.body;
     const habit = await Habit.create({
       description,
-      user_id: req.session.user.id,
+      user_id: user_id,
       value_id
     });
 
