@@ -5,26 +5,21 @@ const TodayContext = createContext(null);
 
 export const TodayProvider = ({ children }) => {
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchEvents = useCallback(async () => {
     try {
-      setLoading(true);
       const response = await api.get('/api/events/today');
       setEvents(response.data);
       setError(null);
     } catch (error) {
       console.error('Error fetching events:', error);
       setError('Failed to load events');
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   const value = {
     events,
-    loading,
     error,
     fetchEvents
   };

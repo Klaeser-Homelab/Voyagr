@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { getAuthService } from './services/auth';
+
 
 // Contexts
 import { TimerProvider } from './context/TimerContext';
@@ -54,51 +56,27 @@ function AuthenticatedLayout() {
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const [tokenReady, setTokenReady] = useState(false);
-  const [isCheckingToken, setIsCheckingToken] = useState(true);
 
   useEffect(() => {
-    // Only attempt to get the token if we're authenticated
-    if (isAuthenticated && !isLoading) {
-      setIsCheckingToken(true);
-      
-      // Pre-fetch token to ensure it's available before rendering protected content
-      getAccessTokenSilently()
-        .then(() => {
-          console.log("Token successfully retrieved");
-          setTokenReady(true);
-        })
-        .catch(error => {
-          console.error("Failed to retrieve token:", error);
-          // You could add retry logic here
-        })
-        .finally(() => {
-          setIsCheckingToken(false);
-        });
-    } else if (!isLoading) {
-      // If we're not authenticated and not loading, no need to check for token
-      setIsCheckingToken(false);
+    const checkToken = async () => {
+      const authService = getAuthService();
+      const token = await authService.getToken();
+      if (token) {
+        console.log("Token found, setting tokenReady to true");
+        setTokenReady(true);
+      }
     }
-  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
+    checkToken();
+  }, [isAuthenticated, isLoading]);
 
-  // Show loading state while auth is loading or while we're verifying token
-  if (isLoading || (isAuthenticated && isCheckingToken)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="loading loading-spinner loading-lg"></div>
-          <p className="mt-4">Preparing your experience...</p>
-        </div>
-      </div>
-    );
-  }
 
-  // Not authenticated, show welcome page
+  // Not authenticated
   if (!isAuthenticated) {
-    console.log("Not authenticated");
+    console.log("Not authenticated, redirecting to welcome page");
     return <WelcomePage />;
   }
   
-  // Not ready with token yet, show loading
+  // Not ready with token yet
   if (!tokenReady) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -109,14 +87,7 @@ function ProtectedRoute({ children }) {
       </div>
     );
   }
-  
-  // We're authenticated and have a token, render children
   return children;
-}
-
-function TestCallback() {
-  console.log('TestCallback mounted');
-  return <div>Test Callback Page</div>;
 }
 
 function App() {

@@ -4,7 +4,7 @@ import EventBar from './EventBar';
 import { useToday } from '../../../context/TodayContext';
 
 function Today() {
-  const { events, loading, error, fetchEvents } = useToday();
+  const { events, error, fetchEvents } = useToday();
   
   useEffect(() => {
     fetchEvents();
@@ -24,7 +24,6 @@ function Today() {
     });
   };
 
-  if (loading) return <div className="flex justify-center items-center h-32">Loading...</div>;
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   return (

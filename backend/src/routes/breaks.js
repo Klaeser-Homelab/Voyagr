@@ -53,7 +53,6 @@ router.post('/api/breaks/init', async (req, res) => {
   });
 
   router.get('/api/breaks', async (req, res) => {
-    console.log('api/breaks');  
     try {       
       const accessToken = getToken(req);
       const user_id = await redis.get(accessToken);

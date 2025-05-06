@@ -23,7 +23,6 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(cors({
   origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'capacitor-electron://-'],
-  credentials: true,
   sameSite: 'lax',
   secure: process.env.NODE_ENV === 'production'
 }));
