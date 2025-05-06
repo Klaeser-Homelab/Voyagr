@@ -152,14 +152,14 @@ export const ValuesProvider = ({ children }) => {
 
   // Fetch all once auth token is set
   useEffect(() => {
-    const fetchAll = async () => {
+    const checkTokenForFetch = async () => {
       const authService = getAuthService();
       const token = await authService.getToken();
       if (isAuthenticated && !isLoading && token) {
         fetchAll();
       }
     };
-    fetchAll();
+    checkTokenForFetch();
   }, [isAuthenticated, isLoading]);
 
   return (
