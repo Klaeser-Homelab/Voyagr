@@ -5,11 +5,6 @@ const Tracker = () => {
     const [daysInMonth, setDaysInMonth] = useState(0);
     const [currentDate, setCurrentDate] = useState(new Date());
     const { monthData } = useTracker();
-
-    useEffect(() => {
-        console.log("Tracker component mounted");
-        console.log("monthData in tracker:", monthData);
-    }, []);
     
     useEffect(() => {
         // Get the number of days in the current month

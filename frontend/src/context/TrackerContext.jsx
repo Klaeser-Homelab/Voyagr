@@ -22,7 +22,6 @@ export const TrackerProvider = ({ children }) => {
       const response = await api.get(`/api/events/month/${monthString}`);
       
       setMonthData(response.data);
-      console.log("monthData: ", response.data);
       setError(null);
     } catch (error) {
       console.error('Error fetching month events:', error);
@@ -57,7 +56,6 @@ export const TrackerProvider = ({ children }) => {
 
   // Reload when month changes
   useEffect(() => {
-    console.log('useEffect triggered: fetching month events');
     fetchMonthEvents();
   }, [currentMonth, currentYear, fetchMonthEvents]);
 
