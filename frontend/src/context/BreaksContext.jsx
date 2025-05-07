@@ -6,10 +6,6 @@ export const BreaksProvider = ({ children }) => {
   const { breaks, addBreak, updateBreak, deleteBreak } = useValues();
   const [breakDuration, setBreakDuration] = useState(0);  
 
-  useEffect(() => {
-    console.log('breaks', breaks);
-  }, [breaks]);
-
   // After 2 hours of work, you get a long break
   const updateCycleDuration = (duration) => {
     const newDuration = breakDuration + duration;

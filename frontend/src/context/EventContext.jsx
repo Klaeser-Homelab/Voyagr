@@ -21,10 +21,6 @@ export const EventProvider = ({ children }) => {
     }
   }, [timerComplete]);
 
-  useEffect(() => {
-    console.log('activeItem', activeItem);
-  }, [activeItem]);
-
   const transitionToBreak = async (duration) => {
     console.log('transitioning to break', duration);
     let breakItem = getBreak(duration);

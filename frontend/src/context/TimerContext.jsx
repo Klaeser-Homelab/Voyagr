@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 const TimerContext = createContext();
 
@@ -8,16 +8,46 @@ export const TimerProvider = ({ children }) => {
   const [mode, setMode] = useState('timer'); // 'timer' or 'stopwatch'
   const [duration, setDuration] = useState(0);
   const [timerComplete, setTimerComplete] = useState(false);
+  const startTimeRef = useRef(null);
+  const rafIdRef = useRef(null);
+  const pausedAtRef = useRef(0);
+  const durationRef = useRef(duration);
+
+  useEffect(() => {
+    durationRef.current = duration;
+  }, [duration]);
+
+
+  const tick = () => {
+    if (!isActiveEvent || !startTimeRef.current) return;
+    
+    const now = Date.now();
+    const newElapsedTime = now - startTimeRef.current + pausedAtRef.current;
+    setElapsedTime(newElapsedTime);
+    
+    // Use durationRef.current instead of duration
+    if (durationRef.current !== 0 && newElapsedTime >= durationRef.current) {
+      setTimerComplete(true);
+      setIsActiveEvent(false);
+      cancelAnimationFrame(rafIdRef.current);
+      console.log("complete", true, newElapsedTime, durationRef.current);
+    } else {
+      rafIdRef.current = requestAnimationFrame(tick);
+    }
+  };
 
   const initTimer = (activeItem) => {
-      setIsActiveEvent(true);
-      setTimerComplete(false);
-      if (activeItem.duration) {
-        setDuration(activeItem.duration);
-      }
-      else {
-        setDuration(1800000);
-      }
+    setIsActiveEvent(true);
+    setTimerComplete(false);
+    setElapsedTime(0);
+    pausedAtRef.current = 0;
+    startTimeRef.current = Date.now();
+    
+    if (activeItem.duration) {
+      setDuration(activeItem.duration);
+    } else {
+      setDuration(1800000);
+    }
   };
 
   const stopTimer = () => {
@@ -26,61 +56,87 @@ export const TimerProvider = ({ children }) => {
     setDuration(0);
     setIsActiveEvent(false);
     setTimerComplete(false);
+    pausedAtRef.current = 0;
+    
+    
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+    
   };
 
   const pauseTimer = () => {
     console.log("pausing timer: ", elapsedTime);
     setIsActiveEvent(false);
+    pausedAtRef.current = elapsedTime;
+    
+    
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+    
   };
 
   const resumeTimer = () => {
     console.log("resuming timer: ", elapsedTime);
     setIsActiveEvent(true);
+    startTimeRef.current = Date.now();
   };
 
   const resetTimer = () => {
     console.log('resetting timer');
     setIsActiveEvent(false);
     setElapsedTime(0);
+    pausedAtRef.current = 0;
+    
+    // I believe these are redundant but I would have to look at
+    // the actual event loop to be sure. These could be preventing
+    // unneccesary re-renders even if those re-renders don't show changes
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+    
   };
 
   const toggleMode = () => {
     setMode(mode === 'timer' ? 'stopwatch' : 'timer');
   };
 
+  // Start/stop animation frame based on isActiveEvent
   useEffect(() => {
-    console.log("timer", timerComplete, elapsedTime, duration);
-    if (duration !== 0 && elapsedTime >= duration) {
-      setTimerComplete(true);
-      console.log("complete", timerComplete, elapsedTime, duration);
-
-    }
-  }, [elapsedTime]);
-
-  useEffect(() => {
-    let interval = null;
     if (isActiveEvent) {
-      interval = setInterval(() => {
-        setElapsedTime(prev => prev + 1000); 
-      }, 1000);
+      if (!startTimeRef.current) {
+        startTimeRef.current = Date.now();
+      }
+      rafIdRef.current = requestAnimationFrame(tick);
+    } else if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
     }
-
-    return () => clearInterval(interval);
+    
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
   }, [isActiveEvent]);
 
   const getRemainingTime = () => {
-    const totalMiliSeconds = Math.max(0, duration - elapsedTime); // 30 minutes countdown
+    const totalMiliSeconds = Math.max(0, duration - elapsedTime);
     const minutes = Math.floor(totalMiliSeconds / 60000);
     const seconds = Math.floor((totalMiliSeconds % 60000) / 1000);
     return { minutes, seconds };
   };
 
   const getElapsedMilliseconds = () => {
-    return elapsedTime; // Time in seconds
+    return elapsedTime;
   };
 
   const adjustTime = (time) => {
-    setDuration(prev => prev + (time * 60000));
+    setDuration(prev => {
+      const newDuration = prev + (time * 60000);
+      durationRef.current = newDuration; // Also update the ref
+      return newDuration;
+    });
   };
 
   return (
@@ -111,4 +167,4 @@ export const useTimer = () => {
     throw new Error('useTimer must be used within a TimerProvider');
   }
   return context;
-}; 
+};

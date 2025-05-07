@@ -12,6 +12,7 @@ import {ValuesProvider } from './context/ValuesContext';
 import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
+import { TrackerProvider } from './context/TrackerContext';
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
@@ -62,7 +63,7 @@ function ProtectedRoute({ children }) {
       const authService = getAuthService();
       const token = await authService.getToken();
       if (token) {
-        console.log("Token found, setting tokenReady to true");
+        //console.log("Token found, setting tokenReady to true");
         setTokenReady(true);
       }
     }
@@ -72,7 +73,7 @@ function ProtectedRoute({ children }) {
 
   // Not authenticated
   if (!isAuthenticated) {
-    console.log("Not authenticated, redirecting to welcome page");
+    //console.log("Not authenticated, redirecting to welcome page");
     return <WelcomePage />;
   }
   
@@ -111,6 +112,7 @@ function App() {
           <TodayProvider>
             <BreaksProvider>
               <EventProvider>
+              <TrackerProvider>
               <Routes>
                     {/* Public pages (no menu) */}
                     <Route path="/" element={<WelcomePage />} />
@@ -134,6 +136,7 @@ function App() {
                       </ProtectedRoute>
                     } />
                   </Routes>
+              </TrackerProvider>
               </EventProvider>
               </BreaksProvider>
             </TodayProvider>

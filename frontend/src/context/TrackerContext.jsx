@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
-import { api } from '../config/api';
+import api  from '../config/api';
 
 const TrackerContext = createContext(null);
 
@@ -21,28 +21,8 @@ export const TrackerProvider = ({ children }) => {
       
       const response = await api.get(`/api/events/month/${monthString}`);
       
-      // Organize data by day and habit
-      const organizedData = {};
-      
-      // Initialize all days of the month with empty arrays
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      for (let day = 1; day <= daysInMonth; day++) {
-        organizedData[day] = [];
-      }
-      
-      // Fill in the data we received
-      if (response.data && Array.isArray(response.data)) {
-        response.data.forEach(event => {
-          const eventDate = new Date(event.date);
-          const day = eventDate.getDate();
-          
-          if (organizedData[day]) {
-            organizedData[day].push(event);
-          }
-        });
-      }
-      
-      setMonthData(organizedData);
+      setMonthData(response.data);
+      console.log("monthData: ", response.data);
       setError(null);
     } catch (error) {
       console.error('Error fetching month events:', error);
@@ -77,6 +57,7 @@ export const TrackerProvider = ({ children }) => {
 
   // Reload when month changes
   useEffect(() => {
+    console.log('useEffect triggered: fetching month events');
     fetchMonthEvents();
   }, [currentMonth, currentYear, fetchMonthEvents]);
 

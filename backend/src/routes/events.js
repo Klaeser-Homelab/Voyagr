@@ -54,27 +54,85 @@ router.get('/api/events/month/:monthString', async (req, res) => {
     const events = await Event.findAll({
       where: {
         user_id: user_id,
-        date: {
+        updated_at: {
           [Op.between]: [formattedStartDate, formattedEndDate]
         }
       },
       include: [
         {
           model: Habit,
-          attributes: ['id', 'name', 'duration', 'value_id']
+          attributes: ['id', 'description', 'duration', 'value_id'],
+          include: [
+            {
+              model: Value,
+              attributes: ['id', 'description', 'color']
+            }
+          ]
         }
       ],
       order: [
-        ['date', 'ASC']
+        ['updated_at', 'ASC']
       ]
     });
+
+    // First, create a map of values
+    const valueMap = new Map();
     
-    res.json(events);
+    events.forEach(event => {
+      const habit = event.Habit;
+      const value = habit.Value;
+      const eventDate = new Date(event.updatedAt);
+      const day = eventDate.getDate(); // Get day of month (1-31)
+
+      // If value doesn't exist in the map yet, add it
+      if (!valueMap.has(value.id)) {
+        valueMap.set(value.id, {
+          id: value.id,
+          description: value.description,
+          color: value.color,
+          habits: new Map() // Map to store habits for this value
+        });
+      }
+      
+      const valueData = valueMap.get(value.id);
+      
+      // If habit doesn't exist in the value's habits map, add it
+      if (!valueData.habits.has(habit.id)) {
+        valueData.habits.set(habit.id, {
+          id: habit.id,
+          description: habit.description,
+          duration: habit.duration,
+          value_id: habit.value_id,
+          days: new Set()
+        });
+      }
+      
+      // Add day to the habit's days set
+      valueData.habits.get(habit.id).days.add(day);
+    });
+
+    // Convert the nested maps to arrays for response
+    const result = Array.from(valueMap.values()).map(value => ({
+      id: value.id,
+      description: value.description,
+      color: value.color,
+      habits: Array.from(value.habits.values()).map(habit => ({
+        id: habit.id,
+        description: habit.description,
+        duration: habit.duration,
+        value_id: habit.value_id,
+        color: value.color,
+        days: Array.from(habit.days).sort((a, b) => a - b) // Convert Set to sorted array
+      }))
+    }));
+    
+    res.json(result);
   } catch (error) {
     console.error('Error fetching month events:', error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 router.get('/api/events/today', async (req, res) => {
   try {
