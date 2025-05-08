@@ -17,7 +17,7 @@
     "electron:start-live": "node ./live-runner.js",
     "electron:start": "npm run build && electron . --no-cache",
     "electron:pack": "npm run build && electron-builder build --dir -c ./electron-builder.config.json",
-    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json -p always"
+    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json"
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.0",

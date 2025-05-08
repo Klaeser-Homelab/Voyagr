@@ -5,6 +5,7 @@ const Event = require('./Event');
 const Todo = require('./Todo');
 const User = require('./User');
 const Break = require('./Break');
+const Schedule = require('./Schedule');
 
 // Value associations
 Value.hasMany(Habit, { foreignKey: 'value_id' });
@@ -27,6 +28,11 @@ Break.belongsTo(Habit, { foreignKey: 'habit_id' });
 Habit.hasOne(Break, { foreignKey: 'habit_id' });
 Break.belongsTo(User, { foreignKey: 'user_id' });
 
+// Schedule associations
+Schedule.belongsTo(Habit, { foreignKey: 'habit_id' });
+Habit.hasMany(Schedule, { foreignKey: 'habit_id' });
+Schedule.belongsTo(User, { foreignKey: 'user_id' });
+
 // Export models
 module.exports = {
   Value,
@@ -34,5 +40,6 @@ module.exports = {
   Event,
   Todo,
   User,
-  Break
+  Break,
+  Schedule
 };

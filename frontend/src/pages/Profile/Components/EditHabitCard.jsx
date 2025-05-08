@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../config/api';
 import AddBreak from './AddBreak';
 import { useValues } from '../../../context/ValuesContext';
-import { TrashIcon, CheckIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, CheckIcon, PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import ScheduleHabitDialog from './ScheduleHabitDialog';
 
 const EditHabitCard = ({
   habit
@@ -11,6 +12,7 @@ const EditHabitCard = ({
   const [localHabit, setLocalHabit] = useState(habit);
   const [isBreakActive, setIsBreakActive] = useState(habit.is_break);
   const [interval, setInterval] = useState('');
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
   const handleAddBreak = async (e) => {
     // Your existing add break logic
@@ -42,6 +44,28 @@ const EditHabitCard = ({
       setIsBreakActive(false);
       console.log("isBreakActive set to:", false); // Debug log
     }, 10);
+  };
+
+  // Function to open schedule dialog
+  const openScheduleModal = () => {
+    const modal = document.getElementById(`schedule_habit_modal_${habit.id}`);
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
+  // Handle schedule saved
+  const handleScheduleSaved = async (scheduleData) => {
+    try {
+      // Refresh the habit data after scheduling
+      const response = await api.get(`/api/habits/${habit.id}`);
+      setLocalHabit(response.data);
+      
+      // Update the parent component
+      updateHabit(response.data);
+    } catch (error) {
+      console.error('Error refreshing habit data:', error);
+    }
   };
 
   useEffect(() => {
@@ -93,11 +117,21 @@ const EditHabitCard = ({
                 }
               }}
             />
+            {/* Schedule button - Uses unique ID for this habit */}
+            <button 
+              onClick={openScheduleModal} 
+              className={`btn btn-square btn-ghost btn-sm ${
+                localHabit.Schedules && localHabit.Schedules.length > 0 ? ' text-blue-500' : 'text-white'
+              }`}
+            >
+              <CalendarIcon className="size-6" />
+            </button>
+            
             <button onClick={() => handleAddBreak()} className="btn btn-xs bg-green-700 text-white">
               <PlusIcon className="size-4" />
               Add as Break
             </button>
-
+            
       </div>
       <div className="flex flex-row gap-2 items-center">
           <button
@@ -115,46 +149,53 @@ const EditHabitCard = ({
           </button>
       </div>
       </div>
-          
-    
-        <dialog id={`add_break_modal-${habit.id}`}className="modal modal-bottom sm:modal-middle">
-      <div className="modal-box">
-        <h3 className="font-bold text-lg">Creating Break</h3>
-        <p className="py-4">
-          The break interval is how many minutes of cumulative work in a work cycle before this break is activated. 
-          <br />
-          <br />
-          Set multiple breaks with the same interval if you want a random break selected and the other breaks to be suggested as alternatives.
-          If a working session activates multiple breaks, the longest is used.
-          <br />
-          <br />
-          After the longest break is taken, the work cycle restarts.
-        </p>
-        <div className="modal-action">
-          <form method="dialog" className="flex flex-col w-full gap-2">
-            <input
-              type="number"  // Changed to number type for better UX
-              value={interval}
-              onChange={(e) => setInterval(e.target.value)}
-              className="input input-bordered w-full mt-2"
-              placeholder="Enter break interval in minutes"
-            />
-            <div className="flex flex-row gap-2">
-              <button onClick={handleCloseModal} className="btn btn-primary mt-4">Close</button>
-              <button
-                type="button"  // Specify button type
-                className="btn btn-success mt-4"
-                onClick={handleAddBreak}
-                disabled={!interval}  // Check for empty string
-              >
-                Add Break
-              </button>
-            </div>
-          </form>
+      
+      {/* Break Modal */}
+      <dialog id={`add_break_modal-${habit.id}`} className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Creating Break</h3>
+          <p className="py-4">
+            The break interval is how many minutes of cumulative work in a work cycle before this break is activated. 
+            <br />
+            <br />
+            Set multiple breaks with the same interval if you want a random break selected and the other breaks to be suggested as alternatives.
+            If a working session activates multiple breaks, the longest is used.
+            <br />
+            <br />
+            After the longest break is taken, the work cycle restarts.
+          </p>
+          <div className="modal-action">
+            <form method="dialog" className="flex flex-col w-full gap-2">
+              <input
+                type="number"  // Changed to number type for better UX
+                value={interval}
+                onChange={(e) => setInterval(e.target.value)}
+                className="input input-bordered w-full mt-2"
+                placeholder="Enter break interval in minutes"
+              />
+              <div className="flex flex-row gap-2">
+                <button onClick={handleCloseModal} className="btn btn-primary mt-4">Close</button>
+                <button
+                  type="button"  // Specify button type
+                  className="btn btn-success mt-4"
+                  onClick={handleAddBreak}
+                  disabled={!interval}  // Check for empty string
+                >
+                  Add Break
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
-    </dialog>
-        </div>
+      </dialog>
+      
+      {/* Schedule Modal with unique ID for this habit */}
+      <ScheduleHabitDialog 
+        habit={localHabit} 
+        onSave={handleScheduleSaved}
+        id={`schedule_habit_modal_${habit.id}`}
+      />
+    </div>
   );
 };
 

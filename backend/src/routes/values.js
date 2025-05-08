@@ -1,7 +1,7 @@
 const express = require('express');
 const { getToken } = require('../middleware/auth'); // Import the middleware
 const router = express.Router();
-const { Value, Habit } = require('../models/associations');
+const { Value, Habit, Schedule, Break } = require('../models/associations');
 const { Sequelize, Op } = require('sequelize');
 const redis = require('../config/redis');
 // GET all values
@@ -9,20 +9,44 @@ router.get('/api/values', async (req, res) => {
   try {
     const accessToken = getToken(req);
     const user_id = await redis.get(accessToken);
+    
     // Find values associated with the current user
     const values = await Value.findAll({
       where: { user_id: user_id, is_active: true }, // Directly filter by user_id
       include: [{    
         model: Habit,
-          required: false,
-          attributes: {
-            include: [
-              [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+        required: false,
+        attributes: {
+          include: [
+            [Sequelize.literal("'habit'"), 'type'] // Hardcode the type as 'habit'
+          ]
+        },
+        include: [
+          {
+            model: Schedule, // Include schedules related to the habit
+            required: false,
+            where: {
+              is_active: true // Only include active schedules
+            },
+            attributes: [
+              'id', 
+              'start_time', 
+              'frequency_type', 
+              'days_of_week', 
+              'week_of_month',
+              'is_active'
             ]
           },
-          where: {
-            is_active: true // Assuming 'is_active' is the field indicating active status
+          {
+            model: Break, // Include breaks related to the habit
+            required: false,
+            attributes: [
+              'id',
+              'interval',
+              'user_id'
+            ]
           }
+        ]
       }],
       order: [['created_at', 'DESC']],
       attributes: {
@@ -31,6 +55,7 @@ router.get('/api/values', async (req, res) => {
         ]
       }
     });
+    
     res.json(values);
   } catch (error) {
     console.log('Error in /api/values:', error);

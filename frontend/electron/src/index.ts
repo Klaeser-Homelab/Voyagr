@@ -4,7 +4,7 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { app, MenuItem, ipcMain } from 'electron'; // Add ipcMain here
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
-import { autoUpdater } from 'electron-updater';
+//import { autoUpdater } from 'electron-updater';
 import authService from './services/authService';
 
 // Import your createBrowserViewWindow function
@@ -87,7 +87,7 @@ if (electronIsDev) {
   // Initialize our app, build windows, and load content.
   await myCapacitorApp.init();
   // Check for updates if we are in a packaged app.
-  autoUpdater.checkForUpdatesAndNotify();
+  //autoUpdater.checkForUpdatesAndNotify();
 
   //myCapacitorApp.openBrowserView('https://mail.google.com');
 })();

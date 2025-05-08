@@ -1,6 +1,4 @@
-import axios from 'axios';
 const keytar = require('keytar');
-
 
 // Constants for keytar
 const SERVICE = 'voyagr';

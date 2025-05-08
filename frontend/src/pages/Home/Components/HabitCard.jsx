@@ -1,52 +1,134 @@
-import { PlayIcon } from "@heroicons/react/24/outline";
-import { useTimer } from "../../../context/TimerContext";
-import { useEvent } from "../../../context/EventContext";
-import { useEffect } from "react";
-const HabitCard = ({ habit}) => {
-  const { startTimer } = useTimer();
-  const { createEvent } = useEvent();
+import React from 'react';
+import { useEvent } from '../../../context/EventContext';
+import { CalendarIcon, PauseIcon } from '@heroicons/react/24/outline';
+import { PlayIcon } from '@heroicons/react/24/solid';
 
-  const getScheduleText = () => {
-    if (!habit.startTime || !habit.endTime || !habit.daysOfWeek) return null;
+function HabitCard({ 
+  habit, 
+  valueColor, 
+  isScheduled = false, 
+  isBreak = false,
+  showScheduled = false,
+  showBreaks = false 
+}) {
+  const { createEvent, activeEvent } = useEvent();
+
+  // Handle clicking on the habit
+  const handleClick = () => {
+    if (activeEvent) return;
+    createEvent({ input: { ...habit, type: 'habit' } });
+  };
+
+  // Get schedule details for display
+  const scheduleInfo = isScheduled && habit.Schedules && habit.Schedules.length > 0
+    ? habit.Schedules[0] // Just use the first schedule for simplicity
+    : null;
+
+  // Get break details for display
+  const breakInfo = isBreak && habit.Break 
+    ? habit.Break
+    : null;
+
+  // Format time for display
+  const formatTime = (timeString) => {
+    if (!timeString) return '';
     
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const scheduledDays = habit.daysOfWeek.map(day => days[day]).join(', ');
-    return `${habit.startTime.slice(0, 5)} - ${habit.endTime.slice(0, 5)} on ${scheduledDays}`;
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  // Format schedule type for display
+  const formatScheduleType = (type) => {
+    switch (type) {
+      case 'daily': return 'Daily';
+      case 'weekly': return 'Weekly';
+      case 'biweekly': return 'Biweekly';
+      case 'monthly': return 'Monthly';
+      case 'custom': return 'Custom';
+      default: return type;
+    }
+  };
+
+  // Format interval for display
+  const formatInterval = (milliseconds) => {
+    if (!milliseconds) return '';
+    
+    const minutes = Math.floor(milliseconds / 60000);
+    
+    if (minutes < 60) {
+      return `${minutes}m`;
+    } else {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+    }
   };
 
   return (
     <div 
-      key={habit.id} 
-      className={`rounded-md transition-all duration-200 cursor-pointer`}
+      className="card bg-base-200 shadow-md cursor-pointer hover:bg-base-300 group relative"
+      onClick={handleClick}
     >
-      <div className="flex items-center justify-between p-2">
-        <div className="flex-grow">
-          <div className="flex items-center justify-between space-x-2">
-            <>
-            <div className="flex items-center space-x-2">
+      <div className="card-body p-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
             <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: habit.color }}
-            />
-            <h4 className="text-white">{habit.description}</h4>
-            </div>
-            </>
-            <PlayIcon className="size-6 text-white" onClick={() => createEvent({input: habit})} />
+              className="w-3 h-3 rounded-full flex-shrink-0" 
+              style={{ backgroundColor: valueColor }}
+            ></div>
+            <h3 className="card-title text-base">
+              {habit.description}
+            </h3>
           </div>
           
-          {/* Schedule information */}
-          {getScheduleText() && (
-            <div className="mt-1 text-sm text-gray-500">
-              <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {getScheduleText()}
-            </div>
-          )}
+          {/* Show indicator icons */}
+          <div className="flex gap-1">
+            {isScheduled && (
+              <div className="flex-shrink-0 text-primary">
+                <CalendarIcon className="size-5" />
+              </div>
+            )}
+            {isBreak && (
+              <div className="flex-shrink-0 text-secondary">
+                <PauseIcon className="size-5" />
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="text-xs text-base-content/70 flex justify-between items-center">
+          <span>{Math.round(habit.duration / 60000)} minutes</span>
+          
+          <div className="flex flex-col items-end">
+            {/* Show schedule time if the habit is scheduled */}
+            {isScheduled && scheduleInfo && (
+              <span className="text-primary">
+                {formatTime(scheduleInfo.start_time)} • {formatScheduleType(scheduleInfo.frequency_type)}
+              </span>
+            )}
+            
+            {/* Show break interval if the habit is a break */}
+            {isBreak && breakInfo && (
+              <span className="text-secondary">
+                After {formatInterval(breakInfo.interval)}
+              </span>
+            )}
+          </div>
+        </div>
+        
+        {/* Play button overlay - appears on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
+          <div className="bg-primary text-primary-content rounded-full p-2">
+            <PlayIcon className="size-5" />
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default HabitCard; 
+export default HabitCard;

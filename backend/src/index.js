@@ -10,6 +10,7 @@ const eventRoutes = require('./routes/events');
 const todoRoutes = require('./routes/todos');
 const userRoutes = require('./routes/users');
 const breakRoutes = require('./routes/breaks');
+const scheduleRoutes = require('./routes/schedules');
 const redis = require('./config/redis');
 const { auth } = require('express-oauth2-jwt-bearer');
 
@@ -86,6 +87,7 @@ app.use(eventRoutes);
 app.use(todoRoutes);
 app.use(userRoutes);
 app.use(breakRoutes);
+app.use(scheduleRoutes);
 // Initialize database and start server
 const startServer = async () => {
   try {

@@ -93,6 +93,28 @@ export const EventProvider = ({ children }) => {
     await api.delete(`/api/events/${activeEvent.id}`);
   };
 
+  const getHabitAndCreateEvent = async (habit_id) => {
+    if (!habit_id) {
+      console.error('Habit ID is null or undefined');
+      return;
+    }
+    
+    try {
+      // Get the habit details
+      const habitResponse = await api.get(`/api/habits/${habit_id}`);
+      const habit = habitResponse.data;
+      
+      // Add the type property to match the expected input format for createEvent
+      habit.type = 'habit';
+      
+      // Pass the complete habit object to createEvent
+      await createEvent({ input: habit });
+      
+    } catch (error) {
+      console.error('Error fetching habit or creating event:', error);
+    }
+  };
+
   const createEvent = async ({input}) => {
     if (!input) {
       console.error('Input is null or undefined:', input);
@@ -141,6 +163,7 @@ export const EventProvider = ({ children }) => {
       deleteEvent,
       updateEvent,
       createEvent,
+      getHabitAndCreateEvent,
       mode,
       setMinutes
     }}>

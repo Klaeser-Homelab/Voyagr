@@ -1,35 +1,100 @@
 import React from 'react';
-import HabitCard from './HabitCard';
-import { PlayIcon } from '@heroicons/react/24/outline';
 import { useEvent } from '../../../context/EventContext';
+import HabitCard from './HabitCard';
+import { CalendarIcon, PauseIcon } from '@heroicons/react/24/outline';
+import { PlayIcon } from '@heroicons/react/24/solid';
 
-function Identity({ value }) {
-  const { createEvent } = useEvent();
+function Identity({ value, showScheduled = false, showBreaks = false }) {
+  const { createEvent, activeEvent } = useEvent();
+
+  // Determine which habits to show based on filters
+  const habitsToDisplay = value.Habits?.filter(habit => {
+    const isScheduledHabit = habit.Schedules && 
+                           habit.Schedules.length > 0 && 
+                           habit.Schedules.some(schedule => schedule.is_active);
+    
+    const isBreakHabit = habit.Break !== null;
+    
+    // Apply filters
+    if (!showScheduled && isScheduledHabit) {
+      return false; // Hide scheduled habits when filter is off
+    }
+    
+    if (!showBreaks && isBreakHabit) {
+      return false; // Hide break habits when filter is off
+    }
+    
+    return true; // Show all other habits
+  });
+
+  // Check if the value has any scheduled habits
+  const hasScheduledHabits = value.Habits?.some(habit => 
+    habit.Schedules && 
+    habit.Schedules.length > 0 && 
+    habit.Schedules.some(schedule => schedule.is_active)
+  );
+
+  // Check if the value has any break habits
+  const hasBreakHabits = value.Habits?.some(habit => 
+    habit.Break !== null
+  );
+
+  // If no habits to display after filtering, don't render this value
+  if (!habitsToDisplay || habitsToDisplay.length === 0) {
+    return null;
+  }
+
+  // Handle clicking on the value
+  const handleValueClick = () => {
+    if (activeEvent) return;
+    createEvent({ input: { ...value, type: 'value' } });
+  };
 
   return (
-    <div 
-      className={`bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg`}
-    >
+    <div className="mb-4">
+      {/* Value card */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer transition-colors duration-200"
-        style={{ backgroundColor: value.color }}
+        className="card shadow-xl cursor-pointer bg-base-200 hover:bg-base-300 group relative"
+        onClick={handleValueClick}
       >
-        <h3 className="text-lg font-semibold text-white">{value.description}</h3>
-        <PlayIcon className="size-6 text-white" onClick={() => createEvent({input: value})} />
+        <div className="card-body">
+          <div className="flex justify-between items-center">
+            <h2 className="card-title">
+              {value.description}
+            </h2>
+            <div className="flex items-center gap-2">
+              <div 
+                className="w-4 h-4 rounded-full" 
+                style={{ backgroundColor: value.color }}
+              ></div>
+            </div>
+          </div>
+          
+          {/* Play button overlay - appears on hover */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
+            <div className="bg-primary text-primary-content rounded-full p-3">
+              <PlayIcon className="size-6" />
+            </div>
+          </div>
+        </div>
       </div>
       
-      {value.Habits && value.Habits.length > 0 && (
-        <div className="p-2 space-y-2">
-          {value.Habits.map(habit => (
-            <HabitCard
-              key={habit.id}
-              habit={{ ...habit, color: value.color }}
-            />
-          ))}
-        </div>
-      )}
+      {/* Always show habits list (no collapsibility) */}
+      <div className="ml-4 mt-2 space-y-2">
+        {habitsToDisplay.map(habit => (
+          <HabitCard 
+            key={habit.id} 
+            habit={habit} 
+            valueColor={value.color}
+            isScheduled={habit.Schedules && habit.Schedules.length > 0}
+            isBreak={habit.Break !== null}
+            showScheduled={showScheduled}
+            showBreaks={showBreaks}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-export default Identity; 
+export default Identity;

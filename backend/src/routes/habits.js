@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getToken } = require('../middleware/auth'); // Import the middleware
-const { Value, Habit, Event, Break } = require('../models/associations');
+const { Value, Habit, Event, Break, Schedule } = require('../models/associations');
 const { Sequelize } = require('sequelize');
 const redis = require('../config/redis');
 
@@ -60,6 +60,10 @@ router.get('/api/habits/:id', async (req, res) => {
         {
           model: Value,
           attributes: ['description', 'color']
+        },
+        {
+          model: Schedule,
+          attributes: ['start_time', 'frequency_type', 'days_of_week', 'week_of_month', 'is_active']
         }
       ]
     });
