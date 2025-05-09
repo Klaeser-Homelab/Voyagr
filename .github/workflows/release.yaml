@@ -5,8 +5,8 @@ on:
     branches:
       - main
 
-  permissions:
-    contents: write  # This is required for creating releases
+permissions:
+  contents: write  # This is required for creating releases
 
 jobs:
   build:
