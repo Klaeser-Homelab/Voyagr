@@ -1,10 +1,17 @@
+import React from 'react';
+
 const getEventSegments = ({ completedEvents }) => {
+  // Filter out events with null duration
+  const validEvents = completedEvents.filter(event => event.duration !== null);
+  
+  console.log('validEvents', validEvents);
+
   // Calculate total minutes in workday (8AM to 7PM = 11 hours)
   const workdayMinutes = 11 * 60;
   const workdayStart = new Date();
   workdayStart.setHours(8, 0, 0, 0);
   
-  if (!completedEvents.length) {
+  if (!validEvents.length) {
     const now = new Date();
     if (now < workdayStart) {
       return [{
@@ -35,27 +42,28 @@ const getEventSegments = ({ completedEvents }) => {
   const now = new Date();
   const minutesSinceStart = Math.max(0, (now - workdayStart) / 1000 / 60);
 
-  // Group events by value and sum their durations
-  const valueSegments = completedEvents.reduce((acc, event) => {
-    const valueId = event.parent_value_id;
+  // Group events by value_id and sum their durations
+  const valueSegments = validEvents.reduce((acc, event) => {
+    const valueId = event.value_id;
     
     if (!acc[valueId]) {
       acc[valueId] = {
-        name: event.description,
+        name: event.Value.description, // Use Value description instead of event description
         color: event.color || '#ddd',
         totalDuration: 0
       };
     }
     
-    acc[valueId].totalDuration += event.duration;
+    // Convert milliseconds to minutes (divide by 60000 not 60)
+    acc[valueId].totalDuration += (event.duration / 60000);
     return acc;
   }, {});
 
   // Calculate total duration of all events (in minutes)
-  const totalEventDuration = completedEvents.reduce((sum, event) => sum + event.duration, 0);
+  const totalEventDuration = validEvents.reduce((sum, event) => sum + (event.duration / 60000), 0);
   
   // Calculate unused past time (excluding remaining time)
-  const unusedDuration = Math.max(0, Math.min(minutesSinceStart, workdayMinutes) - (totalEventDuration / 60));
+  const unusedDuration = Math.max(0, Math.min(minutesSinceStart, workdayMinutes) - totalEventDuration);
   
   // Calculate remaining time
   const remainingDuration = Math.max(0, workdayMinutes - Math.min(minutesSinceStart, workdayMinutes));
@@ -64,7 +72,7 @@ const getEventSegments = ({ completedEvents }) => {
   const segments = Object.values(valueSegments).map(segment => ({
     name: segment.name,
     color: segment.color,
-    percent: ((segment.totalDuration / 60 / workdayMinutes) * 100).toFixed(1)
+    percent: ((segment.totalDuration / workdayMinutes) * 100).toFixed(1)
   }));
 
   // Add unused time segment if there is any
@@ -93,7 +101,7 @@ const EventBar = ({ completedEvents = [] }) => {
 
   return (
     <div>
-      <h1>Event Distribution</h1>
+      <h1>Time by Identity</h1>
       <div className="w-full h-6 flex rounded-xl overflow-hidden shadow-md mb-4">
         {segments.map((segment, index) => (
           <div
@@ -122,4 +130,4 @@ const EventBar = ({ completedEvents = [] }) => {
   );
 };
 
-export default EventBar;    
+export default EventBar;

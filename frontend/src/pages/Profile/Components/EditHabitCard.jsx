@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../config/api';
 import AddBreak from './AddBreak';
+import BreakModal from './BreakModal';
 import { useValues } from '../../../context/ValuesContext';
 import { TrashIcon, CheckIcon, PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import ScheduleHabitDialog from './ScheduleHabitDialog';
@@ -11,39 +12,34 @@ const EditHabitCard = ({
   const { updateHabit } = useValues();
   const [localHabit, setLocalHabit] = useState(habit);
   const [isBreakActive, setIsBreakActive] = useState(habit.is_break);
-  const [interval, setInterval] = useState('');
   const [showScheduleDialog, setShowScheduleDialog] = useState(false);
 
-  const handleAddBreak = async (e) => {
-    // Your existing add break logic
-    e.preventDefault();  // Prevent form submission
-    
-    try {
-      await api.post('/api/breaks', {
-        habit_id: habit.id,
-        interval: parseInt(interval, 10) * 60000  // Convert string to number and then to milliseconds
-      });
-      
-      // Optional: Close dialog or reset form
-      setInterval('');
-    } catch (error) {
-      console.error('Error adding break:', error);
-    }
-
-    // Close the modal but keep the swap ON
-    document.getElementById(`add_break_modal-${habit.id}`).close();
-    // No need to update isBreakActive since we want it to stay ON
+  // Function to handle adding a break (now just opens the modal)
+  const handleAddBreak = () => {
+    document.getElementById(`add_break_modal-${habit.id}`).showModal();
   };
   
-  // Function to handle closing without adding a break
-  const handleCloseModal = () => {
-    document.getElementById(`add_break_modal-${habit.id}`).close();
-    
+  // Function to handle closing the break modal
+  const handleCloseBreakModal = () => {
     // Force state update with a slight delay to ensure it happens after modal closes
     setTimeout(() => {
       setIsBreakActive(false);
       console.log("isBreakActive set to:", false); // Debug log
     }, 10);
+  };
+
+  // Handle when a break is successfully added
+  const handleBreakAdded = async () => {
+    try {
+      // Refresh the habit data after adding break
+      const response = await api.get(`/api/habits/${habit.id}`);
+      setLocalHabit(response.data);
+      
+      // Update the parent component
+      updateHabit(response.data);
+    } catch (error) {
+      console.error('Error refreshing habit data:', error);
+    }
   };
 
   // Function to open schedule dialog
@@ -105,7 +101,7 @@ const EditHabitCard = ({
           </label>
           <input 
               type="checkbox"
-              id={`breakToggle-${habit.id}`} // Use the habit's unique ID to create a unique input ID
+              id={`breakToggle-${habit.id}`}
               className="sr-only"
               checked={isBreakActive}
               onChange={(e) => {
@@ -127,7 +123,7 @@ const EditHabitCard = ({
               <CalendarIcon className="size-6" />
             </button>
             
-            <button onClick={() => handleAddBreak()} className="btn btn-xs bg-green-700 text-white">
+            <button onClick={handleAddBreak} className="btn btn-xs bg-green-700 text-white">
               <PlusIcon className="size-4" />
               Add as Break
             </button>
@@ -150,44 +146,13 @@ const EditHabitCard = ({
       </div>
       </div>
       
-      {/* Break Modal */}
-      <dialog id={`add_break_modal-${habit.id}`} className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Creating Break</h3>
-          <p className="py-4">
-            The break interval is how many minutes of cumulative work in a work cycle before this break is activated. 
-            <br />
-            <br />
-            Set multiple breaks with the same interval if you want a random break selected and the other breaks to be suggested as alternatives.
-            If a working session activates multiple breaks, the longest is used.
-            <br />
-            <br />
-            After the longest break is taken, the work cycle restarts.
-          </p>
-          <div className="modal-action">
-            <form method="dialog" className="flex flex-col w-full gap-2">
-              <input
-                type="number"  // Changed to number type for better UX
-                value={interval}
-                onChange={(e) => setInterval(e.target.value)}
-                className="input input-bordered w-full mt-2"
-                placeholder="Enter break interval in minutes"
-              />
-              <div className="flex flex-row gap-2">
-                <button onClick={handleCloseModal} className="btn btn-primary mt-4">Close</button>
-                <button
-                  type="button"  // Specify button type
-                  className="btn btn-success mt-4"
-                  onClick={handleAddBreak}
-                  disabled={!interval}  // Check for empty string
-                >
-                  Add Break
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      {/* Break Modal - Now using the separate component */}
+      <BreakModal 
+        habitId={habit.id}
+        modalId={`add_break_modal-${habit.id}`}
+        onClose={handleCloseBreakModal}
+        onBreakAdded={handleBreakAdded}
+      />
       
       {/* Schedule Modal with unique ID for this habit */}
       <ScheduleHabitDialog 

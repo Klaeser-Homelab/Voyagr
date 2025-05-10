@@ -38,18 +38,20 @@ import Tracker from './pages/Home/Components/Tracker';
 import ElectronLogin from './components/ElectronLogin';
 function AuthenticatedLayout() {
   return (
-    <div className="flex flex-col h-screen lg:m-20 max-w-screen-2xl">
+    <div className="flex flex-col h-screen w-full">
       <Menu />
-      <Routes>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/today" element={<Today />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/voyage" element={<VoyagePage />} />
-        <Route path="/tracker" element={<Tracker />} />
-        <Route path="/*" element={<Navigate to="/home" />} />
-      </Routes>
+      <div className="flex flex-grow overflow-hidden">
+        <Routes>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/today" element={<Today />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/voyage" element={<VoyagePage />} />
+          <Route path="/tracker" element={<Tracker />} />
+          <Route path="/*" element={<Navigate to="/home" />} />
+        </Routes>
+      </div>
     </div>
   );
 }

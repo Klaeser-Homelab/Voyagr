@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import EventBar from './EventBar';
 import { useToday } from '../../../context/TodayContext';
-import { PlayIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, CheckCircleIcon, CalendarIcon } from '@heroicons/react/24/solid';
 import api from '../../../config/api';
 import { useEvent } from '../../../context/EventContext';
+
 function Today() {
   const { events, error, fetchEvents } = useToday();
   const [scheduledHabits, setScheduledHabits] = useState([]);
@@ -16,6 +17,7 @@ function Today() {
   useEffect(() => {
     fetchEvents();
     fetchTodaySchedules();
+    console.log('events', events);
   }, [fetchEvents]);
 
   // Fetch schedules that should occur today
@@ -95,6 +97,11 @@ function Today() {
     );
   };
 
+  // Handle starting a scheduled habit
+  const handleStartHabit = (habitId) => {
+    getHabitAndCreateEvent(habitId);
+  };
+
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
   // Get hours from 6 AM to 10 PM (more comprehensive day view)
@@ -123,7 +130,7 @@ function Today() {
             return (
               <div 
                 key={hour} 
-                className={`flex flex-wrap gap-4 border-b border-base-200 ${
+                className={`flex flex-row gap-4 border-b border-base-200 ${
                   hasItems ? 'min-h-[80px]' : 'min-h-[40px]'
                 }`}
               >
@@ -138,20 +145,29 @@ function Today() {
                     return (
                       <div 
                         key={`schedule-${schedule.id}`} 
-                        className={`card ${started ? 'bg-base-300/60' : 'bg-base-200'} p-2`}
+                        className={`card ${started ? 'bg-base-300/60' : 'bg-base-200'} p-2 cursor-pointer hover:bg-base-300 group relative`}
                         style={{ 
-                          borderLeft: `4px solid ${schedule.color || '#ddd'}`
+                          borderLeft: `20px solid ${schedule.color || '#ddd'}`
                         }}
+                        onClick={() => !started && handleStartHabit(schedule.habit_id)}
                       >
-                        <div className="flex flex-row gap-2 items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="badge badge-outline">Scheduled</div>
+                        <div className="flex flex-row gap-2 items-center justify-between ">
                             <span className="font-medium">
                               {schedule.habit_description} • {Math.round(schedule.habit_duration / (1000 * 60))} min
                             </span>
-                          </div>
-                          <PlayIcon className="size-6 text-white" onClick={() => getHabitAndCreateEvent(schedule.habit_id)} />
+                            <CalendarIcon className="size-6 text-primary" />
+                          
+                          {/* Static PlayIcon removed and replaced with the overlay below */}
                         </div>
+                        
+                        {/* Play button overlay - appears on hover, similar to HabitCard */}
+                        {!started && (
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
+                            <div className="bg-primary text-primary-content rounded-full p-2">
+                              <PlayIcon className="size-5" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -160,15 +176,16 @@ function Today() {
                   {eventsInHour.map(event => (
                     <div 
                       key={`event-${event.id}`} 
-                      className="card bg-base-200 p-2 flex flex-col gap-2"
+                      className="card bg-gray-700 p-2 flex flex-col gap-2"
                       style={{ 
-                        borderLeft: `4px solid ${event.color || '#ddd'}`
+                        borderLeft: `20px solid ${event.color || '#ddd'}`
                       }}
                     >
                       <div className="flex justify-between items-center">
                         <span className="font-medium whitespace-nowrap">
-                          {event.description} ({Math.round(event.duration / (1000 * 60))} min)
+                          {event.description} • <span   className="whitespace-nowrap">{Math.round(event.duration / (1000 * 60))} min</span>
                         </span>
+                          <CheckCircleIcon className="size-6 text-white" />
                       </div>
                       {event.todos && event.todos.length > 0 && (
                         <div className="pl-4 text-sm space-y-1">

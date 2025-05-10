@@ -171,6 +171,7 @@ export const ValuesProvider = ({ children }) => {
         archiveValue,
         refreshValues: fetchValues,
         fetchAll,
+        fetchBreaks,
         addHabit,
         updateHabit,
 
