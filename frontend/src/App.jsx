@@ -40,7 +40,7 @@ function AuthenticatedLayout() {
   return (
     <div className="flex flex-col h-screen w-full">
       <Menu />
-      <div className="flex flex-grow overflow-hidden">
+      <div className="flex flex-grow lg:ml-15 overflow-hidden">
         <Routes>
           <Route path="/home" element={<HomePage />} />
           <Route path="/today" element={<Today />} />
