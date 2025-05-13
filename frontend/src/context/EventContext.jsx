@@ -10,7 +10,7 @@ export const EventProvider = ({ children }) => {
   const [activeEvent, setActiveEvent] = useState(null);
   const [todos, setTodos] = useState([]);
   const [activeItem, setActiveItem] = useState(null);
-  const {initTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds, timerComplete } = useTimer();
+  const {initTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds, timerComplete, formatTime } = useTimer();
   const { fetchEvents } = useToday();
   const { getBreak } = useBreaks();
 
@@ -22,9 +22,9 @@ export const EventProvider = ({ children }) => {
   }, [timerComplete]);
 
   const transitionToBreak = async (duration) => {
-    console.log('transitioning to break', duration);
-    let breakItem = getBreak(duration);
-    console.log('breakItem', breakItem);
+    console.log('transitioning to break', formatTime(duration));
+    let breakItem = await getBreak(duration);
+    console.log('break', breakItem);
     if (breakItem) {
       console.log('creating break event');
       createEvent({
@@ -38,6 +38,20 @@ export const EventProvider = ({ children }) => {
       setActiveItem(null);
       setActiveEvent(null);
     }
+  }
+
+  // For skipping the pomodoro timer and directly submitting the event
+  const submitHabitEvent = async (habit_id) => {
+    console.log('submitting event');
+    console.log('habit_id', habit_id);
+    try{
+      api.post('/api/events/submit', {
+        habit_id: habit_id
+      });
+    } catch (error) {
+      console.error('Error submitting event:', error);
+    }
+    await fetchEvents();
   }
 
   const updateEvent = async () => {  
@@ -72,7 +86,7 @@ export const EventProvider = ({ children }) => {
 
       // Reset timer and start break
       if (!activeItem.is_break) {
-        console.log('calling transitioning to break', duration);
+        console.log('calling transitioning to break', formatTime(duration));
         transitionToBreak(duration);
       }
       else{
@@ -93,7 +107,7 @@ export const EventProvider = ({ children }) => {
     await api.delete(`/api/events/${activeEvent.id}`);
   };
 
-  const getHabitAndCreateEvent = async (habit_id) => {
+  const getHabitAndCreateEvent = async (habit_id, color) => {
     if (!habit_id) {
       console.error('Habit ID is null or undefined');
       return;
@@ -108,7 +122,8 @@ export const EventProvider = ({ children }) => {
       habit.type = 'habit';
       
       // Pass the complete habit object to createEvent
-      await createEvent({ input: habit });
+      await createEvent({ input: { ...habit, type: 'habit', color: color } });
+
       
     } catch (error) {
       console.error('Error fetching habit or creating event:', error);
@@ -162,6 +177,7 @@ export const EventProvider = ({ children }) => {
       activeItem,
       deleteEvent,
       updateEvent,
+      submitHabitEvent,
       createEvent,
       getHabitAndCreateEvent,
       mode,

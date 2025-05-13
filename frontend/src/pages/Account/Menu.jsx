@@ -88,7 +88,7 @@ const Menu = ({className}) => {
   
     if (isLarge) {
   return (
-    <div className="fixed left-0 top-0 bottom-0 flex flex-col border-r-2 border-gray-600 justify-between items-center p-5 py-10 h-screen">
+    <div className="fixed z-50 left-0 top-0 bottom-0 flex flex-col border-r-2 border-gray-600 justify-between items-center p-5 py-10 h-screen">
     <div className="flex flex-col gap-5">
             <Home />
             <Today />
@@ -103,7 +103,7 @@ const Menu = ({className}) => {
 }
 if(!isLarge) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 flex flex-row gap-5 justify-between items-center p-5 border-t-2 border-gray-600 rounded-t-lg bg-base-100">
+      <div className="fixed z-50 bottom-0 left-0 right-0 flex flex-row gap-5 justify-between items-center p-5 border-t-2 border-gray-600 bg-base-100">
             <Home />
             <Today />
             <Tracker />

@@ -61,10 +61,12 @@ router.get('/api/events/month/:monthString', async (req, res) => {
       include: [
         {
           model: Habit,
+          required: true, // This excludes events without habits
           attributes: ['id', 'description', 'duration', 'value_id'],
           include: [
             {
               model: Value,
+              required: true, // This also excludes habits without values
               attributes: ['id', 'description', 'color']
             }
           ]
@@ -207,6 +209,32 @@ router.post('/api/events', async (req, res) => {
       user_id: user_id,
       value_id: value_id,
       habit_id: habit_id
+    });
+
+    res.status(201).json(event);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/api/events/submit', async (req, res) => {
+  try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
+    const { habit_id } = req.body;  
+
+    const habit = await Habit.findOne({
+      where: {
+        id: habit_id,
+        user_id: user_id
+      }
+    }); 
+
+    const event = await Event.create({
+      user_id: user_id,
+      habit_id: habit_id,
+      value_id: habit.value_id,
+      duration: habit.duration
     });
 
     res.status(201).json(event);

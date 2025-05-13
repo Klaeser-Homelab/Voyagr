@@ -13,17 +13,17 @@ import { TodayProvider } from './context/TodayContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { TrackerProvider } from './context/TrackerContext';
+import { DeveloperProvider } from './context/DeveloperContext';
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
-import HistoryPage from './pages/HistoryPage';
+import HistoryPage from './pages/Hold/HistoryPage';
 import ProfilePage from './pages/Profile/ProfilePage';
-import VoyagePage from './pages/VoyagePage';
 import WelcomePage from './pages/Welcome/WelcomePage';
-import Callback from './components/Callback';
+import Callback from './pages/Account/Callback';
 import HowItsMade from './pages/Welcome/HowItsMade';
-import Menu from './components/Menu';
-import Settings from './components/Settings';
+import Menu from './pages/Account/Menu';
+import Settings from './pages/Account/Settings';
 import ChapterOne from './pages/Onboarding/ChapterOne';
 import QuickStart from './pages/Profile/QuickStart';
 import Page1 from './pages/Onboarding/Components/Page1';
@@ -35,23 +35,24 @@ import Page6 from './pages/Onboarding/Components/Page6';
 import QuickStartHabits from './pages/Profile/Components/QuickStartHabits';
 import QuickStartLogin from './pages/Profile/Components/QuickStartLogin';
 import Tracker from './pages/Home/Components/Tracker';
-import ElectronLogin from './components/ElectronLogin';
+import ElectronLogin from './pages/Account/ElectronLogin';
+import EventBar from './pages/Home/Components/EventBar';
 function AuthenticatedLayout() {
   return (
-    <div className="flex flex-col h-screen w-full">
+    <div className="flex flex-col h-screen w-full no-scrollbar">
       <Menu />
-      <div className="flex flex-grow lg:ml-15 overflow-hidden">
+      <div className="flex flex-grow lg:ml-15 no-scrollbar">
         <Routes>
           <Route path="/home" element={<HomePage />} />
           <Route path="/today" element={<Today />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/voyage" element={<VoyagePage />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/*" element={<Navigate to="/home" />} />
         </Routes>
       </div>
+      <EventBar />
     </div>
   );
 }
@@ -108,6 +109,7 @@ function App() {
     >
       <ThemeProvider>
         <Router>
+          <DeveloperProvider>
           <OnboardingProvider>
           <ValuesProvider>
           <TimerProvider>
@@ -145,6 +147,7 @@ function App() {
           </TimerProvider>
           </ValuesProvider>
           </OnboardingProvider>
+          </DeveloperProvider>
         </Router>
       </ThemeProvider>
     </Auth0Provider>

@@ -88,3 +88,9 @@ code {
   z-index: 50;
   animation: slowBlink 4s infinite;
 }
+
+/* Hide scrollbars globally */
+html, body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

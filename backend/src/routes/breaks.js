@@ -35,13 +35,15 @@ router.post('/api/breaks/init', async (req, res) => {
       const shortBreak = await Break.create({
         habit_id: shortBreakHabit.id,
         user_id: req.body.id,
-        interval: 5 * 60 * 1000 // 5 minutes in milliseconds
+        interval: 5 * 60 * 1000, // 5 minutes in milliseconds
+        interval_rank: 1
       });
   
       const longBreak = await Break.create({
         habit_id: longBreakHabit.id,
         user_id: req.body.id,
-        interval: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+        interval: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+        interval_rank: 1
       });
   
       console.log('Created Default Break, Short Break, and Long Break');
@@ -58,7 +60,10 @@ router.post('/api/breaks/init', async (req, res) => {
       const user_id = await redis.get(accessToken);
       const breaks = await Break.findAll({
         where: { user_id: user_id },
-        order: [['interval', 'ASC']], // Sort by interval in ascending order
+        order: [
+          ['interval', 'ASC'],           // First sort by interval
+          ['interval_rank', 'ASC']       // Then sort by interval_rank within each interval
+        ],
         include: [{
           model: Habit,
           attributes: ['description', 'duration', 'id', 'value_id', [Sequelize.literal("'habit'"), 'type']],
@@ -113,17 +118,82 @@ router.post('/api/breaks/init', async (req, res) => {
       const accessToken = getToken(req);
       const user_id = await redis.get(accessToken);
       const { habit_id, interval } = req.body;
-
+  
+      // Find the highest interval_rank for breaks with the same interval and user
+      const existingBreak = await Break.findOne({
+        where: {
+          user_id: user_id,
+          interval: interval
+        },
+        order: [['interval_rank', 'DESC']]
+      });
+  
+      // Calculate the next interval_rank
+      const nextRank = existingBreak ? existingBreak.interval_rank + 1 : 1;
+  
       const newBreak = await Break.create({
         habit_id,   
         interval,
+        interval_rank: nextRank,
         user_id: user_id
       });
-
+  
       res.json(newBreak);
     } catch (error) {
       console.error('Error adding break:', error);
       res.status(500).json({ error: 'Failed to add break' });
+    }
+  });
+
+  router.post('/api/breaks/reorder', async (req, res) => {
+    try {
+      const accessToken = getToken(req);
+      const user_id = await redis.get(accessToken);
+      const { interval, break_ids } = req.body;
+  
+      console.log('Reordering breaks for interval:', interval);
+      console.log('Break IDs in new order:', break_ids);
+  
+      // Validate that all break_ids exist and belong to the user with the specified interval
+      const breaks = await Break.findAll({
+        where: {
+          id: break_ids,
+          user_id: user_id,
+          interval: interval
+        }
+      });
+  
+      if (breaks.length !== break_ids.length) {
+        return res.status(400).json({ 
+          error: 'Some breaks not found or not authorized for this interval' 
+        });
+      }
+  
+      // Update each break's interval_rank based on its position in the array
+      const updatePromises = break_ids.map(async (breakId, index) => {
+        const newRank = index + 1; // Ranks start at 1
+        await Break.update(
+          { interval_rank: newRank },
+          { 
+            where: { 
+              id: breakId,
+              user_id: user_id 
+            } 
+          }
+        );
+        return { id: breakId, new_rank: newRank };
+      });
+  
+      const results = await Promise.all(updatePromises);
+  
+      console.log('Updated ranks:', results);
+      res.json({ 
+        message: 'Breaks reordered successfully',
+        updates: results 
+      });
+    } catch (error) {
+      console.error('Error reordering breaks:', error);
+      res.status(500).json({ error: 'Failed to reorder breaks' });
     }
   });
 

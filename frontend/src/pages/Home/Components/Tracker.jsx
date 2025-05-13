@@ -29,11 +29,11 @@ const Tracker = () => {
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
     return (
-        <div className="bg-gray-900 text-white p-4">
+        <div className="bg-gray-900 text-white p-4 overflow-y-auto">
             <h1 className="text-3xl mb-5">Habit Tracker</h1>
             
             {/* Calendar header with day numbers */}
-            <div className="flex mb-2">
+            <div className="hidden md:flex mb-2">
                 <div className="w-48 md:w-64 flex-shrink-0"></div> {/* Empty cell for habit names */}
                 {daysArray.map(day => (
                     <div 

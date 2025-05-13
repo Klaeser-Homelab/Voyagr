@@ -29,6 +29,10 @@ const Break = sequelize.define('Break', {
   interval: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  interval_rank: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
   tableName: 'breaks',

@@ -2,8 +2,8 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../config/api';
-import { getAuthService } from '../services/auth';
+import api from '../../config/api';
+import { getAuthService } from '../../services/auth';
 
 function Callback() {
   const { 

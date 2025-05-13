@@ -2,16 +2,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
-import api from '../config/api';
+import api from '../../config/api';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuthService } from '../services/auth';
+import { getAuthService } from '../../services/auth';
+import { useDeveloper } from '../../context/DeveloperContext';
 
 const Settings = () => {
   const { user, logout } = useAuth0();
   const [confirmationText, setConfirmationText] = useState('');
   const [accountDeleted, setAccountDeleted] = useState(false); // State for confirmation message
-
+  const { developerMode, setDeveloperMode } = useDeveloper();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -73,10 +74,11 @@ const Settings = () => {
               )}
           </div>
     </div>
-    <div className="flex flex-col m-10 justify-between h-full">
+    <div className="flex flex-col m-10 h-full">
     <ul tabIndex={0} className="menu menu-sm rounded-box z-1 mt-3 w-52 p-2 shadow"> 
       <li> <Link to="/history"> History </Link> </li> 
       <li> <button onClick={handleLogout} > Logout </button> </li> 
+      <li> <button onClick={() => setDeveloperMode(!developerMode)}> {developerMode ? 'Disable Developer Mode' : 'Enable Developer Mode'} </button> </li>
     </ul> 
       <div className="flex flex-col gap-2 border-2 border-red-500 border-dashed rounded-lg p-4"> 
         <h1 className="text-2xl font-bold">Danger Zone</h1> 

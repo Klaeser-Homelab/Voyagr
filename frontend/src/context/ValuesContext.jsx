@@ -124,9 +124,16 @@ export const ValuesProvider = ({ children }) => {
     }
   };
 
-  const updateBreak = async (breakItem) => {
+  const updateBreak = async (id, updateData) => {
     try {
-      await api.put('/api/breaks', breakItem);
+      console.log('Updating break with ID:', id);
+      console.log('Update data:', updateData);
+      
+      // Send both id and interval in the request body
+      await api.put('/api/breaks', {
+        id: id,
+        ...updateData
+      });
       fetchBreaks();
     } catch (error) {
       console.error('Failed to update break:', error);

@@ -9,13 +9,14 @@ function HomePage() {
     useEffect(() => {
         fetchAll();
     }, []);
+
     return (
-      <div className="flex flex-col flex-grow h-full lg:flex-row justify-between gap-20">
+      <div className="flex flex-col flex-grow overflow-y-auto h-full lg:flex-row justify-between">
         <div className="radial-glow"></div>
         <div className="flex-grow flex justify-center w-full">
           <ValueList />
         </div>
-        <div className="hidden lg:block w-full max-w-2xl">
+        <div className="hidden lg:block w-full h-screen max-w-2xl">
           <Today />
         </div>
        

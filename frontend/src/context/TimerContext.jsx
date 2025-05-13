@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const TimerContext = createContext();
 
@@ -12,7 +13,7 @@ export const TimerProvider = ({ children }) => {
   const rafIdRef = useRef(null);
   const pausedAtRef = useRef(0);
   const durationRef = useRef(duration);
-
+  const navigate = useNavigate();
   useEffect(() => {
     durationRef.current = duration;
   }, [duration]);
@@ -31,6 +32,7 @@ export const TimerProvider = ({ children }) => {
       setIsActiveEvent(false);
       cancelAnimationFrame(rafIdRef.current);
       console.log("complete", true, newElapsedTime, durationRef.current);
+      navigate('/');
     } else {
       rafIdRef.current = requestAnimationFrame(tick);
     }
@@ -65,26 +67,31 @@ export const TimerProvider = ({ children }) => {
     
   };
 
+  const formatTime = (ms) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}m ${seconds}s`;
+  };
+  
   const pauseTimer = () => {
-    console.log("pausing timer: ", elapsedTime);
+    console.log("pausing timer: ", formatTime(elapsedTime));
     setIsActiveEvent(false);
     pausedAtRef.current = elapsedTime;
-    
     
     if (rafIdRef.current) {
       cancelAnimationFrame(rafIdRef.current);
     }
-    
   };
 
   const resumeTimer = () => {
-    console.log("resuming timer: ", elapsedTime);
+    console.log("resuming timer: ", formatTime(elapsedTime));
     setIsActiveEvent(true);
     startTimeRef.current = Date.now();
   };
 
   const resetTimer = () => {
-    console.log('resetting timer');
+    console.log('resetting timer: ', formatTime(elapsedTime));
     setIsActiveEvent(false);
     setElapsedTime(0);
     pausedAtRef.current = 0;
@@ -139,6 +146,13 @@ export const TimerProvider = ({ children }) => {
     });
   };
 
+  const adjustElapsedTime = async (time) => {
+    await setElapsedTime(prev => {
+      const newElapsedTime = prev + (time * 60000);
+      return newElapsedTime;
+    });
+  };
+
   return (
     <TimerContext.Provider value={{
       isActiveEvent,
@@ -152,6 +166,8 @@ export const TimerProvider = ({ children }) => {
       toggleMode,
       resumeTimer,
       elapsedTime,
+      formatTime,
+      adjustElapsedTime,
       adjustTime,
       getRemainingTime,
       getElapsedMilliseconds,

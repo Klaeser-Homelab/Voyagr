@@ -1,130 +1,105 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useEvent } from '../../../context/EventContext';
+import { useTimer } from '../../../context/TimerContext';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { PlayIcon, PauseIcon } from '@heroicons/react/24/outline';
 
-const getEventSegments = ({ completedEvents }) => {
-  // Filter out events with null duration
-  const validEvents = completedEvents.filter(event => event.duration !== null);
+const EventBar = () => {
+  const { activeEvent, activeItem } = useEvent();
+  const { 
+    isActiveEvent, 
+    mode, 
+    getRemainingTime, 
+    getElapsedMilliseconds,
+    pauseTimer,
+    resumeTimer 
+  } = useTimer();
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  console.log('validEvents', validEvents);
+  const [displayTime, setDisplayTime] = useState(getRemainingTime());
 
-  // Calculate total minutes in workday (8AM to 7PM = 11 hours)
-  const workdayMinutes = 11 * 60;
-  const workdayStart = new Date();
-  workdayStart.setHours(8, 0, 0, 0);
+  // Update display time when getRemainingTime changes (same as Event component)
+  useEffect(() => {
+    const { minutes, seconds } = getRemainingTime();
+    setDisplayTime({ minutes, seconds });
+  }, [getRemainingTime]);
+
+  // Update display time every second (but rely on the above effect for accuracy)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const { minutes, seconds } = getRemainingTime();
+      setDisplayTime({ minutes, seconds });
+    }, 100); // More frequent updates for smoother display
+
+    return () => clearInterval(interval);
+  }, [getRemainingTime]);
+
+  // Don't show the bar if there's no active event or if we're on the home page
+  const isOnHomePage = location.pathname === '/home' || location.pathname === '/';
   
-  if (!validEvents.length) {
-    const now = new Date();
-    if (now < workdayStart) {
-      return [{
-        name: 'Remaining',
-        color: '#f5f5f5',
-        percent: '100'
-      }];
+  if (!activeEvent || !activeItem || isOnHomePage) {
+    return null;
+  }
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleBarClick = () => {
+    navigate('/home');
+  };
+
+  const handlePlayPauseClick = (e) => {
+    e.stopPropagation();
+    isActiveEvent ? pauseTimer() : resumeTimer();
+  };
+
+  const getDisplayTime = () => {
+    if (mode === 'timer') {
+      return `${String(displayTime.minutes).padStart(2, '0')}:${String(displayTime.seconds).padStart(2, '0')}`;
+    } else {
+      return formatTime(Math.floor(getElapsedMilliseconds() / 1000));
     }
-    
-    const minutesSinceStart = Math.max(0, (now - workdayStart) / 1000 / 60);
-    const unusedPercent = ((Math.min(minutesSinceStart, workdayMinutes) / workdayMinutes) * 100).toFixed(1);
-    const remainingPercent = (100 - unusedPercent).toFixed(1);
-    
-    return [
-      {
-        name: 'Unused',
-        color: '#e0e0e0',
-        percent: unusedPercent
-      },
-      {
-        name: 'Remaining',
-        color: '#f5f5f5',
-        percent: remainingPercent
-      }
-    ];
-  }
-
-  const now = new Date();
-  const minutesSinceStart = Math.max(0, (now - workdayStart) / 1000 / 60);
-
-  // Group events by value_id and sum their durations
-  const valueSegments = validEvents.reduce((acc, event) => {
-    const valueId = event.value_id;
-    
-    if (!acc[valueId]) {
-      acc[valueId] = {
-        name: event.Value.description, // Use Value description instead of event description
-        color: event.color || '#ddd',
-        totalDuration: 0
-      };
-    }
-    
-    // Convert milliseconds to minutes (divide by 60000 not 60)
-    acc[valueId].totalDuration += (event.duration / 60000);
-    return acc;
-  }, {});
-
-  // Calculate total duration of all events (in minutes)
-  const totalEventDuration = validEvents.reduce((sum, event) => sum + (event.duration / 60000), 0);
-  
-  // Calculate unused past time (excluding remaining time)
-  const unusedDuration = Math.max(0, Math.min(minutesSinceStart, workdayMinutes) - totalEventDuration);
-  
-  // Calculate remaining time
-  const remainingDuration = Math.max(0, workdayMinutes - Math.min(minutesSinceStart, workdayMinutes));
-
-  // Convert to percentage segments including unused time
-  const segments = Object.values(valueSegments).map(segment => ({
-    name: segment.name,
-    color: segment.color,
-    percent: ((segment.totalDuration / workdayMinutes) * 100).toFixed(1)
-  }));
-
-  // Add unused time segment if there is any
-  if (unusedDuration > 0) {
-    segments.push({
-      name: 'Unused',
-      color: '#e0e0e0',
-      percent: ((unusedDuration / workdayMinutes) * 100).toFixed(1)
-    });
-  }
-
-  // Add remaining time segment if there is any
-  if (remainingDuration > 0) {
-    segments.push({
-      name: 'Upcoming',
-      color: '#f5f5f5',
-      percent: ((remainingDuration / workdayMinutes) * 100).toFixed(1)
-    });
-  }
-
-  return segments;
-};
-
-const EventBar = ({ completedEvents = [] }) => {
-  const segments = getEventSegments({ completedEvents });
+  };
 
   return (
-    <div>
-      <h1>Time by Identity</h1>
-      <div className="w-full h-6 flex rounded-xl overflow-hidden shadow-md mb-4">
-        {segments.map((segment, index) => (
-          <div
-            key={index}
-            className="h-full transition-all duration-300 hover:opacity-90"
-            style={{
-              width: `${segment.percent}%`,
-              backgroundColor: segment.color,
-            }}
-            title={`${segment.name}: ${segment.percent}%`}
+    <div 
+      className="fixed bottom-16 left-0 right-0 lg:bottom-0 lg:left-16 bg-gray-800 border-t border-gray-600 p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 z-50"
+      onClick={handleBarClick}
+    >
+      <div className="flex items-center justify-between max-w-md mx-auto">
+        {/* Event info */}
+        <div className="flex items-center flex-1">
+          <div 
+            className="w-4 h-4 rounded-full mr-3" 
+            style={{ backgroundColor: activeItem.color || '#ccc' }}
           />
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-4 mb-8">
-        {segments.map((segment, index) => (
-          <div key={index} className="flex items-center gap-2 text-sm">
-            <div 
-              className="w-3 h-3 rounded-sm" 
-              style={{ backgroundColor: segment.color }} 
-            />
-            <span>{segment.name}: {segment.percent}%</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-white truncate">{activeItem.description}</h3>
+            <p className="text-gray-400 text-sm">
+              {mode === 'timer' ? 'Timer' : 'Stopwatch'} • Click to return
+            </p>
           </div>
-        ))}
+        </div>
+        
+        {/* Timer display and controls */}
+        <div className="flex items-center gap-3">
+          <span className="text-xl font-mono text-white">
+            {getDisplayTime()}
+          </span>
+          <button 
+            className="btn btn-sm btn-circle bg-gray-700 hover:bg-gray-600 text-white"
+            onClick={handlePlayPauseClick}
+          >
+            {isActiveEvent ? 
+              <PauseIcon className="size-4 text-white" /> : 
+              <PlayIcon className="size-4 text-white" />
+            }
+          </button>
+        </div>
       </div>
     </div>
   );
