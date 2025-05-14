@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSound } from './SoundContext'; // Import the sound hook
 
 const TimerContext = createContext();
 
@@ -14,10 +15,11 @@ export const TimerProvider = ({ children }) => {
   const pausedAtRef = useRef(0);
   const durationRef = useRef(duration);
   const navigate = useNavigate();
+  const { playSound } = useSound(); // Use the sound context
+
   useEffect(() => {
     durationRef.current = duration;
   }, [duration]);
-
 
   const tick = () => {
     if (!isActiveEvent || !startTimeRef.current) return;
@@ -31,6 +33,10 @@ export const TimerProvider = ({ children }) => {
       setTimerComplete(true);
       setIsActiveEvent(false);
       cancelAnimationFrame(rafIdRef.current);
+      
+      // Play timer completion sound
+      playSound('timerComplete');
+      
       console.log("complete", true, newElapsedTime, durationRef.current);
       navigate('/');
     } else {
@@ -60,11 +66,9 @@ export const TimerProvider = ({ children }) => {
     setTimerComplete(false);
     pausedAtRef.current = 0;
     
-    
     if (rafIdRef.current) {
       cancelAnimationFrame(rafIdRef.current);
     }
-    
   };
 
   const formatTime = (ms) => {
@@ -94,15 +98,12 @@ export const TimerProvider = ({ children }) => {
     console.log('resetting timer: ', formatTime(elapsedTime));
     setIsActiveEvent(false);
     setElapsedTime(0);
+    setTimerComplete(false);
     pausedAtRef.current = 0;
     
-    // I believe these are redundant but I would have to look at
-    // the actual event loop to be sure. These could be preventing
-    // unneccesary re-renders even if those re-renders don't show changes
     if (rafIdRef.current) {
       cancelAnimationFrame(rafIdRef.current);
     }
-    
   };
 
   const toggleMode = () => {

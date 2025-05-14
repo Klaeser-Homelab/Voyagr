@@ -60,26 +60,43 @@ const Settings = () => {
   };
 
   return (
-    <>
-    <div className="m-10">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+    <div className="flex flex-col justify-center p-10 lg:ml-20">
+    {/* Centered and larger avatar */}
+    <div className="flex justify-center items-center mb-6">
+          <div tabIndex={0} className="">
               {user?.picture ? (
                 <img
                   alt="User avatar"
                   src={user.picture}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-32 h-32 rounded-full object-cover"
                 />
               ) : (
-                <UserCircleIcon className="w-10 h-10" />
+                <UserCircleIcon className="w-32 h-32" />
               )}
           </div>
     </div>
-    <div className="flex flex-col m-10 h-full">
-    <ul tabIndex={0} className="menu menu-sm rounded-box z-1 mt-3 w-52 p-2 shadow"> 
-      <li> <Link to="/history"> History </Link> </li> 
-      <li> <button onClick={handleLogout} > Logout </button> </li> 
-      <li> <button onClick={() => setDeveloperMode(!developerMode)}> {developerMode ? 'Disable Developer Mode' : 'Enable Developer Mode'} </button> </li>
-    </ul> 
+    <div className="flex flex-col h-full gap-4">
+    
+<div className="flex flex-col gap-2 z-1 mt-3 w-full p-2 text-2xl justify-left items-start"> 
+  <Link 
+    to="/history" 
+    className="hover:text-primary transition-colors duration-200 cursor-pointer"
+  > 
+    History 
+  </Link>
+  <button 
+    onClick={handleLogout}
+    className="hover:text-primary transition-colors duration-200 cursor-pointer text-left"
+  > 
+    Logout 
+  </button>
+  <button 
+    onClick={() => setDeveloperMode(!developerMode)}
+    className="hover:text-primary transition-colors duration-200 cursor-pointer text-left"
+  > 
+    {developerMode ? 'Disable Developer Mode' : 'Enable Developer Mode'} 
+  </button>
+</div>
       <div className="flex flex-col gap-2 border-2 border-red-500 border-dashed rounded-lg p-4"> 
         <h1 className="text-2xl font-bold">Danger Zone</h1> 
         <p>This action is irreversible. All your data will be lost. You will be asked to confirm this action.</p>
@@ -121,7 +138,7 @@ const Settings = () => {
         </div>
       )}
 
-    </>
+    </div>
   );
 };
 

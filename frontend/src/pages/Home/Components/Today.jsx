@@ -116,7 +116,7 @@ function Today() {
   const displayHours = Array.from({ length: 17 }, (_, i) => i + 6);
 
   return (
-    <div className="border-t-2 border-gray-700 bg-gray-800 shadow-lg p-5 h-full flex flex-col">
+    <div className="border-t-2 border-gray-700 bg-gray-800 shadow-lg p-5 pt-15 h-full w-full flex flex-col">
       <TimeByIdentity completedEvents={events} />
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Today's Activity</h2>

@@ -15,6 +15,7 @@ export const ValuesProvider = ({ children }) => {
   // ----- VALUES -----
   const fetchValues = useCallback(async () => {
     try {
+      console.log('Fetch values');
       const res = await api.get('/api/values');
       setValues(res.data);
     } catch (error) {
@@ -155,19 +156,23 @@ export const ValuesProvider = ({ children }) => {
     await fetchValues();
     await fetchBreaks();
     await fetchArchivedValues();
+    console.log('Fetch all');
   }, []);
 
   // Fetch all once auth token is set
+  /*
   useEffect(() => {
     const checkTokenForFetch = async () => {
       const authService = getAuthService();
       const token = await authService.getToken();
       if (isAuthenticated && !isLoading && token) {
         fetchAll();
+        console.log('Fetch from token');
       }
     };
     checkTokenForFetch();
   }, [isAuthenticated, isLoading]);
+*/
 
   return (
     <ValuesContext.Provider

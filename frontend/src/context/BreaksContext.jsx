@@ -9,45 +9,61 @@ export const BreaksProvider = ({ children }) => {
   const [breakDuration, setBreakDuration] = useState(0);  
   const { formatTime } = useTimer();
   // After 2 hours of work, you get a long break
+
   const updateCycleDuration = async(duration) => {
     const newDuration = breakDuration + duration;
     console.log('new duration', formatTime(newDuration));
     console.log('breaks', breaks);
+    
+    if (breaks.length === 0) {
+      setBreakDuration(newDuration);
+      return newDuration;
+    }
+    
     const lastBreakInterval = breaks[breaks.length - 1].interval; // Assuming breaks is sorted
+    let finalDuration;
+    
     if (newDuration > lastBreakInterval) { // Compare with the last break's interval
       console.log('resetting');
-      setBreakDuration(newDuration - lastBreakInterval);
-    }
-    else{
+      finalDuration = newDuration - lastBreakInterval;
+      setBreakDuration(finalDuration);
+    } else {
       console.log('not resetting');
-      setBreakDuration(newDuration);
+      finalDuration = newDuration;
+      setBreakDuration(finalDuration);
     }
+    
+    // Return the calculated duration so getBreak can use it immediately
+    return finalDuration;
   }
 
   const getBreak = async (duration) => {
     console.log('incrementing duration by', formatTime(duration));
-    await updateCycleDuration(duration);
+    
+    // Get the updated duration directly from updateCycleDuration
+    const updatedBreakDuration = await updateCycleDuration(duration);
+    
     // Sort breaks by interval in ascending order
     const sortedBreaks = [...breaks].sort((a, b) => a.interval - b.interval);
     console.log('sortedBreaks', sortedBreaks);
+    console.log('updatedBreakDuration', updatedBreakDuration);
     
-    // Find the interval that should be used (same logic as before)
+    // Find the interval that should be used
     let selectedInterval = null;
-    console.log('breakDuration', breakDuration);
     for (let i = sortedBreaks.length - 1; i >= 0; i--) {
       console.log('sortedBreaks[i].interval', sortedBreaks[i].interval);
-      if (breakDuration >= sortedBreaks[i].interval) {
+      if (updatedBreakDuration >= sortedBreaks[i].interval) {
         selectedInterval = sortedBreaks[i].interval;
         break;
       }
     }
     
-    // Return all breaks that match the selected interval
+    // Return the break that matches the selected interval
     if (selectedInterval !== null) {
       return sortedBreaks.filter(breakItem => breakItem.interval === selectedInterval)[0];
     }
     
-    return null; // Return empty array if no break is found
+    return null;
   }
 
   const getAlternativeBreaks = () => {

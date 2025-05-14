@@ -51,7 +51,7 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-90">
       {/* Value card */}
       <div 
         className="card shadow-xl cursor-pointer bg-base-200 hover:bg-base-300 group relative"

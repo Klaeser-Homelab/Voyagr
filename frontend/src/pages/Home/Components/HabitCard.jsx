@@ -79,7 +79,7 @@ function HabitCard({
     <div className="relative group">
       {/* Done button - appears on hover to the left of the card */}
       <div 
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
+        className="absolute right-[-20] top-1/2 -translate-y-1/2 -translate-x-10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
         onClick={handleDoneClick}
       >
         <button className="btn btn-circle btn-sm btn-success">

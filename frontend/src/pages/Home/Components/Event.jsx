@@ -52,6 +52,8 @@ function Event({ item }) {
     duration, 
     pauseTimer,
     isActiveEvent, 
+    timerComplete,
+    resetTimer,
     mode,
     toggleMode,
     adjustTime,
@@ -66,6 +68,13 @@ function Event({ item }) {
 
   useEffect(() => {
   }, [todos]);
+
+  useEffect(() => {
+    if (timerComplete) {
+      updateEvent();
+      //resetTimer();
+    }
+  }, [timerComplete]);
 
   useEffect(() => {
     const { minutes, seconds } = getRemainingTime();
@@ -149,10 +158,14 @@ function Event({ item }) {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
+      {item.is_break && 
+        <h1 className="text-6xl mt-10 text-center font-bold">Break</h1>
+        }
       <div className="flex-1 flex flex-col justify-center">
         <RadialGlow color={item.color} />
         
-        <div className="container p-14 flex flex-col gap-4 justify-center items-center">
+        
+        <div className="p-14 flex flex-col gap-4 justify-center items-center">
           {/* Time increment squares */}
           <div className="flex flex-wrap justify-center gap-1 mb-4 max-w-2xl">
             {renderTimeIncrements()}
@@ -263,7 +276,7 @@ function Event({ item }) {
                     Submit
                 </button>
           </div>
-          <div className="w-full p-2 space-y-2 bg-gray-800">
+          <div className="w-full max-w-4xl p-2 space-y-2">
             {todos.length > 0 &&
               todos.map(todo => (
                 <Todo 
@@ -281,7 +294,7 @@ function Event({ item }) {
 
           {/* Alternative breaks section - only show if we're in a break */}
           {item?.is_break && alternativeBreaks.length > 0 && (
-            <div className="w-full mb-4 p-3 bg-gray-700/50 rounded-lg">
+            <div className="w-100 mb-4 p-3 rounded-lg text-center">
               <h4 className="text-sm font-medium text-gray-300 mb-2">Switch Breaks</h4>
               <div className="space-y-2">
                 {alternativeBreaks.map((breakItem, index) => (
@@ -308,7 +321,7 @@ function Event({ item }) {
       </div>
 
       {/* Work Session Component - positioned at the bottom */}
-      <div className="w-full">
+      <div className="w-full mb-17 lg:mb-0 lg:pl-13">
         {item?.is_break && <BreakProgress />}
         {!item?.is_break && <WorkSession />}
       </div>

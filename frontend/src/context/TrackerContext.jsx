@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import api  from '../config/api';
+import { getAuthService } from '../services/auth';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const TrackerContext = createContext(null);
 
 export const TrackerProvider = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth0();
   const [monthData, setMonthData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,7 +18,7 @@ export const TrackerProvider = ({ children }) => {
   const fetchMonthEvents = useCallback(async () => {
     try {
       setLoading(true);
-      
+      console.log('Fetching month events');
       // Format date for API request (YYYY-MM)
       const monthString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
       
@@ -53,11 +56,6 @@ export const TrackerProvider = ({ children }) => {
     const dayEvents = monthData[day] || [];
     return dayEvents.some(event => event.habit_id === habitId);
   };
-
-  // Reload when month changes
-  useEffect(() => {
-    fetchMonthEvents();
-  }, [currentMonth, currentYear, fetchMonthEvents]);
 
   const value = {
     monthData,

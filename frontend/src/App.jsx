@@ -14,12 +14,15 @@ import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { TrackerProvider } from './context/TrackerContext';
 import { DeveloperProvider } from './context/DeveloperContext';
+import { SoundProvider } from './context/SoundContext';
+
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
 import HistoryPage from './pages/Hold/HistoryPage';
 import ProfilePage from './pages/Profile/ProfilePage';
 import WelcomePage from './pages/Welcome/WelcomePage';
+import BrowsePage from './pages/Profile/BrowsePage';
 import Callback from './pages/Account/Callback';
 import HowItsMade from './pages/Welcome/HowItsMade';
 import Menu from './pages/Account/Menu';
@@ -48,6 +51,7 @@ function AuthenticatedLayout() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/browse" element={<BrowsePage />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/*" element={<Navigate to="/home" />} />
         </Routes>
@@ -110,6 +114,7 @@ function App() {
       <ThemeProvider>
         <Router>
           <DeveloperProvider>
+          <SoundProvider>
           <OnboardingProvider>
           <ValuesProvider>
           <TimerProvider>
@@ -147,6 +152,7 @@ function App() {
           </TimerProvider>
           </ValuesProvider>
           </OnboardingProvider>
+          </SoundProvider>
           </DeveloperProvider>
         </Router>
       </ThemeProvider>

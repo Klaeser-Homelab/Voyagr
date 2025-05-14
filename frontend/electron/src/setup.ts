@@ -13,11 +13,13 @@ import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
 import { ipcMain } from 'electron';
 import { createLoginWindow } from './auth-process';
+
 const reloadWatcher = {
   debouncer: null,
   ready: false,
   watcher: null,
 };
+
 export function setupReloadWatcher(electronCapacitorApp: ElectronCapacitorApp): void {
   reloadWatcher.watcher = chokidar
     .watch(join(app.getAppPath(), 'app'), {
@@ -35,7 +37,7 @@ export function setupReloadWatcher(electronCapacitorApp: ElectronCapacitorApp): 
           reloadWatcher.ready = false;
           clearTimeout(reloadWatcher.debouncer);
           reloadWatcher.debouncer = null;
-          reloadWatcher.watcher = null;
+          reloadWatcher.debouncer = null;
           setupReloadWatcher(electronCapacitorApp);
         }, 1500);
       }
@@ -52,8 +54,12 @@ export class ElectronCapacitorApp {
     new MenuItem({ label: 'Quit App', role: 'quit' }),
   ];
   private AppMenuBarMenuTemplate: (MenuItem | MenuItemConstructorOptions)[] = [
-    { role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' },
+    // Modified: Remove the app menu for macOS and file menu for other platforms
+    // This removes the app name from the topbar
     { role: 'viewMenu' },
+    // Optionally add other menus without the app name
+    { role: 'windowMenu' },
+    ...(electronIsDev ? [{ role: 'help' as const }] : []),
   ];
   private mainWindowState;
   private loadWebApp;
@@ -117,6 +123,14 @@ export class ElectronCapacitorApp {
       y: this.mainWindowState.y,
       width: this.mainWindowState.width,
       height: this.mainWindowState.height,
+      // Remove title bar but keep window controls
+      titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
+      // Alternative for newer Electron versions (12+):
+      // titleBarStyle: process.platform === 'darwin' ? 'customButtonsOnHover' : 'hidden',
+      titleBarOverlay: process.platform !== 'darwin' ? {
+        color: '#ffffff00', // Transparent
+        symbolColor: '#666666'
+      } : undefined,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
@@ -165,7 +179,9 @@ export class ElectronCapacitorApp {
       this.TrayIcon.setContextMenu(Menu.buildFromTemplate(this.TrayMenuTemplate));
     }
 
-    // Setup the main manu bar at the top of our window.
+    // Setup the main menu bar at the top of our window.
+    // Option 2: You can also completely remove the menu bar with:
+    // Menu.setApplicationMenu(null);
     Menu.setApplicationMenu(Menu.buildFromTemplate(this.AppMenuBarMenuTemplate));
 
     // If the splashscreen is enabled, show it first while the main window loads then switch it out for the main window, or just load the main window from the start.

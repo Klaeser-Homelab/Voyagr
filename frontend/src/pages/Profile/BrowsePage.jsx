@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
-export default function Browse() {
+export default function BrowsePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const carouselRef = useRef(null);
 

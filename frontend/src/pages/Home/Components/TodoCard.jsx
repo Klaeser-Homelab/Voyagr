@@ -11,7 +11,7 @@ const TodoCard = ({todo, onToggle, onDelete}) => {
   };
 
    return (
-    <div className="flex items-center gap-2 w-full bg-gray-600 p-2 rounded-md"
+    <div className="flex items-center gap-2 w-full bg-gray-700 p-2 rounded-md"
     onMouseEnter={() => setIsHovered(true)} // Show "X" on hover
     onMouseLeave={() => setIsHovered(false)} // Hide "X" when not hovering
     >
@@ -24,7 +24,7 @@ const TodoCard = ({todo, onToggle, onDelete}) => {
                     />
         <div className="flex-grow">
             <div className="flex items-center gap-2">
-                <h4 className="text-gray-700">{todo.description}</h4>
+                <h4 className="text-white">{todo.description}</h4>
             </div>
         </div>
         {isHovered && (

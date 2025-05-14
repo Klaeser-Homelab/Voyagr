@@ -13,13 +13,13 @@ const Header = ({className}) => {
   }
   
   return (
-    <header className={`navbar shadow-md ${className}`}>
+    <header className={`navbar shadow-md bg-base-50 ${className}`}>
       <div className="flex-1">
-        <Link to="/" className="flex items-center text-xl">
+        <Link to="/" className="flex items-center text-4xl font-bold">
           <img 
             src={logo}
             alt="Logo" 
-            className="w-10 h-10 object-cover rounded-full" 
+            className="w-20 h-20 object-cover rounded-full" 
           />
           Voyagr
         </Link>
