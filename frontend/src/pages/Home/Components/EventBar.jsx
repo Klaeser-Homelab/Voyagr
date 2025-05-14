@@ -67,7 +67,7 @@ const EventBar = () => {
 
   return (
     <div 
-      className="fixed bottom-16 left-0 right-0 lg:bottom-0 lg:left-28 bg-gray-800 border-t border-gray-600 p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 z-50"
+      className="fixed bottom-16 left-0 right-0 lg:bottom-0 lg:left-28 bg-gray-800 border-t border-l border-gray-600 p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 z-50"
       onClick={handleBarClick}
     >
       <div className="flex items-center justify-between max-w-md mx-auto">
