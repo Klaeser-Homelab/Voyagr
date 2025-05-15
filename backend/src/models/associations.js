@@ -41,5 +41,5 @@ module.exports = {
   Todo,
   User,
   Break,
-  Schedule
+  Schedule,
 };

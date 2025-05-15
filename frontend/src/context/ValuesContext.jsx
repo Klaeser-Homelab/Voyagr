@@ -15,9 +15,9 @@ export const ValuesProvider = ({ children }) => {
   // ----- VALUES -----
   const fetchValues = useCallback(async () => {
     try {
-      console.log('Fetch values');
       const res = await api.get('/api/values');
       setValues(res.data);
+      //console.log('values', res.data);
     } catch (error) {
       console.error('Failed to fetch values:', error);
     }
@@ -90,6 +90,7 @@ export const ValuesProvider = ({ children }) => {
 
   const updateHabit = async (habit) => {
     try {
+      console.log('updateHabit', habit);
       await api.put('/api/habits', habit);
       fetchValues();
     } catch (error) {
@@ -156,7 +157,6 @@ export const ValuesProvider = ({ children }) => {
     await fetchValues();
     await fetchBreaks();
     await fetchArchivedValues();
-    console.log('Fetch all');
   }, []);
 
   // Fetch all once auth token is set

@@ -24,9 +24,8 @@ export const BreaksProvider = ({ children }) => {
     let finalDuration;
     
     if (newDuration > lastBreakInterval) { // Compare with the last break's interval
-      console.log('resetting');
-      finalDuration = newDuration - lastBreakInterval;
-      setBreakDuration(finalDuration);
+      console.log('resetting');;
+      setBreakDuration(0);
     } else {
       console.log('not resetting');
       finalDuration = newDuration;
@@ -38,20 +37,20 @@ export const BreaksProvider = ({ children }) => {
   }
 
   const getBreak = async (duration) => {
-    console.log('incrementing duration by', formatTime(duration));
+    //console.log('incrementing duration by', formatTime(duration));
     
     // Get the updated duration directly from updateCycleDuration
     const updatedBreakDuration = await updateCycleDuration(duration);
     
     // Sort breaks by interval in ascending order
     const sortedBreaks = [...breaks].sort((a, b) => a.interval - b.interval);
-    console.log('sortedBreaks', sortedBreaks);
-    console.log('updatedBreakDuration', updatedBreakDuration);
+    //console.log('sortedBreaks', sortedBreaks);
+    //console.log('updatedBreakDuration', updatedBreakDuration);
     
     // Find the interval that should be used
     let selectedInterval = null;
     for (let i = sortedBreaks.length - 1; i >= 0; i--) {
-      console.log('sortedBreaks[i].interval', sortedBreaks[i].interval);
+      //console.log('sortedBreaks[i].interval', sortedBreaks[i].interval);
       if (updatedBreakDuration >= sortedBreaks[i].interval) {
         selectedInterval = sortedBreaks[i].interval;
         break;

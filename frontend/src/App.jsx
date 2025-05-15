@@ -21,6 +21,7 @@ import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
 import HistoryPage from './pages/Hold/HistoryPage';
 import ProfilePage from './pages/Profile/ProfilePage';
+import HabitPage from './pages/Profile/HabitPage';
 import WelcomePage from './pages/Welcome/WelcomePage';
 import BrowsePage from './pages/Profile/BrowsePage';
 import Callback from './pages/Account/Callback';
@@ -51,6 +52,7 @@ function AuthenticatedLayout() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/habit/:id" element={<HabitPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/*" element={<Navigate to="/home" />} />

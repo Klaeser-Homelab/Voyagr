@@ -16,7 +16,7 @@ const BreakSettingsForm = () => {
   }, [fetchBreaks]);
 
   useEffect(() => {
-    console.log('breaks updated in context:', breaks);
+    //console.log('breaks updated in context:', breaks);
     setLocalBreaks(breaks);
   }, [breaks]);
 

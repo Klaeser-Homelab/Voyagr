@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../config/api';
 import AddBreak from './AddBreak';
 import BreakModal from './BreakModal';
+import NotesModal from './NotesModal';
 import { useValues } from '../../../context/ValuesContext';
-import { TrashIcon, CheckIcon, PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, CheckIcon, PlusIcon, CalendarIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import ScheduleHabitDialog from './ScheduleHabitDialog';
 
 const EditHabitCard = ({
@@ -50,8 +51,15 @@ const EditHabitCard = ({
     }
   };
 
+  const openNotesModal = () => {
+    const modal = document.getElementById(`notes_modal_${habit.id}`);
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
   // Handle schedule saved
-  const handleScheduleSaved = async (scheduleData) => {
+  const handleSaved = async (scheduleData) => {
     try {
       // Refresh the habit data after scheduling
       const response = await api.get(`/api/habits/${habit.id}`);
@@ -122,6 +130,14 @@ const EditHabitCard = ({
             >
               <CalendarIcon className="size-6" />
             </button>
+            <button 
+              onClick={openNotesModal} 
+              className={`btn btn-square btn-ghost btn-sm ${
+                localHabit.details ? ' text-blue-500' : 'text-white'
+              }`}
+            >
+              <PencilSquareIcon className="size-6" />
+            </button>
             
             <button onClick={handleAddBreak} className="btn btn-xs bg-green-700 text-white">
               <PlusIcon className="size-4" />
@@ -157,8 +173,13 @@ const EditHabitCard = ({
       {/* Schedule Modal with unique ID for this habit */}
       <ScheduleHabitDialog 
         habit={localHabit} 
-        onSave={handleScheduleSaved}
+        onSave={handleSaved}
         id={`schedule_habit_modal_${habit.id}`}
+      />
+      <NotesModal
+        habit={localHabit}
+        onSave={handleSaved}
+        id={`notes_modal_${habit.id}`}
       />
     </div>
   );

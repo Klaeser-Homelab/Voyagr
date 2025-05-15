@@ -18,7 +18,7 @@ export const TrackerProvider = ({ children }) => {
   const fetchMonthEvents = useCallback(async () => {
     try {
       setLoading(true);
-      console.log('Fetching month events');
+      //console.log('Fetching month events');
       // Format date for API request (YYYY-MM)
       const monthString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
       

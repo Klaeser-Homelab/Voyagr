@@ -1,4 +1,8 @@
 require('dotenv').config();
+
+// Set timezone to UTC immediately after loading environment variables
+process.env.TZ = 'UTC';
+
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
@@ -14,12 +18,8 @@ const scheduleRoutes = require('./routes/schedules');
 const redis = require('./config/redis');
 const { auth } = require('express-oauth2-jwt-bearer');
 
-
 const app = express();
 const port = process.env.PORT || 3001;
-
-
-
 
 // Middleware
 app.use(cors({
@@ -45,7 +45,6 @@ const jwtCheck = auth({
 });
 
 app.use(jwtCheck);
-
 
 // Session middleware
 if (process.env.NODE_ENV === 'production' && !process.env.BACKEND_SESSION_SECRET) {

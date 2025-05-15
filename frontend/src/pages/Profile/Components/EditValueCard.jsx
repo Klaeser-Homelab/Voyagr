@@ -75,26 +75,47 @@ const EditValueCard = ({
               )}
           </div>
         ) : (
-          <div className="flex items-center justify-between">
-              <div className="flex py-1 gap-3 items-center">
-
-              <h3 className="text-lg font-semibold text-white">{value.description}</h3>
+          <div className="flex items-start justify-between py-2">
+            <div className="flex flex-col items-start gap-2">
+              <div className="flex flex-row items-baseline gap-4">
+                <h3 className="text-lg font-semibold text-white">{value.description}</h3>
+                <span className="text-xs text-base-content/70 font-medium">
+                  Lvl {value.level}
+                </span>
+              </div>
+              <div className="flex flex-row items-center gap-4">
+                <p className="text-xs text-base-content/70 font-medium">
+                  Level Progress
+                </p>
+                <div className="w-20 bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ 
+                      width: `${value.level_progress}%`,
+                      backgroundColor: value.color 
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+              
+            <div className="flex items-start gap-2">
               <button
-                  onClick={() => setShowHabitForm(!showHabitForm)}
-                  className="btn bg-green-700 btn-xs text-white"
-                >
-                  <PlusIcon className="size-4 text-white" />
-                  Create Habit
-                </button>
+                onClick={() => setShowHabitForm(!showHabitForm)}
+                className="btn bg-green-700 btn-xs text-white"
+              >
+                <PlusIcon className="size-4 text-white" />
+                Create Habit
+              </button>
+              
+              <button
+                onClick={() => setEditingValue(true)}
+                className="p-1 hover:bg-gray-700 rounded"
+              >
+                <PencilIcon className="size-5" />
+              </button>
             </div>
-                <button
-                  onClick={() => setEditingValue(true)}
-                  className=""
-                >
-                  <PencilIcon className="size-5" />
-                </button>
-                
-            </div>
+          </div>
         )}
       </div>
       
@@ -127,4 +148,4 @@ const EditValueCard = ({
   );
 };
 
-export default EditValueCard; 
+export default EditValueCard;

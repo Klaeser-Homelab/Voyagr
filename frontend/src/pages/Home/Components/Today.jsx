@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import TimeByIdentity from './TimeByIdentity';
 import { useToday } from '../../../context/TodayContext';
-import { PlayIcon, CheckCircleIcon, CalendarIcon } from '@heroicons/react/24/solid';
+import { PlayIcon, CalendarIcon } from '@heroicons/react/24/solid';
 import { CheckCircleIcon as CheckCircleIconOutline } from '@heroicons/react/24/outline';
 import api from '../../../config/api';
 import { useEvent } from '../../../context/EventContext';
+import EventCard from './EventCard';
 
 function Today() {
   const { events, error, fetchEvents } = useToday();
@@ -18,7 +19,6 @@ function Today() {
   useEffect(() => {
     fetchEvents();
     fetchTodaySchedules();
-    //console.log('events', events);
   }, [fetchEvents]);
 
   // Fetch schedules that should occur today
@@ -26,14 +26,11 @@ function Today() {
     setIsLoading(true);
     try {
       const today = new Date();
-      const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      const dayOfWeek = today.getDay();
       
-      // Get all scheduled habits
       const response = await api.get('/api/schedules/today');
       
-      // Filter and format schedules for today
       const todaySchedules = response.data.map(schedule => {
-        // Convert start_time string to a Date object for today
         const [hours, minutes] = schedule.start_time.split(':');
         const scheduleTime = new Date();
         scheduleTime.setHours(parseInt(hours, 10));
@@ -46,9 +43,7 @@ function Today() {
         };
       });
       
-      // Sort by start time
       todaySchedules.sort((a, b) => a.scheduleTime - b.scheduleTime);
-      
       setScheduledHabits(todaySchedules);
     } catch (error) {
       console.error('Error fetching today schedules:', error);
@@ -57,7 +52,6 @@ function Today() {
     }
   };
 
-
   const formatHour = (hour) => {
     if (hour === 12) return '12 PM';
     if (hour === 0) return '12 AM';
@@ -65,24 +59,13 @@ function Today() {
     return `${hour} AM`;
   };
 
-  const formatTime = (date) => {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 || 12;
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes} ${ampm}`;
-  };
-
   // Get events and scheduled habits for a specific hour
   const getItemsForHour = (hour) => {
-    // Get events for this hour
     const eventsInHour = events.filter(event => {
-      const eventTime = new Date(event.createdAt);
+      const eventTime = new Date(event.occurred_at);
       return eventTime.getHours() === hour;
     });
     
-    // Get scheduled habits for this hour
     const schedulesInHour = scheduledHabits.filter(schedule => 
       schedule.scheduleTime.getHours() === hour
     );
@@ -90,29 +73,30 @@ function Today() {
     return { eventsInHour, schedulesInHour };
   };
 
-  // Check if a scheduled habit has already been started (has a corresponding event)
   const isHabitStarted = (schedule) => {
     return events.some(event => 
       event.habit_id === schedule.habit_id && 
-      new Date(event.createdAt).toDateString() === new Date().toDateString()
+      new Date(event.occurred_at).toDateString() === new Date().toDateString()
     );
   };
 
-  // Handle starting a scheduled habit
   const handleStartHabit = (schedule) => {
     getHabitAndCreateEvent(schedule.habit_id, schedule.color);
   };
 
-  // Handle marking a scheduled habit as done without starting it
   const handleMarkAsDone = (e, schedule) => {
-    e.stopPropagation(); // Prevent the card click from triggering
+    e.stopPropagation();
     console.log('done', schedule.habit_id);
     submitHabitEvent(schedule.habit_id);
   };
 
+  // Handle event updates - refresh the events list
+  const handleEventUpdated = () => {
+    fetchEvents();
+  };
+
   if (error) return <div className="text-error text-center p-4">{error}</div>;
 
-  // Get hours from 6 AM to 10 PM (more comprehensive day view)
   const displayHours = Array.from({ length: 17 }, (_, i) => i + 6);
 
   return (
@@ -153,7 +137,6 @@ function Today() {
                       
                       return (
                         <div key={`schedule-${schedule.id}`} className="relative group">
-                          {/* Done button - appears on hover to the left of the card */}
                           {!started && (
                             <div 
                               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
@@ -179,7 +162,6 @@ function Today() {
                                 <CalendarIcon className="size-6 text-primary" />
                             </div>
                             
-                            {/* Play button overlay - appears on hover, similar to HabitCard */}
                             {!started && (
                               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
                                 <div className="bg-primary text-primary-content rounded-full p-2">
@@ -194,30 +176,11 @@ function Today() {
                     
                     {/* Completed Events */}
                     {eventsInHour.map(event => (
-                      <div 
-                        key={`event-${event.id}`} 
-                        className="card bg-gray-700 p-2 flex flex-col gap-2"
-                        style={{ 
-                          borderLeft: `20px solid ${event.color || '#ddd'}`
-                        }}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium whitespace-nowrap">
-                            {event.description} • <span   className="whitespace-nowrap">{Math.round(event.duration / (1000 * 60))} min</span>
-                          </span>
-                            <CheckCircleIcon className="size-6 text-white" />
-                        </div>
-                        {event.todos && event.todos.length > 0 && (
-                          <div className="pl-4 text-sm space-y-1">
-                            {event.todos.map(todo => (
-                              <div key={todo.id} className="flex items-center gap-2">
-                                <span className="text-base-content/70">✓</span>
-                                <span>{todo.description}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <EventCard 
+                        key={`event-${event.id}`}
+                        event={event}
+                        onEventUpdated={handleEventUpdated}
+                      />
                     ))}
                   </div>
                 </div>

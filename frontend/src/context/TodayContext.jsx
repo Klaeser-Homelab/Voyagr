@@ -12,6 +12,7 @@ export const TodayProvider = ({ children }) => {
       const response = await api.get('/api/events/today');
       setEvents(response.data);
       setError(null);
+      //console.log('events', response.data);
     } catch (error) {
       console.error('Error fetching events:', error);
       setError('Failed to load events');

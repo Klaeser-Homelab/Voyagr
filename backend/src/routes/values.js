@@ -152,6 +152,78 @@ router.post('/api/values', async (req, res) => {
   }
 });
 
+router.post('/api/values/level/', async (req, res) => {
+  try {
+      const { value_id, duration } = req.body;
+      
+      // Validate input
+      if (!value_id || !duration) {
+          return res.status(400).json({ error: 'value_id and duration are required' });
+      }
+      
+      if (duration < 0) {
+          return res.status(400).json({ error: 'duration must be positive' });
+      }
+      
+      // Find the value
+      const value = await Value.findByPk(value_id);
+      if (!value) {
+          return res.status(404).json({ error: 'Value not found' });
+      }
+      
+      // Calculate level progress increase (1 per 5 minutes)
+      // Convert minutes to seconds for duration (assuming duration is in seconds)
+      const progressIncrease = Math.floor(duration / (5 * 60 * 100)); // 5 minutes = 300000 milliseconds
+      
+      const oldProgress = value.level_progress;
+      const oldLevel = value.level;
+      // Calculate new progress and check for level ups
+      let newProgress = value.level_progress + progressIncrease;
+      let newLevel = value.level;
+      let newLevelTime = value.level_time + duration;
+      let leveledUp = false;
+      console.log('newProgress', newProgress);
+      console.log('newLevel', newLevel);
+      console.log('newLevelTime', newLevelTime);
+      console.log('leveledUp', leveledUp);
+      // Handle level ups (loop back to zero plus extra)
+      while (newProgress >= 100) {
+          newLevel += 1;
+          newProgress -= 100;
+          newLevelTime = 0; // Reset level time on level up
+          leveledUp = true;
+      }
+      
+      // Update the value
+      await value.update({
+          level_time: newLevelTime,
+          total_time: value.total_time + duration,
+          level_progress: newProgress,
+          level: newLevel
+      });
+      
+      res.json({
+          success: true,
+          leveled_up: leveledUp,
+          value: {
+              id: value.id,
+              description: value.description,
+              color: value.color,
+              level: value.level,
+              level_progress: value.level_progress,
+              level_time: value.level_time,
+              total_time: value.total_time,
+              old_progress: oldProgress,
+              old_level: oldLevel
+          }
+      });
+      
+  } catch (error) {
+      console.error('Error updating value level:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // PUT update value
 router.put('/api/values', async (req, res) => {
   console.log("PUT request received");

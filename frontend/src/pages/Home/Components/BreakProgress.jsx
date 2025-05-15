@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useTimer } from '../../../context/TimerContext';
 import { useBreaks } from '../../../context/BreaksContext';
 import { useDeveloper } from '../../../context/DeveloperContext';
-
+import { PauseIcon } from '@heroicons/react/24/outline';
 const BreakSession = () => {
   const { 
     duration,
@@ -21,7 +21,7 @@ const BreakSession = () => {
   useEffect(() => {
     const breaks = getUpcomingBreaks();
     setUpcomingBreaks(breaks);
-    console.log('upcomingBreaks fetched:', breaks);
+    //console.log('upcomingBreaks fetched:', breaks);
   }, []);
 
   const formatMinutes = (minutes) => {
@@ -75,7 +75,7 @@ const BreakSession = () => {
               }}
             >
               <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
-                N
+                
               </div>
             </div>
             
@@ -90,16 +90,12 @@ const BreakSession = () => {
               return (
                 <div 
                   key={index}
-                  className="absolute top-[-40px] transform -translate-x-1/2"
+                  className="absolute top-[-30px] transform -translate-x-1/2"
                   style={{ left: `${position}%` }}
                 >
-                  <div 
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                      isPastBreak ? 'bg-gray-500' : 'bg-red-500'
-                    }`}
-                  >
-                    B
-                  </div>
+                  <div className="flex-shrink-0">
+  <PauseIcon className={`size-5 ${isPastBreak ? 'text-gray-500' : 'text-secondary'}`} />
+</div>
                 </div>
               );
             })}

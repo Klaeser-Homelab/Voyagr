@@ -130,7 +130,7 @@ router.get('/api/events/month/:monthString', async (req, res) => {
     
     res.json(result);
   } catch (error) {
-    console.error('Error fetching month events:', error);
+    //console.error('Error fetching month events:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -199,18 +199,21 @@ router.post('/api/events', async (req, res) => {
   try {
     const accessToken = getToken(req);
     const user_id = await redis.get(accessToken);
-    const { value_id, habit_id } = req.body;
+    const { value_id, habit_id, occurred_at } = req.body;
     
-    // value_id is required
-    if (!value_id) {
-      return res.status(400).json({ error: 'value_id is required' });
-    }
+    // Debug logging
+    //console.log('Received occurred_at:', occurred_at);
+    //console.log('Parsed as Date:', new Date(occurred_at));
+    
     const event = await Event.create({
       user_id: user_id,
       value_id: value_id,
-      habit_id: habit_id
+      habit_id: habit_id,
+      occurred_at: occurred_at
     });
 
+    //console.log('Stored occurred_at:', event.occurred_at);
+    
     res.status(201).json(event);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -286,9 +289,17 @@ router.put('/api/events/:id', async (req, res) => {
       return res.status(404).json({ error: 'Event not found or not authorized' });
     }
 
-    // Update the event
-    const { duration } = req.body;
-    event.duration = duration;
+    // Update the event - handle both duration and occurred_at
+    const { duration, occurred_at } = req.body;
+    
+    if (duration !== undefined) {
+      event.duration = duration;
+    }
+    
+    if (occurred_at !== undefined) {
+      event.occurred_at = occurred_at;
+    }
+    
     await event.save();
 
     res.status(200).json(event);

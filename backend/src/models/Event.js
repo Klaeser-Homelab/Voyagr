@@ -27,7 +27,11 @@ const Event = sequelize.define('Event', {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-
+  occurred_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: DataTypes.NOW
+  },
   // Virtual field for computed color
   color: {
     type: DataTypes.VIRTUAL,

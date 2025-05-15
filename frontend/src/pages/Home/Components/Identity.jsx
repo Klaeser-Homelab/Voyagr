@@ -44,8 +44,9 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
     return null;
   }
 
-  // Handle clicking on the value
-  const handleValueClick = () => {
+  // Handle clicking on the play button
+  const handlePlayClick = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
     if (activeEvent) return;
     createEvent({ input: { ...value, type: 'value' } });
   };
@@ -53,16 +54,17 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
   return (
     <div className="mb-4 w-90">
       {/* Value card */}
-      <div 
-        className="card shadow-xl cursor-pointer bg-base-200 hover:bg-base-300 group relative"
-        onClick={handleValueClick}
-      >
+      <div className="card shadow-xl bg-base-200 group relative">
         <div className="card-body">
           <div className="flex justify-between items-center">
             <h2 className="card-title">
               {value.description}
             </h2>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col items-end gap-1">
+              {/* Level text above the circle */}
+              <span className="text-xs text-base-content/70 font-medium">
+                Lvl {value.level}
+              </span>
               <div 
                 className="w-4 h-4 rounded-full" 
                 style={{ backgroundColor: value.color }}
@@ -70,11 +72,15 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
             </div>
           </div>
           
-          {/* Play button overlay - appears on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
-            <div className="bg-primary text-primary-content rounded-full p-3">
+          {/* Play button overlay - appears on hover, only this button is clickable */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={handlePlayClick}
+              className="bg-primary hover:bg-primary/80 text-primary-content rounded-full p-3 transition-colors"
+              disabled={activeEvent}
+            >
               <PlayIcon className="size-6" />
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -87,7 +93,6 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
             habit={habit} 
             valueColor={value.color}
             isScheduled={habit.Schedules && habit.Schedules.length > 0}
-            isBreak={habit.Break !== null}
             showScheduled={showScheduled}
             showBreaks={showBreaks}
           />

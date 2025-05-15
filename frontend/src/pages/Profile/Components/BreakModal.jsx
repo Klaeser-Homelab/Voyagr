@@ -51,11 +51,11 @@ const BreakModal = ({ habitId, modalId, onClose, onBreakAdded }) => {
           The break interval is how many minutes of cumulative work in a work cycle before this break is activated. 
           <br />
           <br />
-          Set multiple breaks with the same interval if you want a random break selected and the other breaks to be suggested as alternatives.
-          If a working session activates multiple breaks, the longest is used.
+          If multiple breaks share the same interval the first will be the default and the rest will appear as alternatives. Reorder the breaks in the profile page.
+          If a working session activates multiple breaks, the longest intervalis used.
           <br />
           <br />
-          After the longest break is taken, the work cycle restarts.
+          After the longest break, the work session restarts.
         </p>
         <div className="modal-action">
           <form method="dialog" className="flex flex-col w-full gap-2">

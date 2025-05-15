@@ -173,6 +173,14 @@ function Event({ item }) {
           
           <h1 className="text-6xl text-center font-bold">{item.description}</h1>
 
+          {item.details && (
+          <div className="mt-4 max-w-2xl text-center">
+            <p className="text-lg text-gray-300 whitespace-pre-wrap">
+              {item.details}
+            </p>
+          </div>
+          )}
+
           <div className="flex flex-row d items-center justify-center gap-4 p-4">
             {mode === 'timer' && (
             <button 
@@ -276,7 +284,7 @@ function Event({ item }) {
                     Submit
                 </button>
           </div>
-          <div className="w-full max-w-4xl p-2 space-y-2">
+          <div className="w-full max-w-4xl p-2 px-10 space-y-2">
             {todos.length > 0 &&
               todos.map(todo => (
                 <Todo 

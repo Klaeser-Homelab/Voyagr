@@ -2,6 +2,7 @@ import React from 'react';
 import { useEvent } from '../../../context/EventContext';
 import { CalendarIcon, PauseIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { PlayIcon } from '@heroicons/react/24/solid';
+import { useNavigate } from 'react-router-dom';
 
 function HabitCard({ 
   habit, 
@@ -12,9 +13,17 @@ function HabitCard({
   showBreaks = false 
 }) {
   const { createEvent, activeEvent, submitHabitEvent } = useEvent();
+  const navigate = useNavigate();
 
-  // Handle clicking on the habit
-  const handleClick = () => {
+  // Handle clicking on the card (navigate to edit page)
+  const handleCardClick = () => {
+    console.log('habit card clicked');
+    navigate(`/habit/${habit.id}`);
+  };
+
+  // Handle clicking the play button
+  const handlePlayClick = (e) => {
+    e.stopPropagation(); // Prevent the card click from triggering
     if (activeEvent) return;
     createEvent({ input: { ...habit, type: 'habit', color: valueColor } });
   };
@@ -89,7 +98,7 @@ function HabitCard({
       
       <div 
         className="card bg-base-200 shadow-md cursor-pointer hover:bg-base-300 group relative"
-        onClick={handleClick}
+        onClick={handleCardClick}
       >
         <div className="card-body p-3">
           <div className="flex justify-between items-center">
@@ -137,12 +146,15 @@ function HabitCard({
               )}
             </div>
           </div>
-          
-          {/* Play button overlay - appears on hover */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-base-300/40 rounded-lg">
-            <div className="bg-primary text-primary-content rounded-full p-2">
-              <PlayIcon className="size-5" />
-            </div>
+        </div>
+        
+        {/* Play button overlay - appears on hover, centered and smaller */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          <div 
+            className="bg-primary text-primary-content rounded-full p-3 pointer-events-auto"
+            onClick={handlePlayClick}
+          >
+            <PlayIcon className="size-6" />
           </div>
         </div>
       </div>

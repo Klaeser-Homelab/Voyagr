@@ -20,6 +20,10 @@ const Habit = sequelize.define('Habit', {
     type: DataTypes.TEXT,
     allowNull: true
   },
+  details: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   value_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

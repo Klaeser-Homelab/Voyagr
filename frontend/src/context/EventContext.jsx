@@ -13,6 +13,7 @@ export const EventProvider = ({ children }) => {
   const {initTimer, resetTimer, stopTimer, mode, setMinutes, getElapsedMilliseconds, timerComplete, formatTime } = useTimer();
   const { fetchEvents } = useToday();
   const { getBreak } = useBreaks();
+  const [levelingUp, setLevelingUp] = useState(null);
 
   useEffect(() => {
     if (timerComplete) {
@@ -55,6 +56,7 @@ export const EventProvider = ({ children }) => {
   }
 
   const updateEvent = async () => {  
+    console.log('updating event');
     const duration = getElapsedMilliseconds();
     stopTimer();
     try {
@@ -62,11 +64,30 @@ export const EventProvider = ({ children }) => {
       const eventResponse = await api.put(
         `/api/events/${activeEvent.id}`,
         {
-          duration: duration,
-        }
+          duration: duration        }
       );
 
-      console.log('updating todos', todos);
+      console.log('activeItem', activeItem);
+
+      // Get the correct value_id based on the activeItem type
+    let value_id;
+    if (activeItem.type === 'habit') {
+      value_id = activeItem.value_id;
+    } else if (activeItem.type === 'value') {
+      value_id = activeItem.id;
+    }
+    
+    const valueResponse = await api.post('/api/values/level/', {
+      value_id: value_id,
+      duration: duration
+    });
+
+    if(valueResponse.data.leveled_up){
+      setLevelingUp(valueResponse.data);
+    }
+
+    console.log('valueResponse', valueResponse);
+
       
       // Process completed todos with the event ID
       const completedTodos = todos
@@ -149,13 +170,14 @@ export const EventProvider = ({ children }) => {
       value_id = input.id;
     }
 
-    console.log('habit_id', habit_id);
-    console.log('value_id', value_id);
+    const now = new Date();
+    const occurred_at = now.toISOString();
 
     try {
       const eventResponse = await api.post('/api/events', {
         value_id: value_id,
-        habit_id: habit_id
+        habit_id: habit_id,
+        occurred_at: occurred_at
       });
 
       
@@ -174,6 +196,8 @@ export const EventProvider = ({ children }) => {
       activeEvent,
       todos,
       setTodos,
+      levelingUp,
+      setLevelingUp,
       activeItem,
       deleteEvent,
       updateEvent,

@@ -82,7 +82,7 @@ router.put('/api/habits', async (req, res) => {
   try {
     const accessToken = getToken(req);
     const user_id = await redis.get(accessToken);
-    const { id, description, duration, is_active } = req.body; // Include all fields you want to update
+    const { id, description, duration, is_active, details } = req.body; // Include all fields you want to update
 
     // Find the habit associated with the current user
     const habit = await Habit.findOne({
@@ -100,7 +100,8 @@ router.put('/api/habits', async (req, res) => {
     habit.description = description || habit.description;
     habit.duration = duration || habit.duration;
     habit.is_active = is_active !== undefined ? is_active : habit.is_active;
-
+    habit.details = details || habit.details;
+    
     // Save the updated habit
     await habit.save();
 
