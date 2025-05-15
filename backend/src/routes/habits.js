@@ -32,11 +32,12 @@ router.post('/api/habits', async (req, res) => {
   try {
     const accessToken = getToken(req);
     const user_id = await redis.get(accessToken);
-    const { description, value_id } = req.body;
+    const { description, value_id, duration } = req.body;
     const habit = await Habit.create({
       description,
       user_id: user_id,
-      value_id
+      value_id,
+      duration
     });
 
     res.status(201).json(habit);
@@ -101,7 +102,7 @@ router.put('/api/habits', async (req, res) => {
     habit.duration = duration || habit.duration;
     habit.is_active = is_active !== undefined ? is_active : habit.is_active;
     habit.details = details || habit.details;
-    
+
     // Save the updated habit
     await habit.save();
 
