@@ -65,38 +65,36 @@ router.get('/api/values', async (req, res) => {
 
 router.post('/api/values/init', async (req, res) => {  
   try {
-    const { user_id, name, color, habit_name, habit_duration, habit_frequency } = req.body;
+    const { value_name, value_color, habit_name, habit_duration } = req.body;
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
 
-    console.log('Request body:', req.body);
-    console.log('user_id type:', typeof user_id, 'value:', user_id);
-    console.log('name type:', typeof name, 'value:', name);
-
-    // Try creating the value and log the result
     const value = await Value.create({
       user_id: user_id,
-      description: name,
-      color: color
+      description: value_name,
+      color: value_color
     });
-    
-    console.log('Created value:', value.toJSON ? value.toJSON() : value);
 
-    // Create the habit
     const habit = await Habit.create({
       user_id: user_id,
       description: habit_name,
       duration: habit_duration * 60000,
       value_id: value.id
     });
-    
-    console.log('Created habit:', habit.toJSON ? habit.toJSON() : habit);
 
-    res.json({ value, habit });
+    const schedule = await Schedule.create({
+      user_id: user_id,
+      habit_id: habit.id,
+      start_time: '18:00:00',
+      frequency_type: 'daily',
+      days_of_week: [1, 2, 3, 4, 5, 6, 7],
+      week_of_month: 1,
+      is_active: true
+    });
+
+    res.json({ value, habit, schedule });
   } catch (error) {
     console.log('Error in /api/values/init:', error);
-    // Log more details about the error
-    if (error.errors) {
-      console.log('Validation errors:', error.errors);
-    }
     res.status(500).json({ error: error.message });
   }
 });

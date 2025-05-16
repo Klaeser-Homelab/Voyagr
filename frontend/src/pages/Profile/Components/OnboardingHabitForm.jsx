@@ -30,20 +30,6 @@ const OnboardingHabitForm = () => {
               required
             />
           </div>
-
-            <h3 className="">Default Duration</h3>
-            <p className="text-xs text-gray-500">How long you expect it to take. Just put something down for now.</p>
-            <label className="input w-full">
-            <input
-              type="number"
-              className="input input-sm input-bordered w-60"
-              value={habit.duration / 60000}
-              onChange={(e) => setHabit({ ...habit, duration: e.target.value * 60000 })}
-              required
-            />
-            <span className="label">minutes</span>
-            </label>
-
           <div className="card-actions mt-2 justify-end">
             <button type="submit" className="btn btn-sm btn-primary">
               Save

@@ -16,7 +16,7 @@ export const OnboardingProvider = ({ children }) => {
             habits: [
                 {
                     id: 101,
-                    name: "Run", 
+                    name: "Move legs rapidly", 
                     duration: 20, 
                     frequency: 1
                 },
@@ -30,7 +30,7 @@ export const OnboardingProvider = ({ children }) => {
                 {
                     id: 201,
                     name: "Make something, no matter how small", 
-                    duration: 30, 
+                    duration: 15, 
                     frequency: 1
                 },
             ]

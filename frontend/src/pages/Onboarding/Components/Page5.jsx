@@ -20,20 +20,19 @@ const Page5 = () => {
         { speaker: playerName, line: "...", color: "text-green-500" },
         { speaker: "Voyagr", line: "Here I'll do it for you. Deploying gravity beam.", color: "text-gray-400" },
         { speaker: "Computer", line: "My security protocol was just bypassed.", color: "text-blue-500" },
-        { speaker: playerName, line: "Did you just hack Computer?", color: "text-green-500" },
+        { speaker: playerName, line: "Voyagr, did you just hack Computer?", color: "text-green-500" },
         { speaker: "Voyagr", line: "I let myself in while we were chatting. I hope that's okay. You have so much interesting information in here.", color: "text-gray-400" },
-        { speaker: playerName, line: "Woahh, stop, corporate is going to kill me.", color: "text-green-500" },
-        { speaker: "Voyagr", line: "I'm sorry. But you should really change your password if you don't want people coming in.", color: "text-gray-400" },
-        { speaker: "Computer", line: "Ahh that's better.", color: "text-blue-500" },
-        { speaker: "Voyagr", line: "Can I still come. Please!! You can put me in the cargo hold.", color: "text-gray-400" },
-        { speaker: playerName, line: "No way! Computer will have to tell corporate. I'll lose my ship!", color: "text-green-500" },
-        { speaker: "Voyagr", line: "Please!! I can help change Computer's directives", color: "text-gray-400" },
-        { speaker: "Computer", line: "I don't like the sound of that!", color: "text-blue-500" },
-        { speaker: playerName, line: "You have been a little stuffy lately Computer.", color: "text-green-500" },
-        { speaker: "Voyagr", line: "Oh yay! We're going to be such great friends!", color: "text-gray-400" },
-
-
-
+        { speaker: playerName, line: "Woahh, stop, corporate is going to kill me when they find out.", color: "text-green-500" },
+        { speaker: "Voyagr", line: "Nonsense, no one will know.", color: "text-gray-400" },
+        { speaker: "Computer", line: "It's right, it doesn't look like your message to headquarters was sent. Voyagr is somehow blocking external coms.", color: "text-blue-500" },
+        { speaker: playerName, line: "...", color: "text-green-500" },
+        { speaker: "Voyagr", line: "Ready or not here I come!", color: "text-gray-400" },
+        { speaker: "Computer", line: "Cargo bay opening, I'm locked out, I can't stop it.", color: "text-blue-500" },
+        { speaker: playerName, line: "Well Voyagr, it looks like we have no choice in the matter. Welcome aboard.", color: "text-green-500" },
+        { speaker: "Voyagr", line: "Yipee! We're going to be such great friends!", color: "text-gray-400" },
+        { speaker: "Computer", line: "Seems more like we're prisoners.", color: "text-blue-500" },
+        { speaker: playerName, line: "Yeah..", color: "text-green-500" },
+        { speaker: "Voyagr", line: "I can hear you.", color: "text-gray-400" },
     ];
 
     const [displayedDialogues, setDisplayedDialogues] = useState([]);
@@ -173,7 +172,7 @@ const Page5 = () => {
                                 className="ml-4 text-green-600 font-bold rounded-md animate-blink" 
                                 onClick={goToNextPage}
                             >
-                                Fine, you can come with.
+                                ....shit. I guess we're in for an adventure.
                             </button>
                         </div>
                     )}

@@ -22,8 +22,11 @@ function Callback() {
           const urlParams = new URLSearchParams(window.location.search);
           const codeParam = urlParams.get('code');
 
+          console.log(urlParams);
+
           // Auth code present but no state, skipping handleRedirectCallback
           if (codeParam && !urlParams.get('state')) {
+            console.log('code present but no state');
             // Skip handleRedirectCallback and proceed with empty state
             setStatus('Authentication code received, continuing...');
             setOnboardingStateChecked(true);
@@ -31,8 +34,10 @@ function Callback() {
           }
           // code and state found in callback
           else if (codeParam && urlParams.get('state')) {
+            console.log('code and state found in callback');
             // This will return your original state object
             const result = await handleRedirectCallback();
+            console.log('result', result);
             setAppState(result.appState);
             setStatus('Onboarding state received.');
             setOnboardingStateChecked(true);
@@ -62,10 +67,16 @@ function Callback() {
       try {
         if (!mounted) return;
 
+        console.log('1');
+
         // Add a small delay to ensure Auth0 is fully initialized
         await new Promise(resolve => setTimeout(resolve, 300));
 
+        console.log('2');
+
         if (!mounted) return;
+
+        console.log('3');
         
         // Get and set auth token from Auth0
         setStatus('Verifying access...'); // getting access token
@@ -73,23 +84,33 @@ function Callback() {
         const authService = getAuthService();
         await authService.setToken(accessToken);
 
+        console.log('4');
+
         // Set user in backend
         setStatus('Configuring user...');
         await api.post('/api/users/auth0');
 
+        console.log('5');
+
         if (!mounted) return;
+
+        console.log('6');
+
+        console.log('appState', appState);
 
         // Initialize user from onboarding state
         setStatus('Initializing...');
-        if(appState && appState.isNewUser) {
+        if(appState && appState.identity) {
+          console.log('initing user');
             await api.post('/api/values/init', {
-              user_id: appState.user_id,
-              name: appState.value_name,
-              color: appState.value_color,
-              habit_name: appState.habit_name,
-              habit_duration: appState.habit_duration,
+             value_name: appState.identity.name,
+              value_color: appState.identity.color,
+              habit_name: appState.habit.name,
+              habit_duration: appState.habit.duration,
             });
           }
+
+        console.log('7');
        
         navigate('/home');
         
@@ -102,6 +123,7 @@ function Callback() {
 
     // Only run setup if we're authenticated
     if (isAuthenticated && !auth0Loading && onboardingStateChecked) {
+      console.log('setting up user');
       setupUser();
     }
 

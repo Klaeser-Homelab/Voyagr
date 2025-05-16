@@ -7,6 +7,8 @@ import { PlayIcon } from '@heroicons/react/24/solid';
 function Identity({ value, showScheduled = false, showBreaks = false }) {
   const { createEvent, activeEvent } = useEvent();
 
+  
+
   // Determine which habits to show based on filters
   const habitsToDisplay = value.Habits?.filter(habit => {
     const isScheduledHabit = habit.Schedules && 

@@ -51,9 +51,11 @@ const Settings = () => {
   };
 
 
-  function handleConfirmDelete() {    
-    deleteAccount();  
-    setAccountDeleted(true);      
+  async function handleConfirmDelete() {    
+    await deleteAccount();  
+    setAccountDeleted(true);    
+    const authService = getAuthService();
+    await authService.removeToken();  
     setTimeout(() => {
         navigate('/'); // Redirect after showing the message
       }, 2000); // Adjust the delay as needed
@@ -78,12 +80,6 @@ const Settings = () => {
     <div className="flex flex-col h-full gap-4">
     
 <div className="flex flex-col gap-2 z-1 mt-3 w-full p-2 text-2xl justify-left items-start"> 
-  <Link 
-    to="/history" 
-    className="hover:text-primary transition-colors duration-200 cursor-pointer"
-  > 
-    History 
-  </Link>
   <button 
     onClick={handleLogout}
     className="hover:text-primary transition-colors duration-200 cursor-pointer text-left"

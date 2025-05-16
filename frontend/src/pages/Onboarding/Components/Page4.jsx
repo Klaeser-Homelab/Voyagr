@@ -32,7 +32,7 @@ const Page4 = () => {
           },
         {
           speaker: "You",
-          line: "Strange. Tell it we're from earth too and ask whether it's one of the Voyager.",
+          line: "Strange. Tell it we're from earth too and ask whether it's one of the Voyager probes.",
           color: "text-green-500"
         },
         {

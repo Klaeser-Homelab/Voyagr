@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const { getToken } = require('../middleware/auth');
 const sequelize = require('../config/database');
-const { Todo, Break, Event, Habit, Value, User } = require('../models/associations');
+const { Todo, Break, Event, Habit, Value, User, Schedule } = require('../models/associations');
 const redis = require('../config/redis');
 // POST /api/users/auth0
 // Creates or updates a user based on Auth0 data
@@ -27,8 +27,6 @@ router.post('/api/users/auth0', async (req, res) => {
       defaults: {
         email: auth0User.email,
         username: auth0User.nickname || auth0User.email,
-        display_name: auth0User.name,
-        avatar_url: auth0User.picture,
         last_login: new Date()
       }
     });
@@ -104,6 +102,7 @@ router.delete('/api/users/delete', async (req, res) => {
     await Todo.destroy({ where: { user_id: user.id }, transaction });
     await Break.destroy({ where: { user_id: user.id }, transaction });
     await Event.destroy({ where: { user_id: user.id }, transaction });
+    await Schedule.destroy({ where: { user_id: user.id }, transaction });
     await Habit.destroy({ where: { user_id: user.id }, transaction });
     await Value.destroy({ where: { user_id: user.id }, transaction });
     
@@ -169,12 +168,58 @@ router.get('/api/users/me', async (req, res) => {
       email: user.email,
       username: user.username,
       display_name: user.display_name,
-      avatar_url: user.avatar_url
+      avatar: user.avatar,
+      onboarding_completed: user.onboarding_completed,
+      voyagr_avatar: user.voyagr_avatar
     });
   } catch (error) {
     console.error('Error in /api/users/me:', error);
     res.status(500).json({ 
       error: 'Failed to get user information', 
+      details: error.message 
+    });
+  }
+});
+
+router.put('/api/users/me', async (req, res) => {
+  try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
+    
+    // Find the user
+    const user = await User.findByPk(user_id);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Extract fields from request body
+    const { display_name, avatar, onboarding_completed, voyagr_avatar } = req.body;
+    
+    // Update only the fields that are provided
+    if (display_name !== undefined) {
+      user.display_name = display_name;
+    }
+    
+    if (avatar !== undefined) {
+      user.avatar = avatar;
+    }
+    
+    if (onboarding_completed !== undefined) {
+      user.onboarding_completed = onboarding_completed;
+    }
+    
+    if (voyagr_avatar !== undefined) {
+      user.voyagr_avatar = voyagr_avatar;
+    }
+    
+    await user.save();
+    
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error in /api/users/me:', error);
+    res.status(500).json({ 
+      error: 'Failed to update user information', 
       details: error.message 
     });
   }

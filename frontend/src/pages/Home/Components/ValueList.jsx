@@ -4,9 +4,7 @@ import { useEvent } from '../../../context/EventContext';
 import { useBreaks } from '../../../context/BreaksContext';
 import Identity from './Identity';
 import Event from './Event';
-import Onboarding from '../../Onboarding/ChapterOne';
 import BreakProgress from './BreakProgress';
-import LevelUpModal from './LevelUpModal';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid';
 import { CalendarIcon, PauseIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -50,14 +48,6 @@ function ValueList() {
   if (activeEvent) {
     return (
       <Event key={activeItem.id} item={activeItem} />
-    );
-  }
-
-  if (values.length === 1 && values[0].id === 1) {
-    return (
-      <div className="p-14 w-full flex flex-col gap-4 bg-black">
-        <Onboarding />
-      </div>
     );
   }
 

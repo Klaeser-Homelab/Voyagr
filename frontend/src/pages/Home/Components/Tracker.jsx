@@ -113,7 +113,7 @@ const Tracker = () => {
                     </div>
                 ))
             ) : (
-                <div className="text-gray-400">No data found for this month</div>
+                <div className="text-gray-400">No better time than the present. Start playing to see your progress.</div>
             )}
         </div>
     );

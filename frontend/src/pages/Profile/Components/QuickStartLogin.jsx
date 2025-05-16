@@ -1,6 +1,7 @@
 import { useOnboarding } from '../../../context/OnboardingContext';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
+
 const QuickStartLogin = () => {
     const { identity, habit } = useOnboarding();
     const name = identity.name || '<identity>';

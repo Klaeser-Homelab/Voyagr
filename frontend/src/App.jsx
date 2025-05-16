@@ -15,7 +15,7 @@ import { OnboardingProvider } from './context/OnboardingContext';
 import { TrackerProvider } from './context/TrackerContext';
 import { DeveloperProvider } from './context/DeveloperContext';
 import { SoundProvider } from './context/SoundContext';
-
+import { UserProvider } from './context/UserContext';
 // Pages
 import HomePage from './pages/Home/HomePage';
 import Today from './pages/Home/Components/Today';
@@ -118,6 +118,7 @@ function App() {
           <DeveloperProvider>
           <SoundProvider>
           <OnboardingProvider>
+          <UserProvider>
           <ValuesProvider>
           <TimerProvider>
           <TodayProvider>
@@ -153,6 +154,7 @@ function App() {
             </TodayProvider>
           </TimerProvider>
           </ValuesProvider>
+          </UserProvider>
           </OnboardingProvider>
           </SoundProvider>
           </DeveloperProvider>

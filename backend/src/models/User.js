@@ -28,7 +28,16 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true
   },
-  avatar_url: {
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  onboarding_completed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  voyagr_avatar: {
     type: DataTypes.STRING,
     allowNull: true
   },

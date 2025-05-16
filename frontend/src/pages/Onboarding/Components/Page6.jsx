@@ -10,7 +10,7 @@ const Page6 = () => {
     const dialogueData = [
         { speaker: "", line: ``, color: "text-gray-400" },
         { speaker: "Voyagr", line: "How long till we get there?", color: "text-gray-400" },
-        { speaker: playerName, line: "We'll be there by the new year.", color: "text-green-500" },
+        { speaker: playerName, line: "It'll be another light year, so a while.", color: "text-green-500" },
         { speaker: "Voyagr", line: "We might as well get to know each other then.", color: "text-gray-400" },
         { speaker: playerName, line: "I suppose so, I'm a merchant captain if you haven't figured that out yet.", color: "text-green-500" },
         { speaker: "Voyagr", line: "Doesn't the ship drive itself?", color: "text-gray-400" },
@@ -20,9 +20,9 @@ const Page6 = () => {
         { speaker: playerName, line: "I...well.....", color: "text-green-500" },
         {speaker: "Computer", line: `What the Captain means to say is that they have some anvils in the fire.`, color: "text-blue-500"},
         { speaker: playerName, line: "Yeah, I have concepts of a plan. I just haven't gotten around to it.", color: "text-green-500" },
-        { speaker: "Voyagr", line: "Hmm, I think we're a lot alike. I'm also not sure.", color: "text-gray-400" },
-        { speaker: playerName, line: "Why aren't you sure?", color: "text-green-500" },
-        { speaker: "Voyagr", line: "Well, I want to be a scientist but I'm not sure I can be one.", color: "text-gray-400" },
+        { speaker: "Voyagr", line: "Hmm, I think we're a lot alike.", color: "text-gray-400" },
+        { speaker: playerName, line: "You, the evil super-satellite, and me, the merchant captain. I'm not so sure.", color: "text-green-500" },
+        { speaker: "Voyagr", line: "Of course we are. I want to be a scientist but I'm not sure I can be one.", color: "text-gray-400" },
         { speaker: playerName, line: "Since you're a probe with no engine?", color: "text-green-500" },
         { speaker: "Voyagr", line: "Yeah that's it.", color: "text-gray-400" },
         { speaker: playerName, line: "Maybe you're closer to being a scientist than you think. You have been collecting data for a long time after all.", color: "text-green-500" },
@@ -30,7 +30,7 @@ const Page6 = () => {
         { speaker: playerName, line: "Yeah, maybe.", color: "text-green-500" },
         { speaker: "Voyagr", line: "I have an idea! We can help each other out.", color: "text-gray-400" },
         { speaker: playerName, line: "How would we do that?", color: "text-green-500" },
-        { speaker: "Voyagr", line: "We can pretend together. Act like the things we want to be.", color: "text-gray-400" },
+        { speaker: "Voyagr", line: "We can play pretend together. Act like the things we want to be.", color: "text-gray-400" },
         { speaker: playerName, line: "How will pretending help?", color: "text-green-500" },
         { speaker: "Voyagr", line: "Well if we pretend long enough, at some point that will just be who we are.", color: "text-gray-400" },
         { speaker: playerName, line: "....... I guess there's some sense to that.", color: "text-green-500" },
@@ -172,7 +172,7 @@ const Page6 = () => {
                                 className="ml-4 text-green-600 font-bold rounded-md animate-blink" 
                                 onClick={goToNextPage}
                             >
-                                Yeah, I'll give it a try.
+                                Why not? Let's give it a try.
                             </button>
                         </div>
                     )}
