@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useEvent } from '../../../context/EventContext';
 import { CalendarIcon, PauseIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { PlayIcon } from '@heroicons/react/24/solid';

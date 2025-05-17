@@ -92,6 +92,78 @@ router.post('/api/values/init', async (req, res) => {
       is_active: true
     });
 
+    // Example
+    const value_example = await Value.create({
+      user_id: user_id,
+      description: 'Diligent Learner (Identity)',
+      color: '#A020F0'
+    });
+
+    await Habit.create({
+      user_id: user_id,
+      description: '1. Start here (Habit)',
+      duration: 10 * 1000, // 10 seconds
+      value_id: value_example.id
+    });
+
+    await Habit.create({
+      user_id: user_id,
+      description: '2. Now try this one (Habit)',
+      duration: 15 * 1000, // 10 seconds
+      value_id: value_example.id
+    });
+
+    const habit_break = await Habit.create({
+      user_id: user_id,
+      description: 'Your first break (Habit and Break)',
+      duration: 5 * 1000, // 10 seconds
+      value_id: value_example.id
+    });
+
+    await Break.create({
+      user_id: user_id,
+      interval: 12 * 1000,
+      interval_rank: 1,
+      habit_id: habit_break.id
+    });
+
+
+    // Break
+    const break_example = await Value.create({
+      user_id: user_id,
+      description: 'Pomodoro Break',
+      color: '#808080'
+    });
+
+    const habit_short_break = await Habit.create({
+      user_id: user_id,
+      description: 'Short Break',
+      duration: 5 * 60 * 1000,
+      value_id: break_example.id
+    });
+
+    const habit_long_break = await Habit.create({
+      user_id: user_id,
+      description: 'Long Break',
+      duration: 20 * 60 * 1000,
+      value_id: break_example.id
+    });
+
+    await Break.create({
+      user_id: user_id,
+      interval: 30 * 60 * 1000,
+      interval_rank: 1,
+      habit_id: habit_short_break.id
+    });
+
+    await Break.create({
+      user_id: user_id,
+      interval: 120 * 60 * 1000,
+      interval_rank: 1,
+      habit_id: habit_long_break.id
+    });
+    
+    
     res.json({ value, habit, schedule });
   } catch (error) {
     console.log('Error in /api/values/init:', error);
@@ -180,10 +252,10 @@ router.post('/api/values/level/', async (req, res) => {
       let newLevel = value.level;
       let newLevelTime = value.level_time + duration;
       let leveledUp = false;
-      console.log('newProgress', newProgress);
-      console.log('newLevel', newLevel);
-      console.log('newLevelTime', newLevelTime);
-      console.log('leveledUp', leveledUp);
+      //console.log('newProgress', newProgress);
+      //console.log('newLevel', newLevel);
+      //console.log('newLevelTime', newLevelTime);
+      //console.log('leveledUp', leveledUp);
       // Handle level ups (loop back to zero plus extra)
       while (newProgress >= 100) {
           newLevel += 1;

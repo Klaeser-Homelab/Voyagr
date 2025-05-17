@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useValues } from '../../../context/ValuesContext';
-import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { TrashIcon, Bars3Icon, ClockIcon } from '@heroicons/react/24/outline';
 import api from '../../../config/api';
 // This form relies on a local state that is synced on save.
 const BreakSettingsForm = () => {
@@ -157,7 +157,8 @@ const BreakSettingsForm = () => {
   return (
     <div className="bg-gray-800 shadow-lg rounded-lg">
       <div className="flex flex-col p-4">
-        <h2 className="text-xl font-bold">Breaks</h2>
+
+        <h2 className="text-xl font-bold flex items-center gap-2"><ClockIcon className="size-6 text-gray-400" /> Break Cycle</h2>
         <div className="flex flex-row gap-2 mt-2 mb-2">
           <div className="w-6"></div> {/* Space for drag handle */}
           <p className="hidden md:block text-sm px-2 w-45">Habits</p>

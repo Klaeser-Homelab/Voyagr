@@ -97,6 +97,7 @@ function Identity({ value, showScheduled = false, showBreaks = false }) {
             isScheduled={habit.Schedules && habit.Schedules.length > 0}
             showScheduled={showScheduled}
             showBreaks={showBreaks}
+            isBreak={habit.Break !== null}
           />
         ))}
       </div>

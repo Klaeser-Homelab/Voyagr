@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { useValues } from '../../../context/ValuesContext';
 import { useEvent } from '../../../context/EventContext';
 import { useBreaks } from '../../../context/BreaksContext';
+import { useUser } from '../../../context/UserContext';
 import Identity from './Identity';
 import Event from './Event';
 import BreakProgress from './BreakProgress';
+import ValueListOnboard from './ValueListOnboard';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid';
 import { CalendarIcon, PauseIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import HabitCard from './HabitCard';
 
 function ValueList() {
   const { activeItem, activeEvent, levelingUp, setLevelingUp } = useEvent();
@@ -16,6 +19,8 @@ function ValueList() {
   const [showScheduled, setShowScheduled] = useState(false);
   const [showBreaks, setShowBreaks] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { user, updateUser, isOnboardingPageCompleted } = useUser();
+
   // Toggle the dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -39,6 +44,25 @@ function ValueList() {
   // Handle modal close
   const handleModalClose = () => {
     setLevelingUp(null);
+  };
+
+  const handleOnboardingClose = () => {
+    // Onboarding will be handled by the ValueListOnboard component
+  };
+
+  const spoofedHabit = {
+    id: values[0]?.Habits[0]?.id, // Use an ID that doesn't exist in your data
+    break: null, // or add break data if you want to test break functionality
+    createdAt: "2025-05-15T10:30:00.000Z",
+    schedules: [],
+    is_active: true,
+    details: "This is a spoofed habit for testing",
+    duration: 1800, // 30 minutes in seconds
+    type: "habit",
+    updatedAt: "2025-05-15T10:30:00.000Z",
+    value_id: values[0]?.id,
+    // Add any other properties your habit object might have
+    description: "1. Start your first habit"
   };
 
   if (error) {
@@ -124,6 +148,13 @@ function ValueList() {
                     />
                   </div>
                 ))}
+                {/* ValueList Onboarding Modal */}
+                  {user && !isOnboardingPageCompleted(2) && (
+                    <ValueListOnboard 
+                      isOpen={true} 
+                      onClose={handleOnboardingClose}
+                    />
+                  )}
               </div>
             )}
           </div>
@@ -137,55 +168,54 @@ function ValueList() {
         </div>
       )}
 
-      {/* Level Up Modal */}
-      {levelingUp && console.log('levelingUp:', levelingUp)}
+      
 
       {/* Level Up Modal */}
       {levelingUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div className="bg-base-100 rounded-lg shadow-xl p-8 max-w-md w-full mx-4 relative">
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 btn btn-ghost btn-sm btn-circle"
-        >
-          <XMarkIcon className="size-5" />
-        </button>
+          <div className="bg-base-100 rounded-lg shadow-xl p-8 max-w-md w-full mx-4 relative">
+            {/* Close button */}
+            <button
+              onClick={handleModalClose}
+              className="absolute top-4 right-4 btn btn-ghost btn-sm btn-circle"
+            >
+              <XMarkIcon className="size-5" />
+            </button>
 
-        {/* Celebration content */}
-        <div className="text-center">
-          {/* Celebration emoji/icon */}
-          <div className="text-6xl mb-4">🎉</div>
-          
-          {/* Level up message */}
-          <h2 className="text-3xl font-bold text-primary mb-2">
-            Level Up!
-          </h2>
-          
-          <p className="text-lg mb-4">
-            Congratulations! You've reached level {value.level}
-          </p>
-          
-          {/* Progress details */}
-          <div className="bg-base-200 rounded-lg p-4 mb-6">
-            <div className="text-sm text-base-content/70 mb-2">
-              Previous Level: {value.old_level}
-            </div>
-            <div className="text-sm text-base-content/70 mb-2">
-              Current Level: {value.level}
-            </div>
-            <div className="text-sm text-base-content/70">
-              Total Time: {Math.round(value.total_time / 60)} minutes
+            {/* Celebration content */}
+            <div className="text-center">
+              {/* Celebration emoji/icon */}
+              <div className="text-6xl mb-4">🎉</div>
+              
+              {/* Level up message */}
+              <h2 className="text-3xl font-bold text-primary mb-2">
+                Level Up!
+              </h2>
+              
+              <p className="text-lg mb-4">
+                Congratulations! You've reached level {levelingUp.level}
+              </p>
+              
+              {/* Progress details */}
+              <div className="bg-base-200 rounded-lg p-4 mb-6">
+                <div className="text-sm text-base-content/70 mb-2">
+                  Previous Level: {levelingUp.old_level}
+                </div>
+                <div className="text-sm text-base-content/70 mb-2">
+                  Current Level: {levelingUp.level}
+                </div>
+                <div className="text-sm text-base-content/70">
+                  Total Time: {Math.round(levelingUp.total_time / 60)} minutes
+                </div>
+              </div>
+              
+              {/* Motivational message */}
+              <p className="text-base-content/80">
+                Keep up the great work! Every step forward is progress.
+              </p>
             </div>
           </div>
-          
-          {/* Motivational message */}
-          <p className="text-base-content/80">
-            Keep up the great work! Every step forward is progress.
-          </p>
         </div>
-      </div>
-      </div>
       )}
     </div>
   );

@@ -139,7 +139,7 @@ function Today() {
                         <div key={`schedule-${schedule.id}`} className="relative group">
                           {!started && (
                             <div 
-                              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
+                              className="absolute right-[-20] top-1/2 -translate-y-1/2 -translate-x-10 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10"
                               onClick={(e) => handleMarkAsDone(e, schedule)}
                             >
                               <button className="btn btn-circle btn-sm btn-success">

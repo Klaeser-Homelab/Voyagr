@@ -33,13 +33,9 @@ const User = sequelize.define('User', {
     allowNull: true
   },
   onboarding_completed: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false
-  },
-  voyagr_avatar: {
-    type: DataTypes.STRING,
-    allowNull: true
+    defaultValue: 0
   },
   last_login: {
     type: DataTypes.DATE,

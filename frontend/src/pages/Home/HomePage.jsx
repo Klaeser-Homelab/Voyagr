@@ -7,11 +7,13 @@ import { useUser } from '../../context/UserContext';
 import Onboarding from '../Onboarding/ChapterOne';
 import HomeOnboard from './Components/HomeOnboard';
 import { useNavigate } from 'react-router-dom';
+import VoyagrAvatar from '../../assets/voyagr_avatar.png';
+
 
 function HomePage() {
     const { fetchAll, values } = useValues();
     const { fetchMonthEvents } = useTracker();
-    const { user, fetchUser } = useUser();
+    const { user, fetchUser, isOnboardingPageCompleted } = useUser();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [showOnboardingModal, setShowOnboardingModal] = useState(false);
@@ -37,17 +39,17 @@ function HomePage() {
         console.log('user', user);
         
         // Only navigate after data has loaded
-        if (!isLoading) {
+        if (!isLoading && user) {
             if (values.length === 0) {
                 // No values - go to onboarding
                 navigate('/chapter-one');
-            } else if (user && !user.onboarding_completed) {
-                // Has values but onboarding not completed - show modal
-                console.log('showOnboardingModal', showOnboardingModal);
+            } else if (!isOnboardingPageCompleted(1)) {
+                // Has values but page 1 onboarding not completed - show modal
+                console.log('Page 1 not completed, showing HomeOnboard modal');
                 setShowOnboardingModal(true);
             }
         }
-    }, [values, user, isLoading, navigate]);
+    }, [values, user, isLoading, navigate, isOnboardingPageCompleted]);
 
     // Show loading state while fetching data
     if (isLoading) {
@@ -59,7 +61,7 @@ function HomePage() {
     }
 
     return (
-        <div className="flex flex-col flex-grow overflow-hidden h-screen lg:flex-row justify-between">
+        <div className="relative flex flex-col flex-grow overflow-hidden h-screen lg:flex-row justify-between">
             <div className="radial-glow"></div>
             <div className="flex-grow flex justify-center w-full overflow-hidden">
                 <div className="w-full overflow-y-auto">
@@ -73,7 +75,7 @@ function HomePage() {
             {/* Onboarding Modal */}
             {showOnboardingModal && (
                 <HomeOnboard isOpen={showOnboardingModal} onClose={() => setShowOnboardingModal(false)} />
-            )}
+            )}    
         </div>
     );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useTimer } from '../../../context/TimerContext';
 import { useBreaks } from '../../../context/BreaksContext';
 import { useDeveloper } from '../../../context/DeveloperContext';
-import { PauseIcon } from '@heroicons/react/24/outline';
+import { PauseIcon, ClockIcon } from '@heroicons/react/24/outline';
 const BreakSession = () => {
   const { 
     duration,
@@ -56,12 +56,15 @@ const BreakSession = () => {
   return (
     <div className="bg-gray-800/50 p-4 rounded-lg w-full">
       <div className="text-center text-white">
-        <h1 className="text-lg font-semibold mb-2">
-          Work Session
-          <p className="text-sm text-gray-400">
-            {formatMinutes(Math.floor(breakDuration / 60000))}
-          </p>
-        </h1>
+      <div className="text-center">
+  <ClockIcon className="size-8 mx-auto mb-1" />
+  <h1 className="text-lg font-semibold mb-2">
+    Break Cycle
+    <p className="text-sm text-gray-400">
+      {formatMinutes(Math.floor(breakDuration / 60000))}
+    </p>
+  </h1>
+</div>
         
         {/* Progress line - Only showing the timeline without progress bar */}
         <div className="mt-6 mb-6">

@@ -170,7 +170,6 @@ router.get('/api/users/me', async (req, res) => {
       display_name: user.display_name,
       avatar: user.avatar,
       onboarding_completed: user.onboarding_completed,
-      voyagr_avatar: user.voyagr_avatar
     });
   } catch (error) {
     console.error('Error in /api/users/me:', error);
@@ -194,7 +193,7 @@ router.put('/api/users/me', async (req, res) => {
     }
 
     // Extract fields from request body
-    const { display_name, avatar, onboarding_completed, voyagr_avatar } = req.body;
+    const { display_name, avatar, onboarding_completed, voyagr_avatar, onboarding_step } = req.body;
     
     // Update only the fields that are provided
     if (display_name !== undefined) {
@@ -211,6 +210,10 @@ router.put('/api/users/me', async (req, res) => {
     
     if (voyagr_avatar !== undefined) {
       user.voyagr_avatar = voyagr_avatar;
+    }
+
+    if (onboarding_step !== undefined) {
+      user.onboarding_step = onboarding_step;
     }
     
     await user.save();
