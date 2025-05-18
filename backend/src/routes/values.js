@@ -171,6 +171,59 @@ router.post('/api/values/init', async (req, res) => {
   }
 });
 
+router.post('/api/values/init/onboardingcomplete', async (req, res) => {  
+  try {
+    const accessToken = getToken(req);
+    const user_id = await redis.get(accessToken);
+
+    // Find values for this user
+    const values = await Value.findAll({
+      user_id: user_id
+    });
+
+    // Update any values with "Diligent Learner" in description to is_active: false
+    let diligent_learner_id;
+    for (const value of values) {
+      if (value.description.includes('Diligent Learner')) {
+        const diligent_learner = await Value.findByPk(value.id);
+        diligent_learner_id = diligent_learner.id;
+        diligent_learner.is_active = false;
+        await diligent_learner.save();
+      }
+    }
+
+    // Mark habits for diligent_learner_id as is_active: false
+    await Habit.update({
+      is_active: false
+    }, {
+      where: {
+        value_id: diligent_learner_id
+      }
+    });
+    
+    // Default Value
+    const value_example = await Value.create({
+      user_id: user_id,
+      description: 'Focused Worker',
+      color: '#00FF00'
+    });
+
+    // Create default habit
+    const habit = await Habit.create({
+      user_id: user_id,
+      description: 'Work',
+      duration: 30 * 60 * 1000, // 30 minutes
+      value_id: value_example.id
+    });
+
+
+    res.json({ message: 'Onboarding complete' });
+  } catch (error) {
+    console.log('Error in /api/values/init:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/api/values/archived', async (req, res) => {  
   try {
     const accessToken = getToken(req);

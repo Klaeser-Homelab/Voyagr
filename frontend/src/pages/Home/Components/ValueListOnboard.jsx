@@ -39,7 +39,7 @@ function ValueListOnboard({ isOpen, onClose }) {
   const steps = [
     {
         title: "Level Up your Identities with Voyagr",
-        message: 'You, for instance, are a Diligent Learner Lvl 1. Work on Habits to Level Up.',
+        message: 'You, for instance, are a Diligent Learner at Level 1. Work on Habits to Level Up.',
         icon: <img 
           src={headshotOptions.find(h => h.key === selectedHeadshot)?.src} 
           alt="Your avatar"

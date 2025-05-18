@@ -5,14 +5,13 @@ import Headshot2 from '../../../assets/headshot_2.png';
 import Headshot3 from '../../../assets/headshot_3.png';
 import { useUser } from '../../../context/UserContext';
 
-function HomeOnboard({ isOpen, onClose }) {
+function HomeOnboard() {
     const { user, updateUser, markOnboardingPageCompleted } = useUser();
     const [currentStep, setCurrentStep] = useState(1); // 1: name, 2: avatar, 3: complete
     const [name, setName] = useState('');
     const [selectedHeadshot, setSelectedHeadshot] = useState('');
     const [currentInput, setCurrentInput] = useState('');
 
-    if (!isOpen) return null;
 
     const headshotOptions = [
         { key: 'headshot_1', src: Headshot1, alt: 'Option 1' },
@@ -44,11 +43,9 @@ function HomeOnboard({ isOpen, onClose }) {
                 // Mark page 1 (HomeOnboard) as completed
                 await markOnboardingPageCompleted(1);
                 
-                onClose();
             } catch (error) {
                 console.error('Error completing onboarding:', error);
                 // Still close the modal even if there's an error
-                onClose();
             }
         }, 2000);
     };

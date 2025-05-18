@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import { getAuthService } from '../../services/auth';
+import { useUser } from '../../context/UserContext';
 
 function Callback() {
   const { 
@@ -15,6 +16,8 @@ function Callback() {
   const [status, setStatus] = useState('Authenticating...');
   const [appState, setAppState] = useState(null);
   const [onboardingStateChecked, setOnboardingStateChecked] = useState(false);
+  const { fetchUser,  } = useUser();
+
 
   useEffect(() => {
     async function getOnboardingState() {
@@ -111,6 +114,8 @@ function Callback() {
           }
 
         console.log('7');
+
+        //await fetchUser();
        
         navigate('/home');
         

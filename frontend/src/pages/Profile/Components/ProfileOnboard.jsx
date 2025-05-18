@@ -7,10 +7,7 @@ import Headshot3 from '../../../assets/headshot_3.png';
 import { useNavigate } from 'react-router-dom';
 
 import { 
-  UserCircleIcon,
-  AdjustmentsHorizontalIcon,
-  StarIcon,
-  CheckCircleIcon as CheckCircleIconOutline
+  ClockIcon, MagnifyingGlassIcon, ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
@@ -32,7 +29,7 @@ function ProfileOnboard() {
   const steps = [
     {
       title: "Welcome to Your Profile",
-      message: 'This is where you can view and update your personal information and preferences.',
+      message: 'Here you can define your Identities and Habits.',
       icon: <img 
         src={headshotOptions.find(h => h.key === selectedHeadshot)?.src} 
         alt="Your avatar"
@@ -43,24 +40,24 @@ function ProfileOnboard() {
       iconColor: "text-black"
     },
     {
-      title: "Customize Your Avatar",
-      message: 'Choose an avatar that represents you best.',
-      icon: <UserCircleIcon className="size-6" />,
+      title: "Define your Break Cycle",
+      message: 'Short and long Pomodoro breaks are already defined for you.',
+      icon: <ClockIcon className="size-6" />,
       animation: "animate-bounce",
-      iconBg: "bg-primary",
-      iconColor: "text-black"
+      iconBg: "bg-base-300",
+      iconColor: "text-white"
     },
     {
-      title: "Set Your Preferences",
-      message: "Adjust settings to personalize your Voyagr experience.",
-      icon: <AdjustmentsHorizontalIcon className="size-6" />,
+      title: "Discover",
+      message: "Browse popular Identities and Habits.",
+      icon: <MagnifyingGlassIcon className="size-6" />,
       animation: "animate-bounce",
       iconBg: "bg-gray-500",
       iconColor: "text-white"
     },
     {
       title: "Track Your Achievements",
-      message: "View your progress and completed goals here.",
+      message: "View your Level progress here or track your Habits in the Habit Tracker.",
       icon: <CheckCircleIcon className="size-6" />,
       animation: "animate-bounce",
       iconBg: "bg-success",
@@ -168,8 +165,8 @@ function ProfileOnboard() {
           >
             {profileStep === steps.length ? (
               <>
-                <StarIcon className="size-5" />
-                Get Started
+                <ChartBarIcon className="size-5" />
+                Track Habits
               </>
             ) : 'Next'}
           </button>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useTracker } from '../../../context/TrackerContext';
+import { useUser } from '../../../context/UserContext';
+import TrackerOnboard from './TrackerOnboard';
 
 const Tracker = () => {
     const [daysInMonth, setDaysInMonth] = useState(0);
     const [currentDate, setCurrentDate] = useState(new Date());
     const { monthData } = useTracker();
-    
+    const { user, isOnboardingPageCompleted } = useUser();
     useEffect(() => {
         // Get the number of days in the current month
         const year = currentDate.getFullYear();
@@ -114,6 +116,9 @@ const Tracker = () => {
                 ))
             ) : (
                 <div className="text-gray-400">No better time than the present. Start playing to see your progress.</div>
+            )}
+            {user && !isOnboardingPageCompleted(4) && (
+                <TrackerOnboard />
             )}
         </div>
     );

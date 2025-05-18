@@ -34,23 +34,6 @@ function HomePage() {
         loadData();
     }, []);
 
-    useEffect(() => {
-        console.log('values', values);
-        console.log('user', user);
-        
-        // Only navigate after data has loaded
-        if (!isLoading && user) {
-            if (values.length === 0) {
-                // No values - go to onboarding
-                navigate('/chapter-one');
-            } else if (!isOnboardingPageCompleted(1)) {
-                // Has values but page 1 onboarding not completed - show modal
-                console.log('Page 1 not completed, showing HomeOnboard modal');
-                setShowOnboardingModal(true);
-            }
-        }
-    }, [values, user, isLoading, navigate, isOnboardingPageCompleted]);
-
     // Show loading state while fetching data
     if (isLoading) {
         return (
@@ -73,8 +56,8 @@ function HomePage() {
             </div>
             
             {/* Onboarding Modal */}
-            {showOnboardingModal && (
-                <HomeOnboard isOpen={showOnboardingModal} onClose={() => setShowOnboardingModal(false)} />
+            {user && !isOnboardingPageCompleted(1) && (
+                <HomeOnboard />
             )}    
         </div>
     );

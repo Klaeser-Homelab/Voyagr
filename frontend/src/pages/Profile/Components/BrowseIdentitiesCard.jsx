@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
 const BrowseIdentitiesCard = () => {
   const navigate = useNavigate();
   
@@ -18,9 +20,12 @@ const BrowseIdentitiesCard = () => {
   return (
     <div className="card bg-base-100 shadow-md">
       <div className="card-body">
-        <h3 className="card-title text-lg font-semibold mb-4">Browse Identities</h3>
+        <h3 className="card-title text-lg font-semibold mb-4 flex items-center gap-2">
+          <MagnifyingGlassIcon className="size-6" />
+          Popular Identities
+        </h3>
         <p className="text-sm text-base-content opacity-70 mb-4">
-          Discover popular identity frameworks from our community
+          Discover popular identity frameworks from our community.
         </p>
         
         <div className="space-y-3">

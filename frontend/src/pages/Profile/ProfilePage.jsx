@@ -7,6 +7,8 @@ import Archived from './Components/Archived';
 import BrowseIdentitiesCard from './Components/BrowseIdentitiesCard';
 import ProfileOnboard from './Components/ProfileOnboard';
 import { useUser } from '../../context/UserContext';
+import Profile from './Components/Profile';
+
 const ProfilePage = () => {
   const { values } = useValues();
   const [error, setError] = useState(null);
@@ -21,11 +23,13 @@ const ProfilePage = () => {
         {/* ValueList Onboarding Modal */}
         <div className="flex flex-col mx-2 md:mx-0 mt-5">
           <ValueForm />
+          <Profile />
         </div>
         {user && !isOnboardingPageCompleted(3) && (
           <ProfileOnboard 
           />
         )}
+
         <div className="flex flex-col gap-1 mx-2 md:mx-0 mt-4">
           {values.map((value) => (
             <EditValueCard
