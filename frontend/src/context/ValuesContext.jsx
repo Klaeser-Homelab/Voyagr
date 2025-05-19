@@ -159,21 +159,6 @@ export const ValuesProvider = ({ children }) => {
     await fetchArchivedValues();
   }, []);
 
-  // Fetch all once auth token is set
-  /*
-  useEffect(() => {
-    const checkTokenForFetch = async () => {
-      const authService = getAuthService();
-      const token = await authService.getToken();
-      if (isAuthenticated && !isLoading && token) {
-        fetchAll();
-        console.log('Fetch from token');
-      }
-    };
-    checkTokenForFetch();
-  }, [isAuthenticated, isLoading]);
-*/
-
   return (
     <ValuesContext.Provider
       value={{
