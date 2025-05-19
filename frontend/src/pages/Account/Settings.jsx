@@ -63,20 +63,6 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col justify-center p-10 lg:ml-20">
-    {/* Centered and larger avatar */}
-    <div className="flex justify-center items-center mb-6">
-          <div tabIndex={0} className="">
-              {user?.picture ? (
-                <img
-                  alt="User avatar"
-                  src={user.picture}
-                  className="w-32 h-32 rounded-full object-cover"
-                />
-              ) : (
-                <UserCircleIcon className="w-32 h-32" />
-              )}
-          </div>
-    </div>
     <div className="flex flex-col h-full gap-4">
     
 <div className="flex flex-col gap-2 z-1 mt-3 w-full p-2 text-2xl justify-left items-start"> 
