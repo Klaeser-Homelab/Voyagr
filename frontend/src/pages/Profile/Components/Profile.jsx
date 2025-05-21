@@ -66,7 +66,7 @@ export default function Profile() {
                 </div>
             ) : (
                 <div className="flex justify-between items-center px-4">
-                    <div className="flex-grow flex justify-center pl-15">
+                    <div className="flex-grow flex justify-center">
                         <h1 className="text-4xl font-semibold">{user?.display_name}</h1>
                     </div>
                     <button 
