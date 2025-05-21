@@ -65,11 +65,13 @@ export default function Profile() {
                     </button>
                 </div>
             ) : (
-                <div className="relative w-full max-w-xs flex justify-center">
-                    <h1 className="text-4xl font-semibold text-center">{user?.display_name}</h1>
+                <div className="flex justify-between items-center px-4">
+                    <div className="flex-grow flex justify-center pl-15">
+                        <h1 className="text-4xl font-semibold">{user?.display_name}</h1>
+                    </div>
                     <button 
                         onClick={() => setIsEditing(true)}
-                        className="absolute right-[75px] p-2 text-white hover:text-gray-800"
+                        className="p-2 text-white hover:text-gray-800 ml-4"
                     >
                         <PencilIcon className="w-5 h-5" />
                     </button>
