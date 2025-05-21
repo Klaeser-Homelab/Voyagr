@@ -3,6 +3,7 @@ import { useValues } from '../../../context/ValuesContext';
 import { useEvent } from '../../../context/EventContext';
 import { useBreaks } from '../../../context/BreaksContext';
 import { useUser } from '../../../context/UserContext';
+import { useTimer } from '../../../context/TimerContext';
 import Identity from './Identity';
 import Event from './Event';
 import BreakProgress from './BreakProgress';
@@ -10,11 +11,14 @@ import ValueListOnboard from './ValueListOnboard';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid';
 import { CalendarIcon, PauseIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import HabitCard from './HabitCard';
+import VoyagrAvatar from '../../../assets/voyagr_avatar.png';
+
 
 function ValueList() {
   const { activeItem, activeEvent, levelingUp, setLevelingUp } = useEvent();
   const { values } = useValues();
   const { breakDuration } = useBreaks();
+  const { formatTime } = useTimer();
   const [error, setError] = useState(null);
   const [showScheduled, setShowScheduled] = useState(false);
   const [showBreaks, setShowBreaks] = useState(false);
@@ -43,6 +47,8 @@ function ValueList() {
 
   // Handle modal close
   const handleModalClose = () => {
+    console.log('handleModalClose');
+    console.log(levelingUp);
     setLevelingUp(null);
   };
 
@@ -173,7 +179,7 @@ function ValueList() {
       {/* Level Up Modal */}
       {levelingUp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
-          <div className="bg-base-100 rounded-lg shadow-xl p-8 max-w-md w-full mx-4 relative">
+          <div className="bg-base-100 rounded-lg shadow-xl p-8 max-w-md w-full mx-4 relative border-8 border-primary">
             {/* Close button */}
             <button
               onClick={handleModalClose}
@@ -185,34 +191,41 @@ function ValueList() {
             {/* Celebration content */}
             <div className="text-center">
               {/* Celebration emoji/icon */}
+              <div className="flex flex-row items-center justify-center gap-4">
               <div className="text-6xl mb-4">🎉</div>
+                <img src={VoyagrAvatar} alt="Voyagr" className="w-20 h-20 rounded-full mb-4" />
+                <div className="text-6xl mb-4">🎉</div>
+              </div>
+
+              {/* Motivational message */}
+              <p className="text-base-content/80 text-lg">
+                Nice work, {user.display_name}! You've leveled up!
+              </p>
               
               {/* Level up message */}
               <h2 className="text-3xl font-bold text-primary mb-2">
-                Level Up!
+                Level
               </h2>
               
-              <p className="text-lg mb-4">
-                Congratulations! You've reached level {levelingUp.level}
+              <p className="text-8xl text-secondary font-bold mb-4" style={{ color: levelingUp.value.color }}>
+                 {levelingUp.value.level}
               </p>
+
+              <h2 className="text-3xl font-bold text-primary mb-2">
+                {levelingUp.value.description}
+              </h2>
               
               {/* Progress details */}
               <div className="bg-base-200 rounded-lg p-4 mb-6">
-                <div className="text-sm text-base-content/70 mb-2">
-                  Previous Level: {levelingUp.old_level}
+                <div className="text-lg text-base-content/70 mb-2">
+                  Previous Level: {levelingUp.value.old_level}
                 </div>
-                <div className="text-sm text-base-content/70 mb-2">
-                  Current Level: {levelingUp.level}
-                </div>
-                <div className="text-sm text-base-content/70">
-                  Total Time: {Math.round(levelingUp.total_time / 60)} minutes
+                <div className="text-lg text-base-content/70">
+                  Total Time: {formatTime(levelingUp.value.total_time)}
                 </div>
               </div>
               
-              {/* Motivational message */}
-              <p className="text-base-content/80">
-                Keep up the great work! Every step forward is progress.
-              </p>
+              
             </div>
           </div>
         </div>
