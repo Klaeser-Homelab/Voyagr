@@ -1,6 +1,5 @@
 # Voyagr
-[![Watch the video](https://img.youtube.com/vi/bW34WQVk7L8/maxresdefault.jpg)](https://youtu.be/bW34WQVk7L8)
-[![Watch the video 2](https://github.com/user-attachments/assets/7280a745-699d-4398-be9b-150fc6afdcd3)](https://youtu.be/bW34WQVk7L8)
+[![Watch the video](https://github.com/user-attachments/assets/7280a745-699d-4398-be9b-150fc6afdcd3)](https://youtu.be/bW34WQVk7L8)
 
 ### [Watch this video on YouTube](https://youtu.be/bW34WQVk7L8)
 
