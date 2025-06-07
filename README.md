@@ -1,5 +1,8 @@
 # Voyagr
-![Screenshot 2025-04-04 at 3 56 30 PM](https://github.com/user-attachments/assets/b5dfd581-bf28-412b-a0a0-330810c79e63)
+[![Watch the video](https://img.youtube.com/vi/bW34WQVk7L8/maxresdefault.jpg)](https://youtu.be/bW34WQVk7L8)
+[![Watch the video 2](https://github.com/user-attachments/assets/7280a745-699d-4398-be9b-150fc6afdcd3)](https://youtu.be/bW34WQVk7L8)
+
+### [Watch this video on YouTube](https://youtu.be/bW34WQVk7L8)
 
 Voyagr is a learning project and a tool I use to manage my day. Give it a try [Voyagr](https://voyagr.me/).
 
