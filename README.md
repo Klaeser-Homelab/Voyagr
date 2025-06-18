@@ -15,7 +15,7 @@ Voyagr is a habit tracker and self-management app that helps you live your value
 - [x] Build a CI/CD pipeline with testing and automatic deployments.
 - [x] Build a flexible frontend with dark/light themes that looks good on desktop and mobile.
 
-## What features exist and are planned?
+## Features
 See [issues](https://github.com/Klaeser-Homelab/Voyagr/issues) for details.
 - [x] Create and record values.
 - [x] Manage your time using a pomodoro timer, stopwatch, and tasks.
@@ -25,9 +25,8 @@ See [issues](https://github.com/Klaeser-Homelab/Voyagr/issues) for details.
 - [ ] Discover and share values and habits.
 - [ ] Initiate habits and session from places smart home buttons.
 
-
-## Inspiration
-Many of us struggle at some point in our lives with the question of how we should spend our time. There is no generic answer but I think a good start is to discover your values, start living them, and take opportunities as they come. Another way of saying this is to find and keep your attention on what you decide matters most. Attention is difficult and Voyagr is built to help maintain it. Several books got me thinking along these lines and I wanted to mention them here. 
+## Why
+Voyagr is about keeping your attention on what you decide matters most to you. These are some books along the same lines. 
 - [The Suble Art of not giving a f*ck - Manson](https://www.goodreads.com/book/show/28257707-the-subtle-art-of-not-giving-a-f-ck)
 - [Atomic Habits - Clear](https://www.goodreads.com/book/show/40121378-atomic-habits?from_search=true&from_srp=true&qid=pTZ9qbuEcd&rank=1)
 - [Four Thousand Weeks - Burkeman](https://www.goodreads.com/book/show/54785515-four-thousand-weeks?ref=nav_sb_ss_1_19)
