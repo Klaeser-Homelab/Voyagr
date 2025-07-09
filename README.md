@@ -5,8 +5,8 @@
 
 Voyagr is a learning project and a tool I use to manage my day. Give it a try [Voyagr](https://voyagr.me/).
 
-### Grade
-3/10 - See Substack post for details
+### Self-grading
+5/10 - See Substack post for details
 
 ## What is Voyagr?
 Voyagr is a habit tracker and self-management app that helps you live your values. You can think of it as a cross between a habit tracker like [Habatica](https://habitica.com/) or [Finch](https://finchcare.com/) and a pomodoro timer like [Session](https://www.stayinsession.com/). Habits can be configured to be scheduled or unscheduled and can be suggested as breaks after Pomodoro sessions.
