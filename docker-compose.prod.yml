@@ -6,7 +6,7 @@ services:
     # Ports removed - proxy handles external access
     networks:
       - voyagr-network
-      - proxy
+      - proxy-network
     depends_on:
       - backend
     # SSL volumes removed - proxy handles SSL termination
@@ -18,7 +18,7 @@ services:
     # Port mapping removed - only accessible via proxy network
     networks:
       - voyagr-network
-      - proxy
+      - proxy-network
     environment:
       POSTGRES_HOST: postgres
       NODE_ENV: PRODUCTION
@@ -38,7 +38,7 @@ services:
     # Port mapping removed - internal access only
     networks:
       - voyagr-network
-      - proxy
+      - proxy-network
 
   postgres:
     image: postgres:16
@@ -52,7 +52,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - voyagr-network
-      - proxy
+      - proxy-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
@@ -65,5 +65,5 @@ volumes:
 networks:
   voyagr-network:
     external: true
-  proxy:
+  proxy-network:
     external: true
